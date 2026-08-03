@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from './Navbar.astro';
+import Footer from './Footer.astro';
+
+const { post } = Astro.props;
+const index = post?.index ?? 0;
+const posts = post?.allPosts ?? [];
+const previous = index > 0 ? posts[index - 1] : null;
+const next = index < posts.length - 1 ? posts[index + 1] : null;
+const related = posts.filter((item) => item.slug !== post.slug).slice(0, 3);
+const pageTitle = `${post.title} | Jutt AI Blog`;
+const pageDescription = post.description;
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://jutt.ai/' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://jutt.ai/blog' },
+    { '@type': 'ListItem', position: 3, name: post.title, item: `https://jutt.ai/blog/${post.slug}` }
+  ]
+};
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.description,
+  image: post.image,
+  author: { '@type': 'Person', name: post.author },
+  datePublished: post.date,
+  mainEntityOfPage: `https://jutt.ai/blog/${post.slug}`
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} url={`/blog/${post.slug}`} image={post.image}>
+  <Navbar />
+  <main class="article-shell">
+    <article class="article-card">
+      <img class="hero-image" src={post.image} alt={post.title} loading="eager" decoding="async" />
+      <div class="article-body">
+        <p class="eyebrow">{post.category}</p>
+        <h1>{post.title}</h1>
+        <p class="lead">{post.description}</p>
+        <div class="meta-row">
+          <span>By {post.author}</span>
+          <span>{post.date}</span>
+          <span>{post.readTime}</span>
+        </div>
+        <div class="toc">
+          <h2>Table of contents</h2>
+          <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#strategy">Strategy</a></li>
+            <li><a href="#execution">Execution</a></li>
+          </ul>
+        </div>
+        <section id="overview">
+          <h2>Overview</h2>
+          <p>Modern AI teams need a clear operating rhythm. The best systems connect strategic intent with reliable execution and a strong feedback loop.</p>
+        </section>
+        <section id="strategy">
+          <h2>Strategy</h2>
+          <p>Start with the business leverage point, define the user experience, and document how success will be measured. Precision beats novelty when the stakes are high.</p>
+        </section>
+        <section id="execution">
+          <h2>Execution</h2>
+          <p>Pair thoughtful design with safe automation. Build observability early, refine prompts continuously, and keep humans in the loop where trust matters most.</p>
+        </section>
+        <div class="share-box">
+          <span>Share</span>
+          <a href="https://x.com" target="_blank" rel="noreferrer">X</a>
+          <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+        </div>
+        <div class="comments-box">
+          <h2>Comments</h2>
+          <p>Comments are coming soon. Share your perspective in the meantime and join the next conversation.</p>
+        </div>
+      </div>
+    </article>
+
+    <aside class="sidebar">
+      <div class="author-box">
+        <h3>About the author</h3>
+        <p>{post.author} writes about AI strategy, product design, and operational clarity for modern organizations.</p>
+      </div>
+      <div class="related-box">
+        <h3>Related posts</h3>
+        <ul>
+          {related.map((item) => <li><a href={`/blog/${item.slug}`}>{item.title}</a></li>)}
+        </ul>
+      </div>
+      <div class="nav-box">
+        {previous ? <a href={`/blog/${previous.slug}`}>← {previous.title}</a> : <span />}
+        {next ? <a href={`/blog/${next.slug}`}>{next.title} →</a> : <span />}
+      </div>
+    </aside>
+  </main>
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+</Layout>
+
+<style>
+  .article-shell { max-width: 1240px; margin: 0 auto; padding: 3rem 1.25rem 4rem; display: grid; grid-template-columns: 1.45fr 0.65fr; gap: 1.5rem; }
+  .article-card, .sidebar > div { background: var(--surface); border: 1px solid var(--border); border-radius: 1.3rem; overflow: hidden; box-shadow: 0 18px 40px rgba(15, 32, 67, 0.08); }
+  .hero-image { width: 100%; height: 340px; object-fit: cover; }
+  .article-body { padding: 1.75rem; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); font-size: 0.8rem; font-weight: 700; }
+  h1 { color: var(--text); font-size: clamp(1.9rem, 3vw, 2.8rem); margin: 0.25rem 0 0.8rem; }
+  .lead, .article-body p, .author-box p { color: var(--muted); line-height: 1.9; }
+  .meta-row { display: flex; gap: 1rem; flex-wrap: wrap; color: #64748b; font-size: 0.95rem; margin-bottom: 1.3rem; }
+  .toc { background: #f8fafc; border-radius: 1rem; padding: 1.15rem; margin: 1rem 0 1.2rem; }
+  .toc h2 { color: var(--text); margin: 0 0 0.75rem; }
+  .toc ul { padding-left: 1rem; margin: 0; }
+  .toc a, .related-box a, .nav-box a, .share-box a { color: var(--accent); text-decoration: none; }
+  .share-box { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; color: var(--text); }
+  .comments-box { margin-top: 1.6rem; padding: 1.1rem; border-radius: 1rem; background: #f8fafc; }
+  .sidebar { display: flex; flex-direction: column; gap: 1rem; }
+  .author-box, .related-box, .nav-box { padding: 1.2rem 1.15rem; }
+  .author-box h3, .related-box h3 { color: var(--text); margin: 0 0 0.75rem; }
+  .nav-box { display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; }
+  .nav-box a { max-width: 48%; color: var(--accent); }
+  @media (max-width: 900px) { .article-shell { grid-template-columns: 1fr; } }
+</style>

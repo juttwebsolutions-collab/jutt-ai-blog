@@ -1,0 +1,45 @@
+---
+const { post, compact = false } = Astro.props;
+const href = `/blog/${post.slug}`;
+---
+
+<article class={`card ${compact ? 'compact' : ''}`} data-category={post.category} data-search={`${post.title} ${post.category} ${post.excerpt}`.toLowerCase()}>
+  <a href={href} class="card-image-link">
+    <img src={post.image} alt={post.title} loading="lazy" decoding="async" />
+  </a>
+  <div class="card-body">
+    <div class="meta-row">
+      <span class="pill">{post.category}</span>
+      <span>{post.readTime}</span>
+    </div>
+    <h3><a href={href}>{post.title}</a></h3>
+    <p>{post.excerpt}</p>
+    <div class="card-footer">
+      <span>{post.author}</span>
+      <a href={href}>Read more →</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    overflow: hidden;
+    box-shadow: 0 18px 50px rgba(15, 32, 67, 0.08);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 24px 65px rgba(15, 32, 67, 0.12); }
+  .card-image-link img { width: 100%; height: 240px; object-fit: cover; display: block; }
+  .card-body { padding: 1.3rem; display: flex; flex-direction: column; gap: 0.9rem; }
+  .meta-row, .card-footer { display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--muted); font-size: 0.92rem; }
+  .pill { padding: 0.45rem 0.85rem; background: rgba(47,124,255,0.12); color: #2563eb; border-radius: 999px; font-weight: 700; font-size: 0.82rem; }
+  h3 { margin: 0; font-size: 1.25rem; line-height: 1.3; }
+  h3 a { color: var(--text); text-decoration: none; }
+  p { margin: 0; color: #475569; line-height: 1.75; }
+  .card-footer a { color: var(--accent); font-weight: 700; }
+  .compact .card-image-link img { height: 170px; }
+</style>

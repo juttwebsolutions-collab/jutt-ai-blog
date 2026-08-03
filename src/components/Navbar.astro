@@ -1,0 +1,135 @@
+---
+const { pathname } = Astro.url;
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/privacy', label: 'Privacy' }
+];
+const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
+---
+
+<header class="site-header">
+  <nav class="nav-shell" aria-label="Primary">
+    <a class="brand" href="/">
+      <span class="brand-mark">J</span>
+      <span>Jutt AI Blog</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="nav-links">
+      {links.map((link) => (
+        <a href={link.href} class={isActive(link.href) ? 'active' : ''}>{link.label}</a>
+      ))}
+    </div>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+  if (toggle && links) {
+    toggle.addEventListener('click', () => {
+      const isOpen = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    links.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => {
+      links.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }));
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: linear-gradient(135deg, #1f5de0, #3274f5);
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+    box-shadow: 0 20px 60px rgba(15,39,103,0.12);
+  }
+  .nav-shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: white;
+    color: #1f5de0;
+    font-weight: 800;
+    box-shadow: 0 12px 26px rgba(15,39,103,0.16);
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .nav-links a {
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    padding: 0.5rem 0.85rem;
+    border-radius: 999px;
+    transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    color: white;
+    background: rgba(255,255,255,0.16);
+    transform: translateY(-1px);
+  }
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 0.28rem;
+    padding: 0.45rem;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .nav-toggle span {
+    width: 1.4rem;
+    height: 2px;
+    background: white;
+    border-radius: 999px;
+  }
+  @media (max-width: 760px) {
+    .nav-toggle { display: inline-flex; }
+    .nav-links {
+      display: none;
+      position: absolute;
+      right: 1rem;
+      top: calc(100% + 0.6rem);
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(22, 54, 138, 0.98);
+      border-radius: 1rem;
+      min-width: 12rem;
+    }
+    .nav-links.open { display: flex; }
+  }
+</style>

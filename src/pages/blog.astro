@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import PostCard from '../components/PostCard.astro';
+import { posts, categories } from '../data/posts';
+
+const pageTitle = 'Blog | Jutt AI Blog';
+const pageDescription = 'Explore premium AI insights, strategy, product design, and automation trends on the Jutt AI Blog.';
+const page = Number(Astro.url.searchParams.get('page') ?? '1');
+const perPage = 6;
+const totalPages = Math.ceil(posts.length / perPage);
+const visiblePosts = posts.slice((page - 1) * perPage, page * perPage);
+---
+
+<Layout title={pageTitle} description={pageDescription} url="/blog">
+  <Navbar />
+  <main class="page-shell">
+    <section class="hero-section">
+      <div>
+        <p class="eyebrow">Insights & Strategy</p>
+        <h1>AI stories crafted for ambitious teams.</h1>
+        <p class="hero-copy">Read thoughtful analysis, practical playbooks, and design ideas that turn AI into a lasting advantage.</p>
+      </div>
+      <div class="hero-panel">
+        <label class="search-box">
+          <span>🔎</span>
+          <input id="search-input" type="search" placeholder="Search articles" />
+        </label>
+        <div class="chip-row">
+          {categories.map((category) => (
+            <button class={`chip ${category === 'All' ? 'active' : ''}`} data-category={category}>{category}</button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="posts-grid" id="posts-grid">
+      {visiblePosts.map((post) => <PostCard post={post} />)}
+    </section>
+
+    <section class="highlights-card">
+      <p class="eyebrow">Editorial note</p>
+      <h2>Fresh ideas for teams building with AI.</h2>
+      <p>Every article is designed to blend strategic clarity with practical execution so you can move from experimentation to confidence.</p>
+    </section>
+
+    <nav class="pagination" aria-label="Pagination">
+      {page > 1 && <a href={`/blog?page=${page - 1}`} class="page">← Prev</a>}
+      {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
+        <a href={`/blog?page=${item}`} class={`page ${item === page ? 'active' : ''}`}>{item}</a>
+      ))}
+      {page < totalPages && <a href={`/blog?page=${page + 1}`} class="page">Next →</a>}
+    </nav>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const input = document.getElementById('search-input');
+  const chips = document.querySelectorAll('.chip');
+  const cards = document.querySelectorAll('#posts-grid .card');
+  let activeCategory = 'All';
+
+  const applyFilters = () => {
+    const query = input?.value.toLowerCase() ?? '';
+    cards.forEach((card) => {
+      const matchesQuery = card.getAttribute('data-search')?.includes(query) ?? true;
+      const matchesCategory = activeCategory === 'All' || card.getAttribute('data-category') === activeCategory;
+      card.style.display = matchesQuery && matchesCategory ? '' : 'none';
+    });
+  };
+
+  input?.addEventListener('input', applyFilters);
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      activeCategory = chip.getAttribute('data-category') ?? 'All';
+      chips.forEach((item) => item.classList.toggle('active', item === chip));
+      applyFilters();
+    });
+  });
+</script>
+
+<style>
+  .page-shell { max-width: 1180px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
+  .hero-section { display: grid; grid-template-columns: 1.25fr 0.9fr; gap: 1.5rem; align-items: start; margin-bottom: 2rem; }
+  .eyebrow { letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.8rem; color: var(--accent); font-weight: 700; }
+  h1 { font-size: clamp(2rem, 3.2vw, 3rem); margin: 0.2rem 0 0.7rem; color: var(--text); }
+  .hero-copy { color: var(--muted); max-width: 60ch; line-height: 1.75; }
+  .hero-panel { padding: 1.4rem; border-radius: 1.4rem; border: 1px solid var(--border); background: var(--surface); box-shadow: 0 18px 40px rgba(15, 32, 67, 0.08); }
+  .search-box { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1rem; border-radius: 999px; background: #f8fafc; border: 1px solid var(--border); margin-bottom: 1rem; }
+  .search-box input { background: transparent; border: 0; color: var(--text); width: 100%; outline: none; }
+  .search-box span { color: var(--accent); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .chip { color: var(--text); border: 1px solid rgba(47,124,255,0.18); padding: 0.55rem 0.85rem; border-radius: 999px; background: #eef4ff; cursor: pointer; }
+  .chip.active { color: white; background: linear-gradient(135deg, #2f7cff, #6dd3ff); border-color: transparent; }
+  .posts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  .highlights-card { margin-top: 1.5rem; padding: 1.4rem; border-radius: 1.4rem; background: var(--surface); border: 1px solid var(--border); box-shadow: 0 18px 40px rgba(15, 32, 67, 0.08); }
+  .highlights-card h2 { color: var(--text); margin: 0.35rem 0 0.5rem; }
+  .highlights-card p { color: var(--muted); line-height: 1.75; margin: 0; }
+  .pagination { display: flex; gap: 0.7rem; margin-top: 2rem; flex-wrap: wrap; }
+  .page { color: var(--text); padding: 0.7rem 1rem; background: #f8fafc; border-radius: 999px; text-decoration: none; border: 1px solid var(--border); }
+  .page.active { color: white; background: linear-gradient(135deg, #2f7cff, #6dd3ff); border-color: transparent; }
+  @media (max-width: 860px) { .hero-section { grid-template-columns: 1fr; } .posts-grid { grid-template-columns: 1fr; } }
+</style>

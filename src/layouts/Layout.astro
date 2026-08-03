@@ -1,0 +1,72 @@
+---
+const { title = 'Jutt AI Blog', description = 'Premium AI insights for modern teams.', url = '/', image = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80' } = Astro.props;
+const canonical = `https://jutt.ai${url}`;
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Jutt AI Blog',
+  url: 'https://jutt.ai/',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://jutt.ai/blog?page=1',
+    'query-input': 'required name=search_term_string'
+  }
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#2f7cff" />
+    <link rel="canonical" href={canonical} />
+    <title>{title}</title>
+    <meta property="og:site_name" content="Jutt AI Blog" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <slot />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: light;
+    --bg: #f6f8fd;
+    --surface: #ffffff;
+    --text: #10203f;
+    --muted: #5c6d85;
+    --accent: #2f7cff;
+    --accent-soft: rgba(47,124,255,0.14);
+    --border: rgba(26,83,204,0.12);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; background: var(--bg); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top left, rgba(47,124,255,0.14), transparent 18%), linear-gradient(180deg, #f6f8fd 0%, #e7eff9 100%);
+    color: var(--text);
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  button, input, textarea, select { font: inherit; }
+  ::selection { background: rgba(47,124,255,0.2); color: var(--text); }
+</style>
