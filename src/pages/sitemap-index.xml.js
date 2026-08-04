@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import { posts } from '../data/posts';
 
 export async function GET() {
-  const baseUrl = 'https://jutt.ai';
+  const baseUrl = 'https://juttaiblog.netlify.app';
   const pages = ['/', '/blog', '/about', '/contact', '/privacy'];
   const postUrls = posts.map((post) => `/blog/${post.slug}`);
   const urls = [...pages, ...postUrls];

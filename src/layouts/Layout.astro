@@ -1,14 +1,14 @@
 ---
 const { title = 'Jutt AI Blog', description = 'Premium AI insights for modern teams.', url = '/', image = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80' } = Astro.props;
-const canonical = `https://jutt.ai${url}`;
+const canonical = `https://juttaiblog.netlify.app${url}`;
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Jutt AI Blog',
-  url: 'https://jutt.ai/',
+  url: 'https://juttaiblog.netlify.app/',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://jutt.ai/blog?page=1',
+    target: 'https://juttaiblog.netlify.app/blog?page=1',
     'query-input': 'required name=search_term_string'
   }
 };
