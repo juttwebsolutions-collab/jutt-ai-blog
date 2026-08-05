@@ -4,6 +4,6 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://juttaiblog.netlify.app',
+  site: 'https://juttaiblog.online',
   integrations: [sitemap()],
 });

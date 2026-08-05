@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://juttaiblog.netlify.app/sitemap-index.xml
+
+Sitemap: https://juttaiblog.online/sitemap-index.xml
