@@ -15,13 +15,14 @@ const next = index < posts.length - 1 ? posts[index + 1] : null;
 const related = posts.filter((item) => item.slug !== post.slug).slice(0, 3);
 const pageTitle = `${post.title} | Jutt AI Blog`;
 const pageDescription = post.description;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://juttaiblog.online';
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://juttaiblog.netlify.app/' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://juttaiblog.netlify.app/blog' },
-    { '@type': 'ListItem', position: 3, name: post.title, item: `https://juttaiblog.netlify.app/blog/${post.slug}` }
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteUrl}/blog` },
+    { '@type': 'ListItem', position: 3, name: post.title, item: `${siteUrl}/blog/${post.slug}` }
   ]
 };
 const articleSchema = {
@@ -32,7 +33,7 @@ const articleSchema = {
   image: post.image,
   author: { '@type': 'Person', name: post.author },
   datePublished: post.date,
-  mainEntityOfPage: `https://juttaiblog.netlify.app/blog/${post.slug}`
+  mainEntityOfPage: `${siteUrl}/blog/${post.slug}`
 };
 ---
 
