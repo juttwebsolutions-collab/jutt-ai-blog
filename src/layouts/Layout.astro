@@ -1,17 +1,12 @@
 ---
-const { title = 'Jutt AI Blog', description = 'Premium AI insights for modern teams.', url = '/', image = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80' } = Astro.props;
+const { title = 'Jutt AI Blog', description = 'A simple AI blog with clear articles and practical insights.', url = '/', image = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80' } = Astro.props;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://juttaiblog.online';
 const canonical = `${siteUrl}${url.startsWith('/') ? url : `/${url}`}`;
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'Jutt AI Blog',
-  url: `${siteUrl}/`,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${siteUrl}/blog?page=1`,
-    'query-input': 'required name=search_term_string'
-  }
+  url: `${siteUrl}/`
 };
 ---
 <!doctype html>
@@ -22,7 +17,7 @@ const websiteSchema = {
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#2f7cff" />
+    <meta name="theme-color" content="#2563eb" />
     <meta name="google-site-verification" content="-YF-yBmthxmGphnFLFsIsjRG0307kBGHgDz6lYVXP2g" />
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
@@ -37,9 +32,6 @@ const websiteSchema = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-Q6DPG1PWBH"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
@@ -57,25 +49,26 @@ const websiteSchema = {
 <style is:global>
   :root {
     color-scheme: light;
-    --bg: #f6f8fd;
-    --surface: #ffffff;
-    --text: #10203f;
-    --muted: #5c6d85;
-    --accent: #2f7cff;
-    --accent-soft: rgba(47,124,255,0.14);
-    --border: rgba(26,83,204,0.12);
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --text: #111827;
+    --muted: #4b5563;
+    --accent: #2563eb;
+    --border: #d9e2f0;
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; background: var(--bg); }
+  html { background: var(--bg); color: var(--text); scroll-behavior: smooth; }
   body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top left, rgba(47,124,255,0.14), transparent 18%), linear-gradient(180deg, #f6f8fd 0%, #e7eff9 100%);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
     color: var(--text);
+    line-height: 1.6;
   }
   img { max-width: 100%; display: block; }
-  a { color: inherit; text-decoration: none; }
-  button, input, textarea, select { font: inherit; }
-  ::selection { background: rgba(47,124,255,0.2); color: var(--text); }
+  a { color: var(--accent); text-decoration: none; }
+  p { margin: 0 0 1rem; }
+  main { max-width: 960px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+  ::selection { background: rgba(37, 99, 235, 0.2); color: var(--text); }
 </style>

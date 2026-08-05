@@ -4,37 +4,34 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<Layout title="About | Jutt AI Blog" description="Learn about the mission behind Jutt AI Blog and the team shaping premium AI content." url="/about">
+<Layout title="About | Jutt AI Blog" description="Learn about the simple mission behind Jutt AI Blog." url="/about">
   <Navbar />
-  <main class="page-shell">
-    <section class="content-card">
-      <p class="eyebrow">About Jutt AI Blog</p>
-      <h1>We publish premium AI thinking for modern operators.</h1>
-      <p>Jutt AI Blog exists to make complex AI topics approachable without sacrificing depth. We blend strategy, product, design, and real-world implementation so readers can move from curiosity to action.</p>
-      <p>Our mission is simple: help founders, marketers, and builders understand how artificial intelligence can create durable advantage when grounded in clarity, ethics, and disciplined execution.</p>
-      <div class="highlights-grid">
-        <div>
-          <h3>Editorial depth</h3>
-          <p>Every story balances insight, examples, and clear next steps.</p>
-        </div>
-        <div>
-          <h3>Practical focus</h3>
-          <p>We prioritize frameworks that teams can apply immediately.</p>
-        </div>
-      </div>
+  <main>
+    <section class="card">
+      <p class="eyebrow">About</p>
+      <h1>Simple AI writing for practical readers.</h1>
+      <p>Jutt AI Blog shares clear articles about AI strategy, product thinking, and everyday implementation. The goal is to make helpful ideas easier to read and act on.</p>
+      <p>Each post is written to be useful, direct, and easy to scan.</p>
     </section>
   </main>
   <Footer />
 </Layout>
 
 <style>
-  .page-shell { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
-  .content-card { background: var(--surface); border: 1px solid var(--border); border-radius: 1.4rem; padding: 2.2rem; box-shadow: 0 18px 40px rgba(15, 32, 67, 0.08); }
-  .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; }
-  h1 { color: var(--text); font-size: clamp(2rem, 3vw, 2.7rem); margin-bottom: 1rem; }
-  p { color: var(--muted); line-height: 1.8; }
-  .highlights-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.3rem; }
-  .highlights-grid div { padding: 1.25rem; border-radius: 1rem; background: #f8fbff; border: 1px solid rgba(15,32,67,0.08); }
-  .highlights-grid h3 { color: var(--text); margin: 0 0 0.4rem; }
-  @media (max-width: 760px) { .highlights-grid { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface);
+    padding: 1.5rem;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin: 0 0 0.75rem; }
+  p { color: var(--muted); }
 </style>

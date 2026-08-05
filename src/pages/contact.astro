@@ -4,68 +4,33 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<Layout title="Contact | Jutt AI Blog" description="Reach out to the Jutt AI Blog team for editorial inquiries, partnerships, and speaking opportunities." url="/contact">
+<Layout title="Contact | Jutt AI Blog" description="Get in touch about the Jutt AI Blog." url="/contact">
   <Navbar />
-  <main class="page-shell">
-    <section class="content-card">
+  <main>
+    <section class="card">
       <p class="eyebrow">Contact</p>
-      <h1>Let’s build thoughtful AI conversations.</h1>
-      <p>Email us at juttwebsolutions@gmail.com to discuss editorial partnerships, speaking, or collaboration opportunities.</p>
-      <form id="contact-form" class="contact-form">
-        <label>
-          Name
-          <input type="text" name="name" required />
-        </label>
-        <label>
-          Email
-          <input type="email" name="email" required />
-        </label>
-        <label>
-          Message
-          <textarea name="message" rows="5" required></textarea>
-        </label>
-        <button type="submit">Send message</button>
-        <p id="contact-status" class="form-status" role="status"></p>
-      </form>
+      <h1>Get in touch.</h1>
+      <p>Email us at <a href="mailto:juttwebsolutions@gmail.com">juttwebsolutions@gmail.com</a> for editorial questions or collaboration ideas.</p>
     </section>
   </main>
   <Footer />
 </Layout>
 
 <style>
-  .page-shell { max-width: 900px; margin: 0 auto; padding: 3rem 1.25rem 5rem; }
-  .content-card { background: var(--surface); border: 1px solid var(--border); border-radius: 1.4rem; padding: 2rem; box-shadow: 0 18px 40px rgba(15, 32, 67, 0.08); }
-  .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; }
-  h1 { color: var(--text); font-size: clamp(2rem, 3vw, 2.7rem); margin: 0.6rem 0 1rem; }
-  p { color: var(--muted); line-height: 1.8; }
-  .contact-form { display: grid; gap: 1rem; margin-top: 1.5rem; }
-  .contact-form label { display: grid; gap: 0.45rem; color: var(--text); font-weight: 600; }
-  .contact-form input, .contact-form textarea { padding: 1rem 1rem; border: 1px solid var(--border); border-radius: 1rem; background: #f8fafc; color: var(--text); }
-  .contact-form input:focus, .contact-form textarea:focus { outline: none; box-shadow: 0 0 0 4px rgba(47,124,255,0.14); }
-  .contact-form button { justify-self: flex-start; border: 0; border-radius: 999px; padding: 0.95rem 1.2rem; font-weight: 700; background: linear-gradient(135deg, #2f7cff, #6dd3ff); color: #06101e; cursor: pointer; transition: transform 180ms ease, box-shadow 180ms ease; }
-  .contact-form button:hover { transform: translateY(-1px); box-shadow: 0 18px 40px rgba(47,124,255,0.18); }
-  .form-status { min-height: 1.2rem; color: var(--accent); }
-  .form-status.error { color: #ef4444; }
-</style>
-
-<script>
-  const contactForm = document.getElementById('contact-form');
-  const contactStatus = document.getElementById('contact-status');
-  if (contactForm && contactStatus) {
-    contactForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const formData = new FormData(contactForm);
-      const name = String(formData.get('name') || '').trim();
-      const email = String(formData.get('email') || '').trim();
-      const message = String(formData.get('message') || '').trim();
-      if (!name || !email || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        contactStatus.textContent = 'Please complete all fields with a valid email.';
-        contactStatus.classList.add('error');
-        return;
-      }
-      contactStatus.textContent = `Thanks, ${name}! We’ll be in touch soon.`;
-      contactStatus.classList.remove('error');
-      contactForm.reset();
-    });
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    background: var(--surface);
+    padding: 1.5rem;
   }
-</script>
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin: 0 0 0.75rem; }
+  p { color: var(--muted); }
+</style>

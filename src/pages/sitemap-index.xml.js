@@ -1,10 +1,10 @@
 import { getCollection } from 'astro:content';
-import { posts } from '../data/posts';
 
 export async function GET() {
   const baseUrl = 'https://juttaiblog.online';
-  const pages = ['/', '/blog', '/about', '/contact', '/privacy'];
-  const postUrls = posts.map((post) => `/blog/${post.slug}`);
+  const entries = await getCollection('blog');
+  const postUrls = entries.map((entry) => `/blog/${entry.data.slug ?? entry.id.replace(/\.md$/, '')}`);
+  const pages = ['/', '/blog', '/about', '/contact'];
   const urls = [...pages, ...postUrls];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls
