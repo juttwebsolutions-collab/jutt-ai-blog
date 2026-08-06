@@ -333,12 +333,3 @@ As always, we'll update this article once Apple officially announces the device 
 
 ---
 
-## Image Generation Prompt
-
-**Prompt:**
-
-*A premium Apple Watch Ultra 4 resting on a modern dark titanium surface with glowing blue lighting, realistic product photography, rugged titanium case, ultra-wide display, luxury smartwatch aesthetic, cinematic lighting, high-detail, 16:9 aspect ratio, no text, ultra-HD.*
-
-**Hero Alt Text:**
-
-Apple Watch Ultra 4 premium smartwatch with titanium design and advanced health features.
