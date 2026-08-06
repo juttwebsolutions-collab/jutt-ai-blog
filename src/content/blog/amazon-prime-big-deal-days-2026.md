@@ -1,5 +1,6 @@
 ---
 title: "Amazon Prime Big Deal Days 2026: Expected Dates, Deals & Everything We Know"
+description: "Discover everything we know about Amazon Prime Big Deal Days 2026, including expected October dates, biggest discounts, Amazon device deals, membership benefits, and expert shopping tips."
 seoTitle: "Amazon Prime Big Deal Days 2026: Release Date, Deals & Latest Rumors"
 metaTitle: "Amazon Prime Big Deal Days 2026: Expected Dates, Deals & Latest Rumors | Jutt AI Blog"
 metaDescription: "Discover everything we know about Amazon Prime Big Deal Days 2026, including the expected October dates, biggest deal categories, Amazon device discounts, and whether you should wait to shop."
@@ -10,6 +11,8 @@ tags: ["Amazon", "Prime Day", "Prime Big Deal Days", "Shopping Deals", "Amazon D
 ogTitle: "Amazon Prime Big Deal Days 2026: Expected Dates, Deals & Latest Rumors | Jutt AI Blog"
 ogDescription: "Discover everything we know about Amazon Prime Big Deal Days 2026, including the expected October dates, biggest deal categories, Amazon device discounts, and whether you should wait to shop."
 heroPrompt: "A clean, modern flat-lay product photography scene showing an Amazon delivery box, a smartphone displaying a shopping app with a deals countdown, a smart speaker, and a wrapped gift, arranged on a soft blue-gray background with warm autumn light, minimal e-commerce aesthetic, high detail, professional studio lighting"
+
+heroImage: "https://images.unsplash.com/photo-1649734926695-1b1664e98842?q=80&w=1162&auto=format&fit=crop"
 heroAlt: "Amazon Prime Big Deal Days 2026: Expected Dates, Deals & Latest Rumors"
 pubDate: "2026-08-06"
 readTime: "8 min read"

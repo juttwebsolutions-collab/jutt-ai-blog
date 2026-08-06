@@ -12,7 +12,10 @@ export async function getStaticPaths() {
     .map((entry) => {
       const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
       const pubDate = entry.data.pubDate instanceof Date ? entry.data.pubDate : new Date(entry.data.pubDate);
-      const headingMatches = entry.body.match(/^(#{1,3})\s+(.+)$/gm) ?? [];
+      const body = entry.body ?? "";
+
+const headingMatches =
+  body.match(/^(#{1,3})\s+(.+)$/gm) ?? [];
       const toc = headingMatches
         .map((match) => {
           const heading = match.replace(/^#{1,3}\s+/, '').trim();
