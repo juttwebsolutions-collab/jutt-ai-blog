@@ -8,14 +8,21 @@ const placeholderImage = '/images/blog/placeholder.svg';
 export function resolveImagePath(imagePath?: string | null) {
   if (!imagePath) return placeholderImage;
 
-  if (/^https?:\/\//i.test(imagePath) || imagePath.startsWith('//')) {
-    return imagePath;
+  const value = imagePath.trim();
+
+  if (!value) return placeholderImage;
+  if (/^https?:\/\//i.test(value) || value.startsWith('//') || value.startsWith('data:')) {
+    return value;
   }
 
-  const normalizedPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-  const publicPath = path.join(rootDir, 'public', normalizedPath);
+  const cleanedPath = value.replace(/^public\//, '').replace(/^\/+/, '');
+  const publicPath = path.join(rootDir, 'public', cleanedPath);
 
-  return existsSync(publicPath) ? `/${normalizedPath}` : placeholderImage;
+  if (existsSync(publicPath)) {
+    return `/${cleanedPath}`;
+  }
+
+  return placeholderImage;
 }
 
 export function getReadingTime(content = '') {

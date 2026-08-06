@@ -1,23 +1,45 @@
 ---
-const { post, relatedPosts = [] } = Astro.props;
+import BlogImage from './BlogImage.astro';
+
+const { post, relatedPosts = [], toc = [] } = Astro.props;
 ---
 
 <article class="article-shell">
   <header class="article-header">
-    <p class="meta">{post.category} · {post.date} · {post.readingTime}</p>
+    <div class="article-topbar">
+      <span class="meta-chip">{post.category}</span>
+      <span class="meta-chip muted">{post.date}</span>
+      <span class="meta-chip muted">{post.readingTime}</span>
+    </div>
     <h1>{post.title}</h1>
     <p class="intro">{post.description}</p>
+
+    <div class="author-card">
+      <div class="author-badge">{post.author}</div>
+      <p>Expert analysis, practical takeaways, and a clear breakdown of what matters most.</p>
+    </div>
+
     {post.image && (
-      <img
+      <BlogImage
         class="hero-image"
         src={post.image}
         alt={post.title}
         loading="eager"
-        decoding="async"
-        onerror="this.onerror=null;this.src='/images/blog/placeholder.svg';"
+        priority={true}
       />
     )}
   </header>
+
+  {toc.length > 0 && (
+    <aside class="toc-card">
+      <h2>Table of contents</h2>
+      <ul>
+        {toc.map((item) => (
+          <li><a href={`#${item.anchor}`}>{item.text}</a></li>
+        ))}
+      </ul>
+    </aside>
+  )}
 
   <div class="content">
     <slot />
@@ -41,7 +63,7 @@ const { post, relatedPosts = [] } = Astro.props;
 
   {relatedPosts.length > 0 && (
     <section class="related-section">
-      <h2>Related Articles</h2>
+      <h2>Related articles</h2>
       <div class="related-grid">
         {relatedPosts.map((item) => (
           <article class="related-card">
@@ -57,74 +79,131 @@ const { post, relatedPosts = [] } = Astro.props;
 
 <style>
   .article-shell {
-    max-width: 780px;
+    max-width: 860px;
     margin: 0 auto;
     display: grid;
-    gap: 1.5rem;
+    gap: 1.2rem;
+  }
+  .article-header,
+  .toc-card,
+  .content,
+  .faq-card,
+  .related-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow);
   }
   .article-header {
-    background: #ffffff;
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    padding: 1.25rem;
   }
-  .meta {
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.77rem;
+  .article-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent), #60a5fa);
+    color: #fff;
+    font-size: 0.78rem;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .meta-chip.muted {
+    background: #eef4ff;
     color: var(--accent);
-    margin-bottom: 0.45rem;
+    text-transform: none;
+    letter-spacing: normal;
   }
   h1 {
     margin: 0 0 0.75rem;
-    font-size: clamp(2rem, 3vw, 2.6rem);
-    line-height: 1.15;
+    font-size: clamp(2rem, 3vw, 2.7rem);
+    line-height: 1.1;
   }
   .intro {
     color: var(--muted);
-    font-size: 1.03rem;
+    font-size: 1.04rem;
     margin: 0 0 1rem;
+  }
+  .author-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #f8fbff, #eef4ff);
+    margin-bottom: 1rem;
+  }
+  .author-badge {
+    font-weight: 700;
+    color: var(--text);
+  }
+  .author-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
   }
   .hero-image {
     width: 100%;
     height: 320px;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 1.2rem;
     display: block;
   }
+  .toc-card {
+    padding: 1rem 1.15rem;
+  }
+  .toc-card h2,
+  .faq-card h2,
+  .related-section h2 {
+    margin: 0 0 0.8rem;
+    font-size: 1.1rem;
+  }
+  .toc-card ul {
+    padding-left: 1rem;
+    margin: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .toc-card a {
+    color: var(--muted);
+    font-weight: 600;
+  }
   .content {
-    background: #ffffff;
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    padding: 1.2rem;
   }
   .content :global(h2),
-  .content :global(h3) {
-    margin-top: 1.4rem;
-    margin-bottom: 0.6rem;
+  .content :global(h3),
+  .content :global(h4) {
+    margin: 1.35rem 0 0.6rem;
     color: var(--text);
     line-height: 1.25;
   }
   .content :global(p),
   .content :global(li) {
     color: var(--muted);
-    font-size: 1.125rem;
+    font-size: 1.04rem;
     line-height: 1.8;
   }
   .content :global(blockquote) {
-    margin: 1.2rem 0;
-    padding: 1rem 1.2rem;
+    margin: 1.25rem 0;
+    padding: 1rem 1.15rem;
     border-left: 4px solid var(--accent);
     background: #f8fbff;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 1rem 1rem 0;
     color: var(--text);
+    font-style: italic;
   }
   .content :global(pre) {
     padding: 1rem;
-    border-radius: 12px;
+    border-radius: 1rem;
     overflow-x: auto;
     background: #0f172a;
     color: #e2e8f0;
@@ -136,15 +215,14 @@ const { post, relatedPosts = [] } = Astro.props;
   .content :global(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.25rem 0;
-    border: 1px solid #e7edf5;
-    border-radius: 12px;
+    margin: 1.2rem 0;
+    border: 1px solid var(--border);
     overflow: hidden;
   }
   .content :global(th),
   .content :global(td) {
     padding: 0.8rem 0.9rem;
-    border-bottom: 1px solid #e7edf5;
+    border-bottom: 1px solid var(--border);
     text-align: left;
   }
   .content :global(th) {
@@ -152,29 +230,21 @@ const { post, relatedPosts = [] } = Astro.props;
   }
   .content :global(img) {
     width: 100%;
-    border-radius: 16px;
-    margin: 1.25rem 0;
+    border-radius: 1rem;
+    margin: 1.2rem 0;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
   }
   .content :global(ul),
   .content :global(ol) {
-    padding-left: 1.3rem;
+    padding-left: 1.2rem;
   }
   .faq-card,
   .related-section {
-    background: #ffffff;
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 1.25rem 1.4rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-  }
-  .faq-card h2,
-  .related-section h2 {
-    margin: 0 0 1rem;
-    font-size: 1.2rem;
+    padding: 1rem 1.15rem;
   }
   .faq-card details {
-    border-top: 1px solid #e7edf5;
-    padding: 0.85rem 0;
+    border-top: 1px solid var(--border);
+    padding: 0.9rem 0;
   }
   .faq-card details:first-of-type {
     border-top: 0;
@@ -182,12 +252,12 @@ const { post, relatedPosts = [] } = Astro.props;
   }
   .faq-card summary {
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text);
   }
   .faq-card p {
     color: var(--muted);
-    margin: 0.5rem 0 0;
+    margin: 0.4rem 0 0;
   }
   .related-grid {
     display: grid;
@@ -195,10 +265,10 @@ const { post, relatedPosts = [] } = Astro.props;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .related-card {
-    border: 1px solid #e7edf5;
-    border-radius: 14px;
-    padding: 1rem;
-    background: #f8fbff;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 0.95rem;
+    background: linear-gradient(135deg, #f8fbff, #eef4ff);
   }
   .related-card h3 {
     margin: 0 0 0.45rem;
@@ -211,10 +281,23 @@ const { post, relatedPosts = [] } = Astro.props;
   }
   .related-card .read-more {
     color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
   }
-  @media (max-width: 760px) {
+  @media (max-width: 900px) {
     .related-grid { grid-template-columns: 1fr; }
-    .hero-image { height: 240px; }
+  }
+  @media (max-width: 640px) {
+    .article-header,
+    .content,
+    .faq-card,
+    .related-section,
+    .toc-card {
+      padding: 1rem;
+    }
+    .author-card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .hero-image { height: 220px; }
   }
 </style>

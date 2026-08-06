@@ -15,7 +15,7 @@ tags:
   - Wearables
   - Tech News
 
-heroImage: "/images/blog/apple-watch-ultra-4.jpg"
+heroImage: "public/images/blog/apple-watch-ultra-4.jpg"
 
 seoTitle: "Apple Watch Ultra 4: Release Date, Price, Features & Rumors"
 

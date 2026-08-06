@@ -12,6 +12,15 @@ export async function getStaticPaths() {
     .map((entry) => {
       const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
       const pubDate = entry.data.pubDate instanceof Date ? entry.data.pubDate : new Date(entry.data.pubDate);
+      const headingMatches = entry.body.match(/^(#{1,3})\s+(.+)$/gm) ?? [];
+      const toc = headingMatches
+        .map((match) => {
+          const heading = match.replace(/^#{1,3}\s+/, '').trim();
+          const anchor = heading.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+          return { text: heading, anchor };
+        })
+        .filter((item) => item.text !== 'Table of Contents' && item.text !== 'FAQs' && item.text !== 'Conclusion');
+
       return {
         entry,
         slug,
@@ -22,7 +31,8 @@ export async function getStaticPaths() {
         date: pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
         image: resolveImagePath(entry.data.heroImage),
         readingTime: getReadingTime(entry.body || entry.data.description),
-        pubDate
+        pubDate,
+        toc
       };
     })
     .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf());
@@ -42,19 +52,20 @@ export async function getStaticPaths() {
         title: item.title,
         slug: item.slug,
         description: item.description
-      }))
+      })),
+      toc: post.toc
     }
   }));
 }
 
-const { entry, post, relatedPosts } = Astro.props;
+const { entry, post, relatedPosts, toc } = Astro.props;
 const { Content } = await render(entry);
 ---
 
 <Layout title={`${post.title} | Jutt AI Blog`} description={post.description} url={`/blog/${post.slug}`} image={post.image}>
   <Navbar />
   <main>
-    <ArticlePage post={post} relatedPosts={relatedPosts}>
+    <ArticlePage post={post} relatedPosts={relatedPosts} toc={toc}>
       <Content />
     </ArticlePage>
   </main>
