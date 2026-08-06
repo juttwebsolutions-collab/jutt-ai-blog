@@ -2,63 +2,219 @@
 const { post, relatedPosts = [] } = Astro.props;
 ---
 
-<article class="article">
-  {post.image && <img class="hero-image" src={post.image} alt={post.title} loading="eager" decoding="async" />}
-  <div class="article-body">
-    <p class="meta">{post.category} · {post.date}</p>
+<article class="article-shell">
+  <header class="article-header">
+    <p class="meta">{post.category} · {post.date} · {post.readingTime}</p>
     <h1>{post.title}</h1>
     <p class="intro">{post.description}</p>
-    <div class="content">
-      <slot />
-    </div>
+    {post.image && (
+      <img
+        class="hero-image"
+        src={post.image}
+        alt={post.title}
+        loading="eager"
+        decoding="async"
+        onerror="this.onerror=null;this.src='/images/blog/placeholder.svg';"
+      />
+    )}
+  </header>
+
+  <div class="content">
+    <slot />
   </div>
+
+  <section class="faq-card">
+    <h2>Frequently asked questions</h2>
+    <details>
+      <summary>Why does this article matter?</summary>
+      <p>It gives you a clear, practical overview that helps you act with confidence.</p>
+    </details>
+    <details>
+      <summary>How often should I revisit it?</summary>
+      <p>Review it whenever the topic changes or you need a fresh reference point.</p>
+    </details>
+    <details>
+      <summary>Can I share it with my team?</summary>
+      <p>Yes. It is designed to be easy to read and useful in group discussions.</p>
+    </details>
+  </section>
+
   {relatedPosts.length > 0 && (
-    <aside class="related">
-      <h2>Related articles</h2>
-      <ul>
+    <section class="related-section">
+      <h2>Related Articles</h2>
+      <div class="related-grid">
         {relatedPosts.map((item) => (
-          <li><a href={`/blog/${item.slug}`}>{item.title}</a></li>
+          <article class="related-card">
+            <h3><a href={`/blog/${item.slug}`}>{item.title}</a></h3>
+            <p>{item.description}</p>
+            <a class="read-more" href={`/blog/${item.slug}`}>Read article</a>
+          </article>
         ))}
-      </ul>
-    </aside>
+      </div>
+    </section>
   )}
 </article>
 
 <style>
-  .article {
+  .article-shell {
+    max-width: 780px;
+    margin: 0 auto;
     display: grid;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
-  .hero-image {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 1rem;
-  }
-  .article-body {
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    background: var(--surface);
+  .article-header {
+    background: #ffffff;
+    border: 1px solid #e7edf5;
+    border-radius: 20px;
     padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
   }
   .meta {
     text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    font-size: 0.77rem;
     font-weight: 700;
     color: var(--accent);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.45rem;
   }
-  h1 { margin: 0 0 0.75rem; font-size: clamp(1.8rem, 3vw, 2.4rem); }
-  .intro { color: var(--muted); font-size: 1.02rem; }
-  .content :global(h2) { font-size: 1.2rem; margin-top: 1.4rem; margin-bottom: 0.5rem; }
-  .content :global(p) { color: var(--muted); }
-  .related {
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    background: var(--surface);
-    padding: 1rem 1.25rem;
+  h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(2rem, 3vw, 2.6rem);
+    line-height: 1.15;
   }
-  .related ul { padding-left: 1rem; margin: 0.5rem 0 0; }
-  .related li { margin-bottom: 0.4rem; }
+  .intro {
+    color: var(--muted);
+    font-size: 1.03rem;
+    margin: 0 0 1rem;
+  }
+  .hero-image {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 16px;
+    display: block;
+  }
+  .content {
+    background: #ffffff;
+    border: 1px solid #e7edf5;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+  .content :global(h2),
+  .content :global(h3) {
+    margin-top: 1.4rem;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+    line-height: 1.25;
+  }
+  .content :global(p),
+  .content :global(li) {
+    color: var(--muted);
+    font-size: 1.125rem;
+    line-height: 1.8;
+  }
+  .content :global(blockquote) {
+    margin: 1.2rem 0;
+    padding: 1rem 1.2rem;
+    border-left: 4px solid var(--accent);
+    background: #f8fbff;
+    border-radius: 0 12px 12px 0;
+    color: var(--text);
+  }
+  .content :global(pre) {
+    padding: 1rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    background: #0f172a;
+    color: #e2e8f0;
+  }
+  .content :global(code) {
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 0.95rem;
+  }
+  .content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.25rem 0;
+    border: 1px solid #e7edf5;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .content :global(th),
+  .content :global(td) {
+    padding: 0.8rem 0.9rem;
+    border-bottom: 1px solid #e7edf5;
+    text-align: left;
+  }
+  .content :global(th) {
+    background: #f8fbff;
+  }
+  .content :global(img) {
+    width: 100%;
+    border-radius: 16px;
+    margin: 1.25rem 0;
+  }
+  .content :global(ul),
+  .content :global(ol) {
+    padding-left: 1.3rem;
+  }
+  .faq-card,
+  .related-section {
+    background: #ffffff;
+    border: 1px solid #e7edf5;
+    border-radius: 20px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  }
+  .faq-card h2,
+  .related-section h2 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+  }
+  .faq-card details {
+    border-top: 1px solid #e7edf5;
+    padding: 0.85rem 0;
+  }
+  .faq-card details:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .faq-card summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .faq-card p {
+    color: var(--muted);
+    margin: 0.5rem 0 0;
+  }
+  .related-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .related-card {
+    border: 1px solid #e7edf5;
+    border-radius: 14px;
+    padding: 1rem;
+    background: #f8fbff;
+  }
+  .related-card h3 {
+    margin: 0 0 0.45rem;
+    font-size: 1rem;
+  }
+  .related-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem;
+  }
+  .related-card .read-more {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  @media (max-width: 760px) {
+    .related-grid { grid-template-columns: 1fr; }
+    .hero-image { height: 240px; }
+  }
 </style>

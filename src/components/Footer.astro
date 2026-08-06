@@ -12,22 +12,28 @@
       <a href="/about">About</a>
       <a href="/contact">Contact</a>
     </div>
+    <div class="social-links" aria-label="Social links">
+      <a href="https://x.com" target="_blank" rel="noreferrer">X</a>
+      <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+    </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
     padding: 2rem 1.25rem 2.5rem;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
+    border-top: 1px solid #e7edf5;
+    background: #f8fbff;
   }
   .footer-shell {
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
   }
   .brand {
     display: flex;
@@ -42,17 +48,27 @@
     width: 2rem;
     height: 2rem;
     border-radius: 999px;
-    background: var(--accent);
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
     color: white;
     font-weight: 700;
   }
-  .footer-nav {
+  .site-footer p {
+    color: var(--muted);
+    margin: 0.35rem 0 0;
+  }
+  .footer-nav,
+  .social-links {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
   }
-  .footer-nav a {
+  .footer-nav a,
+  .social-links a {
     color: var(--muted);
+  }
+  .footer-nav a:hover,
+  .social-links a:hover {
+    color: var(--accent);
   }
   @media (max-width: 760px) {
     .footer-shell { flex-direction: column; align-items: flex-start; }

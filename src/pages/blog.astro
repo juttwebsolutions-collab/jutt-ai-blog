@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
+import { getReadingTime, resolveImagePath } from '../utils/image';
 
 const posts = (await getCollection('blog'))
   .map((entry) => {
@@ -12,31 +13,40 @@ const posts = (await getCollection('blog'))
       ...entry.data,
       slug,
       date: pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-      image: entry.data.heroImage ?? '/images/blog/default.webp',
-      description: entry.data.description
+      image: resolveImagePath(entry.data.heroImage),
+      description: entry.data.description,
+      readingTime: getReadingTime(entry.body || entry.data.description)
     };
   })
   .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf());
 ---
 
-<Layout title="Latest Articles | Jutt AI Blog" description="Browse the latest AI articles in a simple reading experience." url="/blog">
+<Layout title="Latest Articles | Jutt AI Blog" description="Browse the latest AI articles in a modern reading experience." url="/blog">
   <Navbar />
-  <main>
-    <section class="intro">
+  <main class="blog-page">
+    <section class="hero-section">
       <p class="eyebrow">Latest articles</p>
-      <h1>Simple insights, one article at a time.</h1>
-      <p>Browse the newest posts published on the blog.</p>
+      <h1>Thoughtful AI stories for modern teams.</h1>
+      <p class="intro">Browse the newest posts with a clean, distraction-free reading experience.</p>
     </section>
-    <section class="posts">
+
+    <section class="posts-grid">
       {posts.map((post) => (
         <article class="card">
-          <a href={`/blog/${post.slug}`}>
-            <img src={post.image} alt={post.title} loading="lazy" decoding="async" />
+          <a href={`/blog/${post.slug}`} class="image-link">
+            <img src={post.image} alt={post.title} loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/blog/placeholder.svg';" />
           </a>
           <div class="card-body">
-            <p class="meta">{post.category} · {post.date}</p>
+            <div class="card-meta">
+              <span class="badge">{post.category}</span>
+              <span>{post.readingTime}</span>
+            </div>
             <h2><a href={`/blog/${post.slug}`}>{post.title}</a></h2>
             <p>{post.description}</p>
+            <div class="card-footer">
+              <span>{post.date}</span>
+              <a class="read-more" href={`/blog/${post.slug}`}>Read more</a>
+            </div>
           </div>
         </article>
       ))}
@@ -46,38 +56,131 @@ const posts = (await getCollection('blog'))
 </Layout>
 
 <style>
-  .intro {
-    padding: 1rem 0 1.5rem;
+  .blog-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+  .hero-section {
+    margin-bottom: 2rem;
+    max-width: 760px;
   }
   .eyebrow {
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     font-size: 0.78rem;
     font-weight: 700;
     color: var(--accent);
     margin-bottom: 0.5rem;
   }
-  h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin: 0 0 0.75rem; }
-  .posts {
+  h1 {
+    font-size: clamp(2rem, 3.2vw, 2.8rem);
+    margin: 0 0 0.75rem;
+    line-height: 1.15;
+  }
+  .intro {
+    color: var(--muted);
+    font-size: 1.02rem;
+    margin: 0;
+  }
+  .posts-grid {
     display: grid;
-    gap: 1rem;
+    gap: 1.5rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .card {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: 220px 1fr;
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e7edf5;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  }
+  .image-link {
+    display: block;
+    background: #eef4ff;
+  }
+  .image-link img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .card-body {
+    padding: 1.1rem 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+  h2 {
+    font-size: 1.16rem;
+    line-height: 1.35;
+    margin: 0;
+  }
+  h2 a {
+    color: var(--text);
+  }
+  .card p {
+    color: var(--muted);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .card img { width: 100%; height: 100%; object-fit: cover; min-height: 180px; }
-  .card-body { padding: 1rem 1rem 1rem 0; }
-  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.4rem; }
-  h2 { font-size: 1.15rem; margin: 0 0 0.5rem; }
-  p { color: var(--muted); }
-  @media (max-width: 760px) {
-    .card { grid-template-columns: 1fr; }
-    .card-body { padding: 0 1rem 1rem; }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 0.95rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .read-more:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+  }
+  @media (max-width: 900px) {
+    .posts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .posts-grid { grid-template-columns: 1fr; }
+    .card-body { padding: 1rem; }
   }
 </style>
