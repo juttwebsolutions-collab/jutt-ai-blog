@@ -1,11 +1,11 @@
 ---
-const { title = 'Jutt Solutions | Tech News, Guides & Fixes', description = 'A premium technology news site for guides, reviews, and fixes.', url = '/', image = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80' } = Astro.props;
+const { title = 'Jutt Ai Blog | Tech News, Guides & Fixes', description = 'A premium technology news site for guides, reviews, and fixes.', url = '/', image = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80' } = Astro.props;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://juttaiblog.online';
 const canonical = `${siteUrl}${url.startsWith('/') ? url : `/${url}`}`;
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Jutt Solutions | Tech News, Guides & Fixes',
+  name: 'Jutt Ai Blog | Tech News, Guides & Fixes',
   url: `${siteUrl}/`
 };
 ---
@@ -21,7 +21,7 @@ const websiteSchema = {
     <meta name="google-site-verification" content="-YF-yBmthxmGphnFLFsIsjRG0307kBGHgDz6lYVXP2g" />
     <link rel="canonical" href={canonical} />
     <title>{title}</title>
-    <meta property="og:site_name" content="Jutt Solutions | Tech News, Guides & Fixes" />
+    <meta property="og:site_name" content="Jutt Ai Blog | Tech News, Guides & Fixes" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
