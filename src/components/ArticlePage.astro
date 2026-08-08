@@ -37,13 +37,13 @@ const { post, relatedPosts = [] } = Astro.props;
       <summary>Can I share it with my team?</summary>
       <p>Yes. It is designed to be easy to read and useful in group discussions.</p>
     </details>
-  </section>
+  </article>
 
   {relatedPosts.length > 0 && (
     <section class="related-section">
       <h2>Related Articles</h2>
       <div class="related-grid">
-        {relatedPosts.map((item) => (
+        {relatedPosts.map((item: { slug: string; title: string; description?: string }) => (
           <article class="related-card">
             <h3><a href={`/blog/${item.slug}`}>{item.title}</a></h3>
             <p>{item.description}</p>
