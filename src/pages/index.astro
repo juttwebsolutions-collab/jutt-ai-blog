@@ -23,238 +23,464 @@ const posts = (await getCollection('blog'))
 const [featuredPost, ...latestPosts] = posts;
 ---
 
-<Layout title="Jutt AI Blog" description="A simple AI blog with clear articles and practical insights." url="/">
+<Layout title="Jutt Solutions | Tech News, Guides & Fixes" description="A premium technology news destination for guides, reviews, and practical tech fixes." url="/">
   <Navbar />
-  <main>
-    <section class="hero">
-      <div>
-        <p class="eyebrow">AI Blog</p>
-        <h1>Clear thinking for modern AI work.</h1>
-        <p>Practical articles on strategy, product, and everyday AI use.</p>
-        <a class="button" href="/blog">Read the latest articles</a>
+  <main class="home-layout">
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">Jutt Solutions</p>
+        <h1>Modern tech coverage with clear guides and fast fixes.</h1>
+        <p>Stay informed with premium updates on AI tools, technology news, products, and practical how-to guides.</p>
+        <div class="hero-actions">
+          <a class="button" href="/blog">Browse articles</a>
+          <a class="button secondary" href="/about">About us</a>
+        </div>
       </div>
-      <div class="hero-card">
-        <div class="hero-card-media">
+
+      <div class="hero-feature">
+        <div class="hero-label">Featured story</div>
+        <a class="hero-card" href={`/blog/${featuredPost?.slug}`}>
           <BlogImage
             src={featuredPost?.image}
             alt={featuredPost?.title ?? 'Featured article'}
-            class="hero-visual"
+            class="hero-image"
             priority={true}
           />
-        </div>
-        <div class="hero-card-body">
-          <p class="eyebrow">Latest article</p>
-          <h2>{featuredPost?.title}</h2>
-          <p>{featuredPost?.description}</p>
-          <a class="button secondary" href={`/blog/${featuredPost?.slug}`}>Read more →</a>
-        </div>
+          <div class="hero-card-body">
+            <span class="label">{featuredPost?.category}</span>
+            <h2>{featuredPost?.title}</h2>
+            <p>{featuredPost?.description}</p>
+            <div class="meta">{featuredPost?.author} · {featuredPost?.date}</div>
+          </div>
+        </a>
       </div>
     </section>
 
-    <section class="section">
-      <h2>Latest articles</h2>
-      <div class="posts">
-        {latestPosts.map((post) => (
-          <article class="card">
-            <a href={`/blog/${post.slug}`}>
-              <BlogImage
-                src={post.image}
-                alt={post.title}
-                class="card-image"
-              />
-            </a>
-            <div class="card-body">
-              <p class="meta">{post.category} · {post.date}</p>
-              <h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
-              <p>{post.description}</p>
-              <a class="button secondary" href={`/blog/${post.slug}`}>Read more</a>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
+    <div class="home-grid">
+      <section class="main-column">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Read more</p>
+            <h2>Latest insights</h2>
+          </div>
+          <a class="button outline" href="/blog">View all articles</a>
+        </div>
+
+        <div class="posts-grid">
+          {latestPosts.slice(0, 8).map((post) => (
+            <article class="story-card">
+              <a href={`/blog/${post.slug}`} class="story-image-link">
+                <BlogImage src={post.image} alt={post.title} class="story-image" />
+              </a>
+              <div class="story-body">
+                <span class="tag">{post.category}</span>
+                <h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
+                <p>{post.description}</p>
+                <div class="story-meta">{post.author} · {post.date}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <aside class="sidebar" aria-label="Sidebar">
+        <div class="widget widget-follow">
+          <div class="widget-header">
+            <p class="eyebrow">Follow Us</p>
+            <h3>Stay connected</h3>
+          </div>
+          <div class="social-grid">
+            <a href="#" class="social-pill facebook">Facebook</a>
+            <a href="#" class="social-pill x">X</a>
+            <a href="#" class="social-pill instagram">Instagram</a>
+            <a href="#" class="social-pill youtube">YouTube</a>
+          </div>
+        </div>
+
+        <div class="widget widget-popular">
+          <div class="widget-header">
+            <p class="eyebrow">Popular Posts</p>
+            <h3>Top stories</h3>
+          </div>
+          <div class="popular-list">
+            {posts.slice(0, 4).map((post) => (
+              <a class="popular-card" href={`/blog/${post.slug}`}>
+                <BlogImage src={post.image} alt={post.title} class="popular-thumb" />
+                <div>
+                  <span class="tag">{post.category}</span>
+                  <h4>{post.title}</h4>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="widget widget-newsletter">
+          <div class="widget-header">
+            <p class="eyebrow">Stay informed</p>
+            <h3>Subscribe for new updates</h3>
+          </div>
+          <p>Subscribe to our mailing list to get the latest updates on AI, tech guides, and breaking news.</p>
+          <form class="newsletter-form" action="/" method="get">
+            <label class="sr-only" for="newsletter-email">Email address</label>
+            <input id="newsletter-email" name="email" type="email" placeholder="Email Address" aria-label="Email address" />
+            <button class="button" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </aside>
+    </div>
   </main>
   <Footer />
 </Layout>
 
 <style>
-  .hero {
+  .home-layout {
     display: grid;
-    gap: 1.75rem;
-    grid-template-columns: 1.4fr 1fr;
-    align-items: stretch;
-    padding: 2.5rem 0 3rem;
+    gap: 2rem;
+    padding: 2rem 0 3rem;
   }
-  .hero p {
-    max-width: 40rem;
+
+  .hero-panel {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr);
+    align-items: start;
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2.8rem, 4.5vw, 4.6rem);
+    line-height: 1.05;
+    max-width: 12ch;
+  }
+
+  .hero-copy p {
+    margin: 0;
+    max-width: 42rem;
     color: var(--muted);
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 1.8;
   }
-  .eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 0.75rem;
-  }
-  h1 {
-    font-size: clamp(2.5rem, 4vw, 3.8rem);
-    margin: 0 0 1rem;
-    max-width: 11ch;
-  }
-  .hero-card,
-  .card,
-  .section {
-    border: 1px solid var(--border);
-    border-radius: 1.5rem;
-    background: var(--surface);
-    box-shadow: var(--shadow);
-  }
-  .hero-card {
-    overflow: hidden;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    min-height: 100%;
-  }
-  .hero-card-media {
-    overflow: hidden;
-    background: linear-gradient(135deg, #e0efff, #eff8ff);
-  }
-  .hero-visual {
-    width: 100%;
-    height: 100%;
-    min-height: 260px;
-    object-fit: cover;
-    display: block;
-  }
-  .hero-card-body {
-    padding: 1.5rem;
+
+  .hero-actions {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  .hero-feature {
+    display: grid;
     gap: 1rem;
   }
-  .hero-card h2 {
-    margin: 0;
-    font-size: 1.8rem;
-    line-height: 1.2;
-  }
-  .hero-card p {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.75;
-  }
-  .button {
+
+  .hero-label {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    margin-top: 0.75rem;
-    padding: 0.9rem 1.35rem;
-    border-radius: 999px;
-    background: var(--accent);
-    color: white;
+    gap: 0.6rem;
     font-weight: 700;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.17);
-  }
-  .button.secondary {
-    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
     color: var(--accent);
+  }
+
+  .hero-card {
+    display: grid;
+    gap: 1rem;
+    border-radius: 1.75rem;
+    overflow: hidden;
     border: 1px solid var(--border);
-  }
-  .section {
-    padding: 1.75rem 0 0;
-  }
-  .section h2 {
-    font-size: clamp(1.8rem, 2.2vw, 2.4rem);
-    margin: 0 0 1.25rem;
-  }
- .posts {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
- .card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: 1.25rem;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  transition: .25s;
-  height: 100%;
-}
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-  }
-  .card-image {
-  width: 100%;
-  height: 170px;
-  object-fit: cover;
-  display: block;
-}
-  .card h3 {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.3;
-}
-
-  .card-body > .card-cta {
-    margin-top: auto;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
-  .meta {
-    color: var(--muted);
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
+  .hero-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 45px rgba(15, 23, 42, 0.12);
   }
-  .card h3 {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.3;
-}
-  .card p {
-    color: var(--muted);
+
+  .hero-image {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+  }
+
+  .hero-card-body {
+    padding: 1.5rem;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .hero-card-body .label {
+    display: inline-flex;
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    background: var(--surface-alt);
+    color: var(--accent-strong);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-card-body h2 {
     margin: 0;
+    font-size: clamp(1.8rem, 2.5vw, 2.5rem);
+    line-height: 1.2;
+  }
+
+  .hero-card-body p {
+    margin: 0;
+    color: var(--muted);
     line-height: 1.75;
+  }
+
+  .hero-card-body .meta {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .home-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 2.1fr) minmax(280px, 1fr);
+    align-items: start;
+  }
+
+  .main-column {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-header h2 {
+    margin: 0;
+    font-size: clamp(2rem, 2.5vw, 2.6rem);
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: 1.3rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .story-card {
+    display: grid;
+    gap: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 1.25rem;
+    background: var(--surface);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .story-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  }
+
+  .story-image-link {
+    display: block;
+    overflow: hidden;
+  }
+
+  .story-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+
+  .story-body {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1rem;
+  }
+
+  .story-body .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: var(--surface-alt);
+    color: var(--accent-strong);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .story-body h3 {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .story-body p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.65;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .card-footer {
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
+
+  .story-meta {
     color: var(--muted);
-    font-size: 0.92rem;
-  }
-  @media (max-width: 1200px) {
-  .posts {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
+    font-size: 0.9rem;
   }
 
-  .posts {
-    grid-template-columns: repeat(2, 1fr);
+  .sidebar {
+    display: grid;
+    gap: 1.5rem;
   }
-}
 
-@media (max-width: 600px) {
-  .posts {
-    grid-template-columns: 1fr;
+  .widget {
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    background: var(--surface);
+    padding: 1.4rem;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.05);
   }
-}
+
+  .widget-header {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .widget-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .social-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border-radius: 14px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: white;
+    background: #1f2937;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .social-pill:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  .social-pill.facebook { background: #1877f2; }
+  .social-pill.x { background: #0a0a0a; }
+  .social-pill.instagram { background: radial-gradient(circle at 30% 30%, #feda75, #d62976 40%, #962fbf 60%, #4f5bd5); }
+  .social-pill.youtube { background: #ff0000; }
+
+  .popular-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .popular-card {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 0.9rem;
+    align-items: flex-start;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .popular-thumb {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 18px;
+  }
+
+  .popular-card h4 {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.25;
+    color: var(--text-strong);
+  }
+
+  .popular-card .tag {
+    background: rgba(37, 99, 235, 0.1);
+    color: #1d4ed8;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  .newsletter-form {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .newsletter-form input {
+    min-height: 50px;
+    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+  }
+
+  .newsletter-form button {
+    width: 100%;
+  }
+
+  @media (max-width: 1060px) {
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .hero-panel,
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-image {
+      height: 260px;
+    }
+
+    .story-image {
+      height: 200px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .hero-copy h1 {
+      font-size: clamp(2.2rem, 8vw, 3.2rem);
+    }
+
+    .social-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

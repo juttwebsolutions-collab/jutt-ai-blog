@@ -12,14 +12,17 @@ export async function getStaticPaths() {
     .map((entry) => {
       const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
       const pubDate = entry.data.pubDate instanceof Date ? entry.data.pubDate : new Date(entry.data.pubDate);
-      const body = entry.body ?? "";
+      const body = entry.body ?? '';
 
-const headingMatches =
-  body.match(/^(#{1,3})\s+(.+)$/gm) ?? [];
+      const headingMatches = body.match(/^(#{1,3})\s+(.+)$/gm) ?? [];
       const toc = headingMatches
         .map((match) => {
           const heading = match.replace(/^#{1,3}\s+/, '').trim();
-          const anchor = heading.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+          const anchor = heading
+            .toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
           return { text: heading, anchor };
         })
         .filter((item) => item.text !== 'Table of Contents' && item.text !== 'FAQs' && item.text !== 'Conclusion');
@@ -31,6 +34,7 @@ const headingMatches =
         description: entry.data.description,
         category: entry.data.category,
         author: entry.data.author,
+        tags: entry.data.tags ?? [],
         date: pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
         image: resolveImagePath(entry.data.heroImage),
         readingTime: getReadingTime(entry.body || entry.data.description),
@@ -51,11 +55,14 @@ const headingMatches =
         slug: post.slug,
         readingTime: post.readingTime
       },
-      relatedPosts: posts.filter((item) => item.slug !== post.slug).slice(0, 3).map((item) => ({
-        title: item.title,
-        slug: item.slug,
-        description: item.description
-      })),
+      relatedPosts: posts
+        .filter((item) => item.slug !== post.slug)
+        .slice(0, 3)
+        .map((item) => ({
+          title: item.title,
+          slug: item.slug,
+          description: item.description
+        })),
       toc: post.toc
     }
   }));

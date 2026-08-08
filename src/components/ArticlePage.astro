@@ -1,221 +1,445 @@
 ---
-const { post, relatedPosts = [] } = Astro.props;
+const { post, relatedPosts = [], toc = [] } = Astro.props;
 ---
 
 <article class="article-shell">
-  <header class="article-header">
-    <p class="meta">{post.category} · {post.date} · {post.readingTime}</p>
-    <h1>{post.title}</h1>
-    <p class="intro">{post.description}</p>
-    {post.image && (
-      <img
-        class="hero-image"
-        src={post.image}
-        alt={post.title}
-        loading="eager"
-        decoding="async"
-        onerror="this.onerror=null;this.src='/images/blog/placeholder.svg';"
-      />
-    )}
-  </header>
+  <div class="article-grid">
+    <main class="article-main">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="/blog">{post.category}</a>
+      </nav>
 
-  <div class="content">
-    <slot />
-  </div>
-
-  <section class="faq-card">
-    <h2>Frequently asked questions</h2>
-    <details>
-      <summary>Why does this article matter?</summary>
-      <p>It gives you a clear, practical overview that helps you act with confidence.</p>
-    </details>
-    <details>
-      <summary>How often should I revisit it?</summary>
-      <p>Review it whenever the topic changes or you need a fresh reference point.</p>
-    </details>
-    <details>
-      <summary>Can I share it with my team?</summary>
-      <p>Yes. It is designed to be easy to read and useful in group discussions.</p>
-    </details>
-    </section>
-  </article>
-
-  {relatedPosts.length > 0 && (
-    <section class="related-section">
-      <h2>Related Articles</h2>
-      <div class="related-grid">
-        {relatedPosts.map((item: { slug: string; title: string; description?: string }) => (
-          <article class="related-card">
-            <h3><a href={`/blog/${item.slug}`}>{item.title}</a></h3>
-            <p>{item.description}</p>
-            <a class="read-more" href={`/blog/${item.slug}`}>Read article</a>
-          </article>
-        ))}
+      <div class="article-header">
+        <span class="eyebrow">{post.category}</span>
+        <h1>{post.title}</h1>
+        <div class="article-meta">
+          <div class="author-block">
+            <span class="author-avatar" aria-hidden="true">J</span>
+            <div>
+              <p>By <strong>{post.author}</strong></p>
+              <p>{post.date} · {post.readingTime}</p>
+            </div>
+          </div>
+        </div>
+        <p class="intro">{post.description}</p>
       </div>
-    </section>
-  )}
+
+      {post.image && (
+        <img
+          class="hero-image"
+          src={post.image}
+          alt={post.title}
+          loading="eager"
+          decoding="async"
+          onerror="this.onerror=null;this.src='/images/blog/placeholder.svg';"
+        />
+      )}
+
+      <div class="content">
+        <slot />
+      </div>
+
+      <div class="article-footer">
+        {post.tags?.length && (
+          <div class="tag-list" aria-label="Article tags">
+            {post.tags.map((tag) => (
+              <a class="tag-pill" href={`/blog?tag=${encodeURIComponent(tag)}`}>{tag}</a>
+            ))}
+          </div>
+        )}
+
+        <div class="share-panel">
+          <span>Share:</span>
+          <a href="#" class="share-pill" aria-label="Share on Facebook">Facebook</a>
+          <a href="#" class="share-pill" aria-label="Share on X">X</a>
+          <a href="#" class="share-pill" aria-label="Share on LinkedIn">LinkedIn</a>
+        </div>
+      </div>
+
+      <section class="related-section">
+        <div class="related-header">
+          <h2>You might like</h2>
+          <a class="button outline" href="/blog">See all</a>
+        </div>
+        <div class="related-grid">
+          {relatedPosts.map((item) => (
+            <article class="related-card">
+              <h3><a href={`/blog/${item.slug}`}>{item.title}</a></h3>
+              <p>{item.description}</p>
+              <a class="read-more" href={`/blog/${item.slug}`}>Read article</a>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div class="post-actions">
+        <a class="button secondary" href="/blog">Back to articles</a>
+        <a class="button" href="#comments">Post a comment</a>
+      </div>
+    </main>
+
+    {toc.length > 0 && (
+      <aside class="article-aside" aria-label="Table of contents">
+        <div class="toc-panel">
+          <h2>On this page</h2>
+          <ol>
+            {toc.map((item) => (
+              <li><a href={`#${item.anchor}`}>{item.text}</a></li>
+            ))}
+          </ol>
+        </div>
+      </aside>
+    )}
+  </div>
 </article>
 
 <style>
   .article-shell {
-    max-width: 780px;
+    width: min(100%, 1080px);
     margin: 0 auto;
     display: grid;
-    gap: 1.5rem;
+    gap: 1.75rem;
+    padding: 2rem 0;
   }
+
+  .article-grid {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    align-items: start;
+  }
+
+  .article-main {
+    display: grid;
+    gap: 1.8rem;
+  }
+
+  .breadcrumbs {
+    display: inline-flex;
+    gap: 0.6rem;
+    align-items: center;
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .breadcrumbs a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
   .article-header {
-    background: #ffffff;
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    display: grid;
+    gap: 1rem;
   }
-  .meta {
+
+  .article-header .eyebrow {
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.77rem;
+    letter-spacing: 0.18em;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--accent);
-    margin-bottom: 0.45rem;
+    margin: 0;
   }
-  h1 {
-    margin: 0 0 0.75rem;
-    font-size: clamp(2rem, 3vw, 2.6rem);
-    line-height: 1.15;
+
+  .article-header h1 {
+    margin: 0;
+    font-size: clamp(2.6rem, 3.5vw, 4rem);
+    line-height: 1.05;
+    max-width: 13ch;
   }
-  .intro {
+
+  .article-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
     color: var(--muted);
-    font-size: 1.03rem;
-    margin: 0 0 1rem;
   }
+
+  .author-block {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .author-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+  }
+
+  .author-block p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .intro {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.9;
+    max-width: 64ch;
+  }
+
   .hero-image {
     width: 100%;
-    height: 320px;
+    min-height: 420px;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 24px;
     display: block;
   }
+
   .content {
-    background: #ffffff;
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 1.5rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
   }
-  .content :global(h2),
+
+  .content :global(h2) {
+    font-size: clamp(1.7rem, 2.2vw, 2.2rem);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
   .content :global(h3) {
-    margin-top: 1.4rem;
-    margin-bottom: 0.6rem;
-    color: var(--text);
-    line-height: 1.25;
+    font-size: clamp(1.35rem, 1.8vw, 1.6rem);
+    margin-top: 1.8rem;
+    margin-bottom: 0.85rem;
   }
+
   .content :global(p),
   .content :global(li) {
     color: var(--muted);
-    font-size: 1.125rem;
-    line-height: 1.8;
+    font-size: 1.06rem;
+    line-height: 1.85;
+    margin: 0 0 1.25rem;
   }
+
+  .content :global(strong) {
+    color: var(--text-strong);
+  }
+
   .content :global(blockquote) {
-    margin: 1.2rem 0;
-    padding: 1rem 1.2rem;
+    margin: 1.75rem 0;
+    padding: 1.35rem 1.3rem;
     border-left: 4px solid var(--accent);
-    background: #f8fbff;
-    border-radius: 0 12px 12px 0;
-    color: var(--text);
+    background: #eff6ff;
+    border-radius: 18px;
+    color: var(--text-strong);
   }
+
   .content :global(pre) {
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    border-radius: 18px;
     overflow-x: auto;
     background: #0f172a;
-    color: #e2e8f0;
+    color: #f8fafc;
+    margin: 1.5rem 0;
   }
+
   .content :global(code) {
     font-family: 'SFMono-Regular', Consolas, monospace;
     font-size: 0.95rem;
   }
+
   .content :global(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.25rem 0;
-    border: 1px solid #e7edf5;
-    border-radius: 12px;
-    overflow: hidden;
+    margin: 1.75rem 0;
+    overflow: auto;
+    border: 1px solid #e2e8f0;
   }
+
   .content :global(th),
   .content :global(td) {
-    padding: 0.8rem 0.9rem;
-    border-bottom: 1px solid #e7edf5;
+    padding: 0.95rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
     text-align: left;
   }
+
   .content :global(th) {
     background: #f8fbff;
   }
+
   .content :global(img) {
     width: 100%;
-    border-radius: 16px;
-    margin: 1.25rem 0;
+    border-radius: 18px;
+    margin: 1.5rem 0;
   }
+
   .content :global(ul),
   .content :global(ol) {
-    padding-left: 1.3rem;
+    padding-left: 1.4rem;
   }
-  .faq-card,
-  .related-section {
-    background: #ffffff;
-    border: 1px solid #e7edf5;
-    border-radius: 20px;
-    padding: 1.25rem 1.4rem;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+
+  .article-footer {
+    display: grid;
+    gap: 1.15rem;
   }
-  .faq-card h2,
-  .related-section h2 {
-    margin: 0 0 1rem;
-    font-size: 1.2rem;
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
   }
-  .faq-card details {
-    border-top: 1px solid #e7edf5;
-    padding: 0.85rem 0;
-  }
-  .faq-card details:first-of-type {
-    border-top: 0;
-    padding-top: 0;
-  }
-  .faq-card summary {
-    cursor: pointer;
+
+  .tag-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: var(--surface-alt);
+    color: var(--accent-strong);
+    font-size: 0.88rem;
     font-weight: 600;
-    color: var(--text);
+    text-decoration: none;
   }
-  .faq-card p {
+
+  .share-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
     color: var(--muted);
-    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
   }
+
+  .share-pill {
+    padding: 0.55rem 0.95rem;
+    border-radius: 999px;
+    background: var(--surface-alt);
+    color: var(--text-strong);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .related-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .related-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .related-grid {
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
   .related-card {
     border: 1px solid #e7edf5;
-    border-radius: 14px;
-    padding: 1rem;
+    border-radius: 18px;
+    padding: 1.25rem;
     background: #f8fbff;
   }
+
   .related-card h3 {
-    margin: 0 0 0.45rem;
+    margin: 0 0 0.5rem;
     font-size: 1rem;
   }
+
   .related-card p {
+    margin: 0 0 1rem;
     color: var(--muted);
     font-size: 0.95rem;
-    margin: 0 0 0.75rem;
   }
-  .related-card .read-more {
+
+  .read-more {
     color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
   }
+
+  .post-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
+
+  .article-aside {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+  }
+
+  .toc-panel {
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--surface);
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+  }
+
+  .toc-panel h2 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+  }
+
+  .toc-panel ol {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--muted);
+    font-size: 0.96rem;
+    line-height: 1.85;
+  }
+
+  .toc-panel li {
+    margin-bottom: 0.75rem;
+  }
+
+  .toc-panel a {
+    color: var(--text-strong);
+    text-decoration: none;
+  }
+
+  @media (max-width: 1080px) {
+    .article-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .article-aside {
+      position: relative;
+      top: auto;
+    }
+  }
+
   @media (max-width: 760px) {
-    .related-grid { grid-template-columns: 1fr; }
-    .hero-image { height: 240px; }
+    .article-shell {
+      padding: 1.25rem 0;
+    }
+
+    .article-header h1 {
+      font-size: clamp(2.2rem, 6vw, 2.8rem);
+    }
+
+    .hero-image {
+      min-height: 260px;
+    }
+
+    .content {
+      padding: 1.5rem;
+    }
+
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

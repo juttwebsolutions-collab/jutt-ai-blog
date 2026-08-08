@@ -1,78 +1,185 @@
 <footer class="site-footer">
   <div class="footer-shell">
-    <div>
+    <div class="footer-column footer-brand">
       <a class="brand" href="/">
-        <span class="brand-mark">J</span>
-        <span>Jutt AI Blog</span>
+        <span class="brand-mark">JS</span>
+        <div>
+          <strong>Jutt Solutions</strong>
+          <p>Tech news, guides, and fixes for modern readers.</p>
+        </div>
       </a>
-      <p>Clear AI ideas for product, strategy, and everyday work.</p>
+      <div class="social-links" aria-label="Social links">
+        <a href="https://x.com" target="_blank" rel="noreferrer noopener" aria-label="Visit X profile">X</a>
+        <a href="https://www.linkedin.com" target="_blank" rel="noreferrer noopener" aria-label="Visit LinkedIn profile">LinkedIn</a>
+        <a href="https://github.com" target="_blank" rel="noreferrer noopener" aria-label="Visit GitHub profile">GitHub</a>
+      </div>
     </div>
-    <div class="footer-nav">
+
+    <div class="footer-column">
+      <h3>Categories</h3>
+      <a href="/blog">AI Tools</a>
+      <a href="/blog">Technology</a>
+      <a href="/blog">Reviews</a>
+      <a href="/blog">News</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Quick links</h3>
+      <a href="/">Home</a>
       <a href="/blog">Latest Articles</a>
       <a href="/about">About</a>
-      <a href="/contact">Contact</a>
+      <a href="/privacy">Privacy Policy</a>
     </div>
-    <div class="social-links" aria-label="Social links">
-      <a href="https://x.com" target="_blank" rel="noreferrer">X</a>
-      <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
-      <a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+
+    <div class="footer-column footer-newsletter">
+      <h3>Stay informed</h3>
+      <p>Subscribe for the latest updates on AI tools, tech guides, and breaking news.</p>
+      <form action="#" class="footer-form">
+        <label class="sr-only" for="footer-email">Email address</label>
+        <div class="footer-input-group">
+          <input id="footer-email" type="email" placeholder="Email address" />
+          <button type="submit">Subscribe</button>
+        </div>
+      </form>
     </div>
   </div>
 </footer>
 
 <style>
   .site-footer {
-    padding: 2rem 1rem 2.5rem;
-    border-top: 1px solid #e7edf5;
-    background: #f8fbff;
+    background: #020617;
+    color: #e2e8f0;
+    padding: 3rem 1rem 2.5rem;
   }
+
   .footer-shell {
-    width: min(1200px, calc(100% - 1.5rem));
+    width: min(1180px, calc(100% - 1.5rem));
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-column {
+    display: grid;
     gap: 1rem;
+  }
+
+  .footer-brand .brand {
+    display: inline-flex;
     align-items: flex-start;
-    flex-wrap: wrap;
+    gap: 1rem;
   }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--text);
-    font-weight: 700;
-  }
+
   .brand-mark {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 18px;
     display: grid;
     place-items: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--accent), #60a5fa);
+    background: linear-gradient(135deg, #2563eb, #60a5fa);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .footer-brand strong {
+    display: block;
+    font-size: 1rem;
+    color: #ffffff;
+  }
+
+  .footer-brand p {
+    margin: 0.35rem 0 0;
+    color: #94a3b8;
+    max-width: 280px;
+    line-height: 1.7;
+  }
+
+  .footer-column h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: white;
+  }
+
+  .footer-column a {
+    display: inline-block;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer-column a:hover,
+  .footer-column a:focus-visible {
+    color: #ffffff;
+  }
+
+  .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    min-height: 42px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+    text-decoration: none;
+    padding: 0 0.75rem;
+    font-weight: 600;
+  }
+
+  .footer-newsletter p {
+    color: #94a3b8;
+  }
+
+  .footer-form {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .footer-input-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.75rem;
+  }
+
+  .footer-input-group input {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    padding: 0.95rem 1rem;
+  }
+
+  .footer-input-group input::placeholder {
+    color: #94a3b8;
+  }
+
+  .footer-input-group button {
+    min-width: 120px;
+    border-radius: 14px;
+    background: #2563eb;
     color: white;
     font-weight: 700;
   }
-  .site-footer p {
-    color: var(--muted);
-    margin: 0.35rem 0 0;
-    max-width: 320px;
+
+  @media (max-width: 960px) {
+    .footer-shell {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
-  .footer-nav,
-  .social-links {
-    display: flex;
-    gap: 0.9rem 1rem;
-    flex-wrap: wrap;
-  }
-  .footer-nav a,
-  .social-links a {
-    color: var(--muted);
-    font-weight: 600;
-  }
-  .footer-nav a:hover,
-  .social-links a:hover {
-    color: var(--accent);
-  }
-  @media (max-width: 640px) {
-    .footer-shell { flex-direction: column; }
+
+  @media (max-width: 680px) {
+    .footer-shell {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
