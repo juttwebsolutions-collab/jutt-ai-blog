@@ -3,7 +3,7 @@ title: "iQOO Z11 5G Full Specifications: Pricing, Features, and Box Contents"
 description: "The complete official specification sheet for the iQOO Z11 5G. Read about the dimensions, 1.5K curved display, Dimensity 7500 Turbo chip, and 7050mAh battery."
 seoTitle: "iQOO Z11 5G Complete Official Specifications Sheet"
 seoDescription: "View the official full specs of the newly announced iQOO Z11 5G. Detailed breakdown of the 7050mAh BlueVolt battery, 144Hz screen, and custom 4nm chipset."
-slug: "iqoo-z11-5g-full-specifications "
+slug: "iqoo-z11-5g-full-specifications"
 focusKeyword: "iQOO Z11 5G camera, display, fingerprint, refresh rate, size, performace, features, battery, connectivity,4nm chipset, best phone under 50k, best phone for gaming, new mobiles"
 category: "Reviews"
 tags:
