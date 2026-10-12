@@ -1,8 +1,10 @@
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  output: 'static', // Server ki jagah static kar dein
+  output: 'server',
+  adapter: cloudflare(),
   site: 'https://juttaiblog.online',
   integrations: [sitemap()],
 });
