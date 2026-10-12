@@ -16,11 +16,7 @@ import { siteConfig } from '../data/site';
 
     <section class="contact-grid">
       <div class="card">
-        <form id="project-form" class="contact-form" action="/api/leads" method="POST">
-          <label class="honeypot" aria-hidden="true">
-            <span>Leave this field empty</span>
-            <input type="text" name="website" tabindex="-1" autocomplete="off" />
-          </label>
+        <form id="project-form" class="contact-form" data-email={siteConfig.email}>
           <div class="field-row">
             <label>
               <span>Name</span>
@@ -64,7 +60,8 @@ import { siteConfig } from '../data/site';
             <span>Project description</span>
             <textarea name="message" rows="6" placeholder="Tell us what you need help with, the current problem, and your goals." required></textarea>
           </label>
-          <button type="submit" class="button">Send project enquiry</button>
+          <button type="submit" class="button">Open email draft</button>
+          <p>This static form opens your email app to send the enquiry; it does not store submissions on the website.</p>
           <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
         </form>
       </div>
@@ -96,32 +93,16 @@ import { siteConfig } from '../data/site';
   const form = document.getElementById('project-form');
   const status = document.getElementById('form-status');
 
-  form?.addEventListener('submit', async function (event) {
+  form?.addEventListener('submit', function (event) {
     event.preventDefault();
     const formElement = event.currentTarget;
-    const button = formElement.querySelector('button[type="submit"]');
-    button.disabled = true;
-    status.textContent = 'Sending your enquiry…';
-
-    try {
-      const result = await fetch(formElement.action, {
-        method: formElement.method,
-        body: new FormData(formElement),
-        headers: { Accept: 'application/json' },
-      });
-      const payload = await result.json();
-      status.textContent = payload.message || (result.ok
-        ? 'Your enquiry has been received.'
-        : 'We could not send your enquiry. Please try again.');
-      status.classList.toggle('success', result.ok);
-      if (result.ok) formElement.reset();
-    } catch (error) {
-      console.error('Contact form submission failed:', error);
-      status.textContent = 'We could not send your enquiry. Please check your connection and try again.';
-      status.classList.remove('success');
-    } finally {
-      button.disabled = false;
-    }
+    const fields = Array.from(new FormData(formElement).entries())
+      .map(([name, value]) => `${name}: ${value}`)
+      .join('\n');
+    const subject = encodeURIComponent('Project enquiry');
+    const body = encodeURIComponent(fields);
+    status.textContent = 'Opening your email app…';
+    window.location.href = `mailto:${formElement.dataset.email}?subject=${subject}&body=${body}`;
   });
 </script>
 
@@ -170,19 +151,10 @@ import { siteConfig } from '../data/site';
     gap: 1rem;
   }
 
-  .honeypot {
-    position: absolute;
-    left: -10000px;
-  }
-
   .form-status {
     min-height: 1.5em;
     margin: 0;
     color: #b42318;
-  }
-
-  .form-status.success {
-    color: var(--accent-strong);
   }
 
   .field-row {
