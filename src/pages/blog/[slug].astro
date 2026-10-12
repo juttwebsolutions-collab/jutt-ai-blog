@@ -6,6 +6,8 @@ import Footer from '../../components/Footer.astro';
 import ArticlePage from '../../components/ArticlePage.astro';
 import { getReadingTime, resolveImagePath } from '../../utils/image';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const entries = await getCollection('blog');
   const posts = entries

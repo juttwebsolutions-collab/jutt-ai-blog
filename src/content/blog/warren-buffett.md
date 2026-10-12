@@ -15,6 +15,7 @@ tags:
   - "value investing"
   - "Berkshire Hathaway CEO"
   - "stock market"
+  
 author: "Jutt AI Blog"
 pubDate: 2026-08-08
 heroImage: "https://images.unsplash.com/photo-1559526324-593bc073d938?auto=format&fit=crop&w=1600&q=80"

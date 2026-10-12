@@ -4,13 +4,13 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<Layout title="404 | Jutt AI Blog" description="The page you requested could not be found." url="/404">
+<Layout title="404 | Jutt AI" description="The page you requested could not be found." url="/404">
   <Navbar />
   <main>
     <section class="card">
       <p class="eyebrow">404</p>
       <h1>Page not found.</h1>
-      <p>The page you were looking for may have moved or never existed. Return home to continue reading the latest posts.</p>
+      <p>The page you were looking for may have moved or never existed. Head back to the homepage to continue exploring Jutt AI’s website design, Shopify, SEO, and digital growth services.</p>
       <a class="button" href="/">Back to home</a>
     </section>
   </main>
@@ -18,12 +18,20 @@ import Footer from '../components/Footer.astro';
 </Layout>
 
 <style>
+  main {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding-top: 4rem;
+  }
+
   .card {
     border: 1px solid var(--border);
-    border-radius: 1rem;
+    border-radius: 24px;
     background: var(--surface);
-    padding: 1.5rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
   }
+
   .eyebrow {
     text-transform: uppercase;
     letter-spacing: 0.16em;
@@ -32,15 +40,25 @@ import Footer from '../components/Footer.astro';
     color: var(--accent);
     margin-bottom: 0.5rem;
   }
-  h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin: 0 0 0.75rem; }
-  p { color: var(--muted); }
+
+  h1 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    margin: 0 0 1rem;
+  }
+
+  p {
+    color: var(--muted);
+    margin: 0;
+    max-width: 620px;
+  }
+
   .button {
-    display: inline-block;
-    margin-top: 0.75rem;
-    padding: 0.7rem 1rem;
+    display: inline-flex;
+    margin-top: 1.2rem;
+    padding: 0.8rem 1.2rem;
     border-radius: 999px;
     background: var(--accent);
     color: white;
-    font-weight: 600;
+    font-weight: 700;
   }
 </style>

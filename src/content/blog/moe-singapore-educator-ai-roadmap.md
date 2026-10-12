@@ -16,6 +16,7 @@ tags:
   - "AI in education"
   - "education technology"
   - "artificial intelligence"
+  
 author: "Jutt AI Blog"
 pubDate: 2026-08-08
 heroImage: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1600&q=80"

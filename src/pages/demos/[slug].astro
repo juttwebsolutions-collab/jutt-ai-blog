@@ -1,0 +1,894 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { demoProjects } from '../../data/site';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return demoProjects.map((demo) => ({ params: { slug: demo.slug }, props: { demo } }));
+}
+
+const { demo } = Astro.props;
+
+const demoContent: Record<string, { title: string; subtitle: string; brand: string; intro: string; cta: string; }> = {
+  'local-business': {
+    title: 'Northline Care & Property',
+    subtitle: 'Modern home care and property support',
+    brand: 'Northline Care',
+    intro: 'A fictional local business website demonstrating how service brands can build trust, explain offers clearly, and guide visitors toward a quote request.',
+    cta: 'Request a quote',
+  },
+  'ecommerce-store': {
+    title: 'Aster & Pine',
+    subtitle: 'Thoughtful home decor for calm, modern living',
+    brand: 'Aster & Pine',
+    intro: 'A fictional Shopify-style storefront concept built around product discovery, premium styling, and an easy mobile shopping journey.',
+    cta: 'Shop collection',
+  },
+  'product-landing': {
+    title: 'Luma Flow',
+    subtitle: 'Energy, focus, and better routines',
+    brand: 'Luma Flow',
+    intro: 'A fictional product landing page focused on clear benefits, trust-building proof, and direct conversion messaging.',
+    cta: 'Buy now',
+  },
+  'software-dashboard': {
+    title: 'FlowPilot',
+    subtitle: 'Operations dashboard for a service business',
+    brand: 'FlowPilot',
+    intro: 'A fictional software dashboard concept showing how operational data can become more actionable and easier to review at a glance.',
+    cta: 'Book a demo',
+  },
+  'social-media': {
+    title: 'Milo & Co.',
+    subtitle: 'Social content concepts for a modern shop',
+    brand: 'Milo & Co.',
+    intro: 'A fictional social media portfolio concept for product storytelling, launch creatives, and short-form content planning.',
+    cta: 'Start a campaign',
+  },
+};
+
+const content = demoContent[demo.slug] ?? demoContent['local-business'];
+---
+
+<Layout title={`${content.title} Demo | Jutt AI`} description={content.intro} url={`/demos/${demo.slug}`}>
+  <Navbar />
+  <main class="demo-page">
+    <div class="demo-header">
+      <div>
+        <p class="eyebrow">Demo project</p>
+        <h1>{content.title}</h1>
+        <p>{content.subtitle}</p>
+      </div>
+      <a class="button" href="/contact">{content.cta}</a>
+    </div>
+
+    {demo.slug === 'local-business' && (
+      <div class="demo-shell local-demo">
+        <header class="local-header">
+          <div class="brand-block">
+            <span class="brand-chip">N</span>
+            <div>
+              <strong>{content.brand}</strong>
+              <span>Home care and property support</span>
+            </div>
+          </div>
+          <nav>
+            <a href="#services">Services</a>
+            <a href="#about">About</a>
+            <a href="#reviews">Reviews</a>
+            <a href="#contact">Contact</a>
+          </nav>
+          <a class="quote-btn" href="/contact">Book a consultation</a>
+        </header>
+
+        <section class="hero-panel">
+          <div>
+            <p class="eyebrow">Trusted local support</p>
+            <h2>Reliable care and property help for busy households.</h2>
+            <p>From ongoing home support to practical maintenance tasks, we make everyday life easier with dependable service and transparent communication.</p>
+            <div class="hero-actions">
+              <a class="button" href="/contact">Request a quote</a>
+              <a class="button secondary" href="#services">See services</a>
+            </div>
+          </div>
+          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1100&q=80" alt="Local service professional helping a household" />
+        </section>
+
+        <section class="three-col" id="services">
+          <article class="mini-card">
+            <h3>Home support</h3>
+            <p>Flexible care plans for busy households and changing routines.</p>
+          </article>
+          <article class="mini-card">
+            <h3>Property care</h3>
+            <p>Seasonal checks, repairs, and practical maintenance support.</p>
+          </article>
+          <article class="mini-card">
+            <h3>Peace of mind</h3>
+            <p>Dependable communication, clear scheduling, and proactive service.</p>
+          </article>
+        </section>
+
+        <section class="info-strip" id="about">
+          <div>
+            <p class="eyebrow">About</p>
+            <h3>Friendly, capable support for the everyday essentials.</h3>
+          </div>
+          <p>Northline Care is a fictional local service brand designed to show how clear storytelling, reassuring service detail, and straightforward calls to action can make a business website feel more credible and helpful.</p>
+        </section>
+
+        <section class="review-grid" id="reviews">
+          <div class="review-card">
+            <strong>“Quick, responsive, and easy to work with.”</strong>
+            <span>Fictional client review</span>
+          </div>
+          <div class="review-card">
+            <strong>“The planning process made everything straightforward.”</strong>
+            <span>Fictional client review</span>
+          </div>
+          <div class="review-card">
+            <strong>“The website finally feels like the service we provide.”</strong>
+            <span>Fictional client review</span>
+          </div>
+        </section>
+
+        <section class="contact-banner" id="contact">
+          <div>
+            <p class="eyebrow">Contact</p>
+            <h3>Let’s talk about your next project.</h3>
+          </div>
+          <a class="button" href="/contact">Request a consultation</a>
+        </section>
+      </div>
+    )}
+
+    {demo.slug === 'ecommerce-store' && (
+      <div class="demo-shell store-demo">
+        <header class="store-header">
+          <div class="brand-block">
+            <span class="brand-chip">A</span>
+            <div>
+              <strong>{content.brand}</strong>
+              <span>Natural home goods</span>
+            </div>
+          </div>
+          <nav>
+            <a href="#new">New Arrivals</a>
+            <a href="#collections">Collections</a>
+            <a href="#best">Best Sellers</a>
+            <a href="#about">About</a>
+          </nav>
+          <div class="cart-box">
+            <span>Cart</span>
+            <strong id="cart-count">0</strong>
+          </div>
+        </header>
+
+        <section class="store-hero">
+          <div>
+            <p class="eyebrow">Fresh seasonal essentials</p>
+            <h2>Bring warmth and calm into everyday spaces.</h2>
+            <p>Curated home pieces designed for slower routines, warm textures, and thoughtful living.</p>
+            <div class="hero-actions">
+              <a class="button" href="#new">Shop collection</a>
+              <a class="button secondary" href="#best">Best sellers</a>
+            </div>
+          </div>
+          <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80" alt="Elegant home decor and furniture" />
+        </section>
+
+        <section class="section-block" id="new">
+          <h3>New arrivals</h3>
+          <div class="product-grid">
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1517705008128-361805f42e86?auto=format&fit=crop&w=900&q=80" alt="Linen throw blanket" />
+              <div>
+                <span>Living room</span>
+                <h4>Cloud Linen Throw</h4>
+                <div class="meta"><strong>$64</strong><button class="add-to-cart" data-product="Cloud Linen Throw" type="button">Add to cart</button></div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80" alt="Wooden table decor" />
+              <div>
+                <span>Dining</span>
+                <h4>Oak Accent Bowl</h4>
+                <div class="meta"><strong>$42</strong><button class="add-to-cart" data-product="Oak Accent Bowl" type="button">Add to cart</button></div>
+              </div>
+            </article>
+            <article class="product-card">
+              <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=80" alt="Modern ceramic vase" />
+              <div>
+                <span>Decor</span>
+                <h4>Stoneware Vase</h4>
+                <div class="meta"><strong>$58</strong><button class="add-to-cart" data-product="Stoneware Vase" type="button">Add to cart</button></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section-block" id="best">
+          <h3>Best sellers</h3>
+          <div class="product-grid small-grid">
+            <article class="product-card compact">
+              <span>Kitchen</span>
+              <h4>Woven Storage Basket</h4>
+              <strong>$38</strong>
+            </article>
+            <article class="product-card compact">
+              <span>Bedroom</span>
+              <h4>Pillow Set</h4>
+              <strong>$54</strong>
+            </article>
+            <article class="product-card compact">
+              <span>Lighting</span>
+              <h4>Soft Glow Lamp</h4>
+              <strong>$72</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="contact-banner" id="about">
+          <div>
+            <p class="eyebrow">About Aster & Pine</p>
+            <h3>Thoughtful pieces for slower, more intentional living.</h3>
+          </div>
+          <a class="button" href="/contact">Request a similar store</a>
+        </section>
+      </div>
+    )}
+
+    {demo.slug === 'product-landing' && (
+      <div class="demo-shell landing-demo">
+        <section class="landing-hero">
+          <div class="copy-block">
+            <p class="eyebrow">Better routines start here</p>
+            <h2>Meet the bottle that makes focus feel easier.</h2>
+            <p>Luma Flow combines durable materials, calming design, and a daily-use system that helps people build consistent routines without extra clutter.</p>
+            <div class="hero-actions">
+              <a class="button" href="/contact">Buy now</a>
+              <a class="button secondary" href="#features">See features</a>
+            </div>
+            <div class="stat-row">
+              <div><strong>4.9/5</strong><span>Customer score</span></div>
+              <div><strong>30 day</strong><span>Risk-free trial</span></div>
+              <div><strong>Free</strong><span>Shipping over $50</span></div>
+            </div>
+          </div>
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80" alt="Premium product bottle in a clean hero shot" />
+        </section>
+
+        <section class="feature-grid" id="features">
+          <article class="feature-card">
+            <h3>Better daily habits</h3>
+            <p>Simple cues and ergonomic design make it easier to keep routines steady.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Premium finish</h3>
+            <p>Thoughtful materials and a clean aesthetic fit effortlessly into real homes.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Built for real life</h3>
+            <p>Whether at home or on the move, the design stays practical and easy to use.</p>
+          </article>
+        </section>
+
+        <section class="benefits-layout">
+          <div>
+            <p class="eyebrow">Why people choose it</p>
+            <h3>Designed to support focus, calm, and routine.</h3>
+          </div>
+          <ul>
+            <li>Lightweight shape that fits easily into a daily routine.</li>
+            <li>Clean, durable finish that looks polished in any space.</li>
+            <li>Clear messaging around value, ease, and everyday use.</li>
+            <li>Conversion-focused structure with a simple, direct path to purchase.</li>
+          </ul>
+        </section>
+
+        <section class="faq-box">
+          <p class="eyebrow">FAQ</p>
+          <div class="faq-list">
+            <details open>
+              <summary>Is it suitable for everyday use?</summary>
+              <p>Yes. The product is designed for regular daily routines and practical use in real life.</p>
+            </details>
+            <details>
+              <summary>Do you offer shipping?</summary>
+              <p>Shipping details can be tailored to the selected region and fulfilment model.</p>
+            </details>
+          </div>
+        </section>
+      </div>
+    )}
+
+    {demo.slug === 'software-dashboard' && (
+      <div class="demo-shell dashboard-demo">
+        <aside class="sidebar">
+          <div class="sidebar-brand">FlowPilot</div>
+          <nav>
+            <a href="#">Overview</a>
+            <a href="#">Orders</a>
+            <a href="#">Projects</a>
+            <a href="#">Clients</a>
+            <a href="#">Reports</a>
+          </nav>
+        </aside>
+        <div class="dashboard-main">
+          <header class="dashboard-header">
+            <div>
+              <p class="eyebrow">Operations dashboard</p>
+              <h2>Performance overview</h2>
+            </div>
+            <button class="button secondary" type="button">Export report</button>
+          </header>
+
+          <div class="stats">
+            <div class="stat-box"><span>Revenue</span><strong>$48.2K</strong></div>
+            <div class="stat-box"><span>Orders</span><strong>324</strong></div>
+            <div class="stat-box"><span>Leads</span><strong>128</strong></div>
+            <div class="stat-box"><span>Retention</span><strong>81%</strong></div>
+          </div>
+
+          <div class="chart-box">
+            <div class="bars">
+              <span style={{ height: '35%' }}></span>
+              <span style={{ height: '52%' }}></span>
+              <span style={{ height: '42%' }}></span>
+              <span style={{ height: '68%' }}></span>
+              <span style={{ height: '76%' }}></span>
+              <span style={{ height: '92%' }}></span>
+              <span style={{ height: '86%' }}></span>
+            </div>
+          </div>
+
+          <div class="table-box">
+            <table>
+              <thead>
+                <tr><th>Project</th><th>Status</th><th>Owner</th><th>Progress</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Website refresh</td><td>In review</td><td>Harper</td><td>78%</td></tr>
+                <tr><td>Customer onboarding</td><td>Active</td><td>Lucas</td><td>62%</td></tr>
+                <tr><td>Retention campaign</td><td>Planning</td><td>Amelia</td><td>44%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {demo.slug === 'social-media' && (
+      <div class="demo-shell social-demo">
+        <section class="social-grid">
+          <article class="social-card feature-card">
+            <span>Reel concept</span>
+            <h3>“Small moments, big product value.”</h3>
+            <p>Short-form visual storytelling built around product detail, texture, and habit-building.</p>
+          </article>
+          <article class="social-card">
+            <span>Carousel</span>
+            <h3>Before & after styling ideas</h3>
+            <p>Show how a product elevates a room with subtle, useful transformations.</p>
+          </article>
+          <article class="social-card">
+            <span>Launch</span>
+            <h3>New collection teaser</h3>
+            <p>Hooks, story sequencing, and CTA direction for a product launch campaign.</p>
+          </article>
+          <article class="social-card">
+            <span>UGC concept</span>
+            <h3>Customer lifestyle content</h3>
+            <p>Show real use cases that build trust and makes the product feel relevant.</p>
+          </article>
+        </section>
+      </div>
+    )}
+
+    <div class="demo-footer">
+      <p>Demo project only. This concept is a fictional example for portfolio and design exploration.</p>
+      <a class="button" href="/contact">Request a similar project</a>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script is:inline>
+  const cartValue = document.getElementById('cart-count');
+  if (cartValue) {
+    let count = 0;
+    document.querySelectorAll('.add-to-cart').forEach(function (button) {
+      button.addEventListener('click', function () {
+        count += 1;
+        cartValue.textContent = String(count);
+        button.textContent = 'Added';
+        setTimeout(function () {
+          button.textContent = 'Add to cart';
+        }, 1200);
+      });
+    });
+  }
+</script>
+
+<style>
+  .demo-page {
+    width: min(1200px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 3rem 0 0;
+  }
+
+  .demo-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-items: end;
+    padding-bottom: 2rem;
+  }
+
+  .demo-header h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .demo-header p:last-child {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+
+  .demo-shell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+
+  .local-header,
+  .store-header,
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .brand-chip {
+    width: 2.4rem;
+    height: 2.4rem;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-weight: 800;
+  }
+
+  .brand-block strong,
+  .store-header strong,
+  .sidebar-brand {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-strong);
+  }
+
+  .brand-block span,
+  .store-header span {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .local-header nav,
+  .store-header nav,
+  .sidebar nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .local-header nav a,
+  .store-header nav a,
+  .sidebar nav a {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .quote-btn,
+  .cart-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    color: var(--text-strong);
+    font-weight: 700;
+  }
+
+  .hero-panel,
+  .store-hero,
+  .landing-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .hero-panel h2,
+  .store-hero h2,
+  .landing-hero h2 {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    line-height: 1.1;
+    margin: 0 0 1rem;
+  }
+
+  .hero-panel p,
+  .store-hero p,
+  .landing-hero p {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.4rem;
+  }
+
+  .hero-panel img,
+  .store-hero img,
+  .landing-hero img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 24px;
+  }
+
+  .three-col,
+  .review-grid,
+  .feature-grid,
+  .stats {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .three-col,
+  .review-grid,
+  .feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mini-card,
+  .review-card,
+  .feature-card,
+  .stat-box,
+  .product-card,
+  .social-card {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.2rem;
+  }
+
+  .mini-card h3,
+  .review-card strong,
+  .feature-card h3,
+  .product-card h4,
+  .social-card h3 {
+    margin: 0 0 0.7rem;
+  }
+
+  .mini-card p,
+  .review-card span,
+  .feature-card p,
+  .social-card p,
+  .stat-box span,
+  .product-card span {
+    color: var(--muted);
+  }
+
+  .info-strip {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.1rem 0;
+  }
+
+  .info-strip h3 {
+    margin: 0;
+    font-size: clamp(1.8rem, 2vw, 2.4rem);
+  }
+
+  .info-strip p:last-child {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .contact-banner {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    background: #0f172a;
+    color: white;
+    border-radius: 20px;
+    padding: 1.4rem 1.2rem;
+    margin-top: 2rem;
+  }
+
+  .contact-banner h3 {
+    color: white;
+    margin: 0;
+    font-size: clamp(1.6rem, 2vw, 2.3rem);
+  }
+
+  .store-demo .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+  }
+
+  .add-to-cart {
+    border-radius: 999px;
+    background: var(--text-strong);
+    color: white;
+    padding: 0.55rem 0.8rem;
+    font-weight: 700;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .stat-row div {
+    background: var(--surface-soft);
+    border-radius: 16px;
+    padding: 0.8rem 1rem;
+    min-width: 120px;
+    border: 1px solid var(--border);
+  }
+
+  .stat-row strong,
+  .stat-box strong {
+    display: block;
+    font-size: 1.3rem;
+    color: var(--text-strong);
+  }
+
+  .stat-row span {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .benefits-layout {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .benefits-layout h3 {
+    margin: 0;
+    font-size: clamp(1.8rem, 2.2vw, 2.4rem);
+  }
+
+  .benefits-layout ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+
+  .faq-box {
+    margin-top: 2rem;
+  }
+
+  .faq-list {
+    display: grid;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .faq-list details {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem;
+  }
+
+  .faq-list summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .faq-list p {
+    margin: 0.75rem 0 0;
+    color: var(--muted);
+  }
+
+  .dashboard-demo {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1rem;
+  }
+
+  .sidebar {
+    background: #0f172a;
+    color: white;
+    border-radius: 24px;
+    padding: 1.1rem;
+  }
+
+  .sidebar-brand {
+    color: white;
+    margin-bottom: 1.2rem;
+  }
+
+  .sidebar nav {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .sidebar nav a {
+    color: #cbd5e1;
+    padding: 0.7rem 0.8rem;
+    border-radius: 12px;
+  }
+
+  .dashboard-main {
+    padding: 0.5rem 0.2rem;
+  }
+
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 1.2rem;
+  }
+
+  .chart-box,
+  .table-box {
+    margin-top: 1.5rem;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1rem;
+  }
+
+  .bars {
+    display: flex;
+    align-items: end;
+    gap: 0.8rem;
+    height: 180px;
+    padding: 1rem 0 0.5rem;
+  }
+
+  .bars span {
+    display: block;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(180deg, #2dd4bf, #0f766e);
+    min-height: 30%;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.8rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-strong);
+  }
+
+  .social-demo {
+    padding: 1rem 0;
+  }
+
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .social-card {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+  }
+
+  .feature-card {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+  }
+
+  .feature-card span,
+  .feature-card h3,
+  .feature-card p {
+    color: white;
+  }
+
+  .demo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0 3rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+
+  .demo-footer p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .hero-panel,
+    .store-hero,
+    .landing-hero,
+    .dashboard-demo,
+    .three-col,
+    .review-grid,
+    .feature-grid,
+    .stats,
+    .product-grid,
+    .social-grid,
+    .info-strip,
+    .benefits-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .demo-header,
+    .local-header,
+    .store-header,
+    .dashboard-header,
+    .contact-banner,
+    .demo-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-panel img,
+    .store-hero img,
+    .landing-hero img {
+      height: 360px;
+    }
+  }
+</style>

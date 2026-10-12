@@ -2,35 +2,256 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import { siteConfig } from '../data/site';
 ---
 
-<Layout title="Contact | Jutt AI Blog" description="Get in touch about the Jutt AI Blog." url="/contact">
+<Layout title="Contact | Jutt AI" description="Get in touch with Jutt AI for website development, Shopify, SEO, content, and digital growth projects." url="/contact">
   <Navbar />
   <main>
-    <section class="card">
+    <section class="page-top">
       <p class="eyebrow">Contact</p>
-      <h1>Get in touch.</h1>
-      <p>Email us at <a href="mailto:juttwebsolutions@gmail.com">juttwebsolutions@gmail.com</a> for editorial questions or collaboration ideas.</p>
+      <h1>Tell us about your project.</h1>
+      <p>Use the form below to share your goals, or email us directly at <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>. Replace the configuration values before launch with your real contact details and domain.</p>
+    </section>
+
+    <section class="contact-grid">
+      <div class="card">
+        <form id="project-form" class="contact-form" action="/api/leads" method="POST">
+          <label class="honeypot" aria-hidden="true">
+            <span>Leave this field empty</span>
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </label>
+          <div class="field-row">
+            <label>
+              <span>Name</span>
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" placeholder="you@example.com" required />
+            </label>
+          </div>
+          <div class="field-row">
+            <label>
+              <span>Business or brand name</span>
+              <input type="text" name="brand" placeholder="Brand or business name" />
+            </label>
+            <label>
+              <span>Service needed</span>
+              <select name="service">
+                <option>Website development</option>
+                <option>Website sales improvement</option>
+                <option>Website SEO optimization</option>
+                <option>Social media content for shops</option>
+                <option>Software development</option>
+                <option>Shopify store development</option>
+                <option>Shopify product listing and SEO</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            <span>Project budget range</span>
+            <select name="budget">
+              <option>Under $1,000</option>
+              <option>$1,000 - $3,000</option>
+              <option>$3,000 - $7,000</option>
+              <option>$7,000 - $15,000</option>
+              <option>$15,000+</option>
+              <option>Prefer not to say</option>
+            </select>
+          </label>
+          <label>
+            <span>Project description</span>
+            <textarea name="message" rows="6" placeholder="Tell us what you need help with, the current problem, and your goals." required></textarea>
+          </label>
+          <button type="submit" class="button">Send project enquiry</button>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <aside class="card info-card">
+        <p class="eyebrow">Project information</p>
+        <h2>What to include</h2>
+        <ul>
+          <li>What the site or system needs to do</li>
+          <li>Where you feel the current experience is weak</li>
+          <li>Any deadlines or business goals</li>
+          <li>Whether you need strategy, design, build, or optimisation</li>
+        </ul>
+        <div class="contact-block">
+          <strong>Email</strong>
+          <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+        </div>
+        <div class="contact-block">
+          <strong>Location</strong>
+          <span>{siteConfig.location}</span>
+        </div>
+      </aside>
     </section>
   </main>
   <Footer />
 </Layout>
 
+<script is:inline>
+  const form = document.getElementById('project-form');
+  const status = document.getElementById('form-status');
+
+  form?.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const formElement = event.currentTarget;
+    const button = formElement.querySelector('button[type="submit"]');
+    button.disabled = true;
+    status.textContent = 'Sending your enquiry…';
+
+    try {
+      const result = await fetch(formElement.action, {
+        method: formElement.method,
+        body: new FormData(formElement),
+        headers: { Accept: 'application/json' },
+      });
+      const payload = await result.json();
+      status.textContent = payload.message || (result.ok
+        ? 'Your enquiry has been received.'
+        : 'We could not send your enquiry. Please try again.');
+      status.classList.toggle('success', result.ok);
+      if (result.ok) formElement.reset();
+    } catch (error) {
+      console.error('Contact form submission failed:', error);
+      status.textContent = 'We could not send your enquiry. Please check your connection and try again.';
+      status.classList.remove('success');
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
+
 <style>
+  .page-top {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4rem 0 1rem;
+  }
+
+  .page-top h1 {
+    font-size: clamp(2.7rem, 5vw, 4.5rem);
+    line-height: 1.06;
+    margin: 0;
+  }
+
+  .page-top p:last-child {
+    max-width: 760px;
+    color: var(--muted);
+    margin-top: 1rem;
+    font-size: 1.08rem;
+  }
+
+  main {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
   .card {
-    border: 1px solid var(--border);
-    border-radius: 1rem;
     background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
     padding: 1.5rem;
+    box-shadow: var(--shadow);
   }
-  .eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-size: 0.78rem;
+
+  .contact-form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .honeypot {
+    position: absolute;
+    left: -10000px;
+  }
+
+  .form-status {
+    min-height: 1.5em;
+    margin: 0;
+    color: #b42318;
+  }
+
+  .form-status.success {
+    color: var(--accent-strong);
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  label {
+    display: grid;
+    gap: 0.45rem;
+    color: var(--text-strong);
     font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
   }
-  h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin: 0 0 0.75rem; }
-  p { color: var(--muted); }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    background: #fff;
+    color: var(--text-strong);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 150px;
+  }
+
+  .button {
+    margin-top: 0.5rem;
+    width: fit-content;
+  }
+
+  .info-card h2 {
+    margin: 0.5rem 0 0.9rem;
+    font-size: 1.8rem;
+  }
+
+  .info-card ul {
+    margin: 0 0 1.2rem;
+    padding-left: 1.1rem;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+
+  .contact-block {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-block strong {
+    color: var(--text-strong);
+  }
+
+  .contact-block a,
+  .contact-block span {
+    color: var(--muted);
+  }
+
+  @media (max-width: 860px) {
+    .contact-grid,
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

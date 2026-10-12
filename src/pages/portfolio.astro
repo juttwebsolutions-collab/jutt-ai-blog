@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import ContactCta from '../components/ContactCta.astro';
+import { portfolioProjects } from '../data/site';
+
+const filterOptions = ['All', 'Websites', 'E-commerce', 'SEO', 'Software', 'Social Media'];
+---
+
+<Layout title="Portfolio | Jutt AI" description="Explore selected website, SEO, e-commerce, software, and social media concept work by Jutt AI." url="/portfolio">
+  <Navbar />
+  <main>
+    <section class="page-top">
+      <p class="eyebrow">Portfolio</p>
+      <h1 class="page-title">Examples of how Jutt AI shapes digital experiences.</h1>
+      <p class="intro">The portfolio below is a mix of concept work, demo projects, and design explorations created to show how Jutt AI addresses websites, e-commerce flows, SEO, software dashboards, and social content strategy.</p>
+    </section>
+
+    <section class="filters" aria-label="Portfolio filters">
+      {filterOptions.map((option) => (
+        <button class={option === 'All' ? 'filter active' : 'filter'} type="button" data-filter={option}>{option}</button>
+      ))}
+    </section>
+
+    <section class="portfolio-grid">
+      {portfolioProjects.map((project) => (
+        <article class="portfolio-card" data-category={project.category}>
+          <div class="card-label">{project.category}</div>
+          <h2>{project.title}</h2>
+          <p>{project.summary}</p>
+          <div class="tag-row">
+            {project.tags.map((tag) => <span>{tag}</span>)}
+          </div>
+          <a href={project.route}>View project →</a>
+        </article>
+      ))}
+    </section>
+
+    <ContactCta title="Need a custom portfolio or website concept for your brand?" href="/contact" />
+  </main>
+  <Footer />
+</Layout>
+
+<script is:inline>
+  const filterButtons = document.querySelectorAll('.filter');
+  const cards = document.querySelectorAll('.portfolio-card');
+
+  filterButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      const selected = button.dataset.filter;
+      filterButtons.forEach((btn) => btn.classList.toggle('active', btn === button));
+      cards.forEach((card) => {
+        const cardCategory = card.dataset.category;
+        const visible = selected === 'All' || cardCategory === selected;
+        card.style.display = visible ? 'block' : 'none';
+      });
+    });
+  });
+</script>
+
+<style>
+  .page-top {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4rem 0 1rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.6rem, 4vw, 4.3rem);
+    line-height: 1.06;
+    margin: 0;
+  }
+
+  .intro {
+    max-width: 760px;
+    color: var(--muted);
+    margin-top: 1rem;
+    font-size: 1.08rem;
+  }
+
+  main {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    padding-top: 1rem;
+  }
+
+  .filter {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .filter.active {
+    background: var(--text-strong);
+    color: white;
+    border-color: var(--text-strong);
+  }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 0 0;
+  }
+
+  .portfolio-card {
+    display: grid;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+  }
+
+  .card-label {
+    display: inline-flex;
+    width: fit-content;
+    padding: 0.38rem 0.7rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .portfolio-card h2 {
+    margin: 1rem 0 0.75rem;
+    font-size: 1.6rem;
+  }
+
+  .portfolio-card p {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .tag-row span {
+    background: var(--surface-soft);
+    border-radius: 999px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.74rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .portfolio-card a {
+    font-weight: 700;
+  }
+
+  @media (max-width: 860px) {
+    .portfolio-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .portfolio-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

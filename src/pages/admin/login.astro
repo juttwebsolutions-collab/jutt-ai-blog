@@ -1,0 +1,64 @@
+---
+export const prerender = true;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin sign in | Jutt AI</title>
+    <style>
+      :root { font-family: Inter, 'Segoe UI', sans-serif; color: #1c2331; background: #f7f5f2; }
+      * { box-sizing: border-box; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 1rem; }
+      main { width: min(100%, 420px); padding: 2rem; border: 1px solid #dfe7e3; border-radius: 20px; background: white; }
+      h1 { margin-top: 0; }
+      label { display: grid; gap: .5rem; font-weight: 700; }
+      input, button { width: 100%; min-height: 48px; padding: .75rem 1rem; border-radius: 10px; font: inherit; }
+      input { border: 1px solid #dfe7e3; }
+      button { margin-top: 1rem; border: 0; color: white; background: #0f766e; font-weight: 700; cursor: pointer; }
+      #login-status { min-height: 1.5em; color: #b42318; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p>Jutt AI · Private area</p>
+      <h1>Lead dashboard</h1>
+      <form id="login-form">
+        <label for="password">Admin password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <button type="submit">Sign in</button>
+        <p id="login-status" role="status" aria-live="polite"></p>
+      </form>
+    </main>
+    <script is:inline>
+      const form = document.getElementById('login-form');
+      const status = document.getElementById('login-status');
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const button = form.querySelector('button');
+        button.disabled = true;
+        status.textContent = 'Signing in…';
+        try {
+          const response = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: new FormData(form).get('password') }),
+          });
+          const result = await response.json();
+          if (!response.ok) {
+            status.textContent = result.message || 'Could not sign in.';
+            return;
+          }
+          window.location.assign('/admin/leads');
+        } catch (error) {
+          console.error('Admin login request failed:', error);
+          status.textContent = 'Could not sign in. Please try again.';
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

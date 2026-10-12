@@ -1,0 +1,2 @@
+ADMIN_PASSWORD="ReplaceWithALongUniquePassword"
+SESSION_SECRET="ReplaceWithAtLeast32RandomCharacters"

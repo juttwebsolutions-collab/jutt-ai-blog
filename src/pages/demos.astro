@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import ContactCta from '../components/ContactCta.astro';
+import { demoProjects } from '../data/site';
+---
+
+<Layout title="Website Demos | Jutt AI" description="Explore example website, storefront, product landing, dashboard, and social media demos created by Jutt AI." url="/demos">
+  <Navbar />
+  <main>
+    <section class="page-top">
+      <p class="eyebrow">Website demos</p>
+      <h1 class="page-title">Example projects that show how digital experiences can feel clearer and more effective.</h1>
+      <p class="intro">These demo routes showcase fictional projects used to illustrate how Jutt AI approaches website design, UX, conversion improvements, and e-commerce storytelling. Each concept is clearly presented as demo work and can be adapted into a client-ready solution.</p>
+    </section>
+
+    <section class="demo-grid">
+      {demoProjects.map((demo) => (
+        <article class="demo-card">
+          <div class="thumb" style={{ background: demo.accent }}></div>
+          <div class="body">
+            <span class="tag">{demo.tag}</span>
+            <h2>{demo.title}</h2>
+            <p>{demo.description}</p>
+            <a href={demo.route}>Open demo →</a>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <ContactCta title="Need a custom version of one of these concepts?" href="/contact" />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page-top {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4rem 0 1rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.7rem, 4vw, 4.4rem);
+    line-height: 1.08;
+    margin: 0;
+  }
+
+  .intro {
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 1.08rem;
+    margin-top: 1rem;
+  }
+
+  main {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+  }
+
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  .demo-card {
+    display: grid;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .thumb {
+    height: 160px;
+    background: linear-gradient(135deg, #0f172a, #475569);
+  }
+
+  .body {
+    padding: 1.4rem;
+  }
+
+  .tag {
+    display: inline-flex;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 1rem 0 0.6rem;
+    font-size: 1.6rem;
+  }
+
+  .body p {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .body a {
+    display: inline-flex;
+    margin-top: 1rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 900px) {
+    .demo-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 620px) {
+    .demo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

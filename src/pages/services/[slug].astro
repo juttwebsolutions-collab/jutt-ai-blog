@@ -1,0 +1,219 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { servicePages, siteConfig } from '../../data/site';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return servicePages.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+---
+
+<Layout title={`${service.title} | Jutt AI`} description={service.summary} url={`/services/${service.slug}`}>
+  <Navbar />
+  <main>
+    <section class="page-top">
+      <p class="eyebrow">{service.title}</p>
+      <h1 class="page-title">{service.kicker}</h1>
+      <p class="intro">{service.summary}</p>
+    </section>
+
+    <section class="section-shell grid-2">
+      <div class="card">
+        <p class="eyebrow">Problems this addresses</p>
+        <ul>
+          {service.problems.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <div class="card">
+        <p class="eyebrow">Deliverables</p>
+        <ul>
+          {service.deliverables.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section-shell process-block">
+      <p class="eyebrow">Working process</p>
+      <h2>How the project moves forward</h2>
+      <div class="process-grid">
+        {service.process.map((step, index) => (
+          <article class="process-card">
+            <span class="step">0{index + 1}</span>
+            <p>{step}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-shell">
+      <p class="eyebrow">FAQs</p>
+      <h2>Common questions</h2>
+      <div class="faq-list">
+        {service.faqs.map((item) => (
+          <details>
+            <summary>{item.question}</summary>
+            <p>{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-shell related-links">
+      <p class="eyebrow">Related work</p>
+      <div class="related-grid">
+        <a href="/demos" class="panel-link">View website demos</a>
+        <a href="/portfolio" class="panel-link">Explore portfolio</a>
+        <a href="/contact" class="panel-link accent">Request a project quote</a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page-top {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4rem 0 1rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+    line-height: 1.06;
+    margin: 0;
+  }
+
+  .intro {
+    max-width: 760px;
+    color: var(--muted);
+    font-size: 1.08rem;
+    margin-top: 1rem;
+  }
+
+  .section-shell {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding-top: 3rem;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.6rem;
+    box-shadow: var(--shadow);
+  }
+
+  .card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--text-strong);
+    line-height: 1.9;
+  }
+
+  .process-block h2,
+  .faq-list + h2,
+  .section-shell h2 {
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 3vw, 2.8rem);
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .process-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 1.2rem;
+    box-shadow: var(--shadow);
+  }
+
+  .step {
+    display: inline-flex;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+  }
+
+  .process-card p {
+    margin: 1rem 0 0;
+    color: var(--muted);
+  }
+
+  .faq-list {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1rem 1.2rem;
+    box-shadow: var(--shadow);
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--text-strong);
+  }
+
+  details p {
+    margin: 0.8rem 0 0;
+    color: var(--muted);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .panel-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 86px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    font-weight: 700;
+    color: var(--text-strong);
+  }
+
+  .panel-link.accent {
+    background: var(--text-strong);
+    color: white;
+    border-color: var(--text-strong);
+  }
+
+  @media (max-width: 860px) {
+    .grid-2,
+    .process-grid,
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,498 +1,661 @@
-﻿
 ---
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import BlogImage from '../components/BlogImage.astro';
-import { getCollection } from 'astro:content';
-import { resolveImagePath } from '../utils/image';
+import { demoProjects, portfolioProjects, servicePages, defaultFaqs, siteConfig } from '../data/site';
 
-const posts = (await getCollection('blog'))
-  .map((entry) => {
-    const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
-    const pubDate =
-      entry.data.pubDate instanceof Date
-        ? entry.data.pubDate
-        : new Date(entry.data.pubDate);
-
-    return {
-      ...entry.data,
-      slug,
-      date: pubDate.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      }),
-      image: resolveImagePath(entry.data.heroImage),
-      description: entry.data.description
-    };
-  })
-  .sort((a, b) => {
-  return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
-});
-
-const [featuredPost, ...latestPosts] = posts;
+const processSteps = [
+  { title: 'Discover', description: 'Understand your business, audience, and the real bottlenecks slowing growth.' },
+  { title: 'Plan', description: 'Shape the page structure, conversion flow, and content priorities before build begins.' },
+  { title: 'Build', description: 'Design and develop a polished digital experience with practical business logic.' },
+  { title: 'Optimize', description: 'Improve performance, messaging, and UX so the site works harder after launch.' },
+  { title: 'Deliver', description: 'Launch confidently with clear next steps and a solution ready for real use.' },
+];
 ---
 
-
-<Layout title="Jutt Ai Blog | Tech News, Guides & Fixes" description="A premium technology news destination for guides, reviews, and practical tech fixes." url="/">
+<Layout title="Jutt AI | Website Development, Shopify, SEO & Digital Growth" description={siteConfig.baseDescription} url="/">
   <Navbar />
-  <main class="home-layout">
-    <section class="hero-panel">
+  <main>
+    <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Jutt Ai Blog</p>
-        <h1>Modern Tech With Mobile Specs, Trending Topics To Go Viral, Ai & Tech News</h1>
-        <p>Stay informed with premium updates on AI tools, technology news, products,Mobile Spec & Comparison and practical how-to guides.</p>
+        <p class="eyebrow">Digital growth for modern businesses</p>
+        <h1>We build websites, improve online sales, and create digital experiences that help businesses grow.</h1>
+        <p class="lead">Jutt AI helps small businesses, Shopify brands, startups, and service companies create polished online experiences that feel credible, convert better, and support long-term growth.</p>
         <div class="hero-actions">
-          <a class="button" href="/blog">Browse articles</a>
-          <a class="button secondary" href="/about">About us</a>
+          <a class="button" href="/contact">Discuss Your Project</a>
+          <a class="button secondary" href="/demos">View Website Demos</a>
+        </div>
+        <div class="mini-trust">
+          <span>Web design</span>
+          <span>Shopify</span>
+          <span>SEO</span>
+          <span>Content</span>
         </div>
       </div>
 
-      <div class="hero-feature">
-        <div class="hero-label">Featured story</div>
-        <a class="hero-card" href={`/blog/${featuredPost?.slug}`}>
-          <BlogImage
-            src={featuredPost?.image}
-            alt={featuredPost?.title ?? 'Featured article'}
-            class="hero-image"
-            priority={true}
-          />
-          <div class="hero-card-body">
-            <span class="label">{featuredPost?.category}</span>
-            <h2>{featuredPost?.title}</h2>
-            <p>{featuredPost?.description}</p>
-            <div class="meta">{featuredPost?.author} · {featuredPost?.date}</div>
-          </div>
-        </a>
+      <div class="hero-visual" aria-label="Agency showcase">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80" alt="A digital agency team reviewing website strategy and design" />
+        <div class="floating-card">
+          <span class="card-tag">Focused on growth</span>
+          <strong>Clear strategy. Better customer journeys. Real business impact.</strong>
+        </div>
       </div>
     </section>
 
-    <div class="home-grid">
-      <section class="main-column">
-        <div class="section-header">
-          <div>
-            <p class="eyebrow">Read more</p>
-            <h2>Latest insights</h2>
-          </div>
-          <a class="button outline" href="/blog">View all articles</a>
-        </div>
+    <section class="trust-intro">
+      <div class="intro-copy">
+        <p class="eyebrow">Why Jutt AI</p>
+        <h2>Professional digital services built around business goals.</h2>
+      </div>
+      <p>Jutt AI combines web design, e-commerce strategy, conversion improvements, SEO, and content systems into a practical service for growing businesses. The goal is not simply a pretty website — it is a stronger digital experience that supports enquiries, sales, and customer trust.</p>
+    </section>
 
-        <div class="posts-grid">
-          {latestPosts.slice(0, 8).map((post) => (
-            <article class="story-card">
-              <a href={`/blog/${post.slug}`} class="story-image-link">
-                <BlogImage src={post.image} alt={post.title} class="story-image" />
-              </a>
-              <div class="story-body">
-                <span class="tag">{post.category}</span>
-                <h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
-                <p>{post.description}</p>
-                <div class="story-meta">{post.author} · {post.date}</div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+    <section class="section-shell">
+      <div class="section-header">
+        <p class="eyebrow">Services</p>
+        <h2>What we do</h2>
+      </div>
+      <div class="grid-3 service-grid">
+        {servicePages.map((service) => (
+          <article class="service-card">
+            <span class="service-tag">{service.title}</span>
+            <h3>{service.title}</h3>
+            <p>{service.summary}</p>
+            <a href={`/services/${service.slug}`}>Learn more →</a>
+          </article>
+        ))}
+      </div>
+    </section>
 
-      <aside class="sidebar" aria-label="Sidebar">
-        <div class="widget widget-follow">
-          <div class="widget-header">
-            <p class="eyebrow">Follow Us</p>
-            <h3>Stay connected</h3>
-          </div>
-          <div class="social-grid">
-            <a href="#" class="social-pill facebook">Facebook</a>
-            <a href="#" class="social-pill x">X</a>
-            <a href="#" class="social-pill instagram">Instagram</a>
-            <a href="#" class="social-pill youtube">YouTube</a>
-          </div>
-        </div>
+    <section class="section-shell">
+      <div class="section-header">
+        <p class="eyebrow">Website demos</p>
+        <h2>Example work and storefront concepts</h2>
+      </div>
+      <div class="grid-3 demo-grid">
+        {demoProjects.map((demo) => (
+          <article class="demo-card">
+            <div class="demo-thumb" style={{ background: demo.accent }} />
+            <div class="demo-body">
+              <span class="demo-tag">{demo.tag}</span>
+              <h3>{demo.title}</h3>
+              <p>{demo.description}</p>
+              <a href={demo.route}>Open demo →</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
 
-        <div class="widget widget-popular">
-          <div class="widget-header">
-            <p class="eyebrow">Popular Posts</p>
-            <h3>Top stories</h3>
-          </div>
-          <div class="popular-list">
-            {posts.slice(0, 4).map((post) => (
-              <a class="popular-card" href={`/blog/${post.slug}`}>
-                <BlogImage src={post.image} alt={post.title} class="popular-thumb" />
-                <div>
-                  <span class="tag">{post.category}</span>
-                  <h4>{post.title}</h4>
-                </div>
-              </a>
-            ))}
-          </div>
+    <section class="section-shell portfolio-section">
+      <div class="section-header split-header">
+        <div>
+          <p class="eyebrow">Portfolio</p>
+          <h2>Selected demonstration projects</h2>
         </div>
+        <a class="button secondary" href="/portfolio">Explore portfolio</a>
+      </div>
+      <div class="portfolio-grid">
+        {portfolioProjects.map((project) => (
+          <article class="portfolio-card">
+            <div class="portfolio-topline">
+              <span>{project.category}</span>
+            </div>
+            <h3>{project.title}</h3>
+            <p>{project.summary}</p>
+            <div class="tag-row">
+              {project.tags.map((tag) => <span>{tag}</span>)}
+            </div>
+            <a href={project.route}>View project →</a>
+          </article>
+        ))}
+      </div>
+    </section>
 
-        <div class="widget widget-newsletter">
-          <div class="widget-header">
-            <p class="eyebrow">Stay informed</p>
-            <h3>Subscribe for new updates</h3>
-          </div>
-          <p>Subscribe to our mailing list to get the latest updates on AI, tech guides, and breaking news.</p>
-          <form class="newsletter-form" action="/" method="get">
-            <label class="sr-only" for="newsletter-email">Email address</label>
-            <input id="newsletter-email" name="email" type="email" placeholder="Email Address" aria-label="Email address" />
-            <button class="button" type="submit">Subscribe</button>
-          </form>
+    <section class="section-shell info-panel">
+      <div class="info-copy">
+        <p class="eyebrow">Sales improvement</p>
+        <h2>Many websites lose sales because the user journey is unclear.</h2>
+        <p>Common issues include weak product messaging, cluttered navigation, unclear CTAs, and a mobile experience that makes buying harder than it should be. Jutt AI focuses on the points that actually influence decisions: trust, clarity, message hierarchy, and purchase flow.</p>
+        <ul>
+          <li>Landing page and product page improvements</li>
+          <li>CTA placement and message refinement</li>
+          <li>Navigation and mobile UX improvements</li>
+          <li>Trust signals and checkout friction review</li>
+        </ul>
+      </div>
+      <div class="info-visual">
+        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80" alt="Business discussion about website optimisation and conversion strategy" />
+      </div>
+    </section>
+
+    <section class="section-shell info-panel alt-panel">
+      <div class="info-visual">
+        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80" alt="Digital analytics and SEO dashboard on a laptop" />
+      </div>
+      <div class="info-copy">
+        <p class="eyebrow">SEO and optimisation</p>
+        <h2>Search-friendly websites need structure, not guesswork.</h2>
+        <p>Good SEO is not just keywords. It starts with technical quality, meaningful content structure, page hierarchy, metadata, and a positive user experience. Jutt AI works to improve the parts of the site that support visibility and usability without guaranteeing rankings or traffic.</p>
+        <ul>
+          <li>Technical SEO and on-page improvements</li>
+          <li>Metadata, heading structure, and internal links</li>
+          <li>Image optimisation and performance improvements</li>
+          <li>Search-friendly content and sitemap guidance</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section-shell content-showcase">
+      <div class="section-header">
+        <p class="eyebrow">Social media content</p>
+        <h2>Content systems for product stories and launch moments</h2>
+      </div>
+      <div class="content-grid">
+        <div class="content-card feature">
+          <span>Instagram carousels</span>
+          <h3>Product-led storytelling that builds desire.</h3>
         </div>
-      </aside>
+        <div class="content-card">
+          <span>Reels concepts</span>
+          <h3>Short-form hooks for product value and launch campaigns.</h3>
+        </div>
+        <div class="content-card">
+          <span>Content calendars</span>
+          <h3>Planned, repeatable posting ideas for shops and brands.</h3>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell">
+      <div class="section-header">
+        <p class="eyebrow">Process</p>
+        <h2>How projects move forward</h2>
+      </div>
+      <div class="process-grid">
+        {processSteps.map((step, index) => (
+          <article class="process-card">
+            <span class="step-number">0{index + 1}</span>
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-shell reasons">
+      <div class="section-header">
+        <p class="eyebrow">Why choose Jutt AI</p>
+        <h2>Practical work, clear thinking, and business-focused design.</h2>
+      </div>
+      <div class="reason-grid">
+        <article class="reason-card">
+          <h3>Business-first thinking</h3>
+          <p>Every page and system is designed to support real goals, not just an aesthetic trend.</p>
+        </article>
+        <article class="reason-card">
+          <h3>Clear conversion focus</h3>
+          <p>Messaging, layout, and navigation are shaped around user intent and purchase flow.</p>
+        </article>
+        <article class="reason-card">
+          <h3>Practical digital systems</h3>
+          <p>From websites to Shopify improvements and lightweight software, the work is built for use.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-shell faq-section">
+      <div class="section-header">
+        <p class="eyebrow">FAQs</p>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq-list">
+        {defaultFaqs.map((faq) => (
+          <details>
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <div class="final-cta">
+      <div>
+        <p class="eyebrow">Ready to build smarter?</p>
+        <h2>Let’s create a website or digital system that works harder for your business.</h2>
+      </div>
+      <a class="button" href="/contact">Get a Quote</a>
     </div>
   </main>
   <Footer />
 </Layout>
 
 <style>
-  .home-layout {
+  .hero {
     display: grid;
+    grid-template-columns: 1.2fr 1fr;
     gap: 2rem;
-    padding: 2rem 0 3rem;
-  }
-
-  .hero-panel {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr);
-    align-items: start;
+    padding: 4rem 0 2rem;
+    align-items: center;
   }
 
   .hero-copy {
     display: grid;
-    gap: 1.25rem;
+    gap: 1.2rem;
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.8rem, 4.5vw, 4.6rem);
-    line-height: 1.05;
-    max-width: 12ch;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 1.02;
+    margin: 0;
   }
 
-  .hero-copy p {
-    margin: 0;
-    max-width: 42rem;
+  .lead {
+    font-size: 1.1rem;
     color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.8;
+    max-width: 650px;
   }
 
   .hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.85rem;
+    gap: 0.9rem;
+    margin-top: 0.6rem;
   }
 
-  .hero-feature {
-    display: grid;
-    gap: 1rem;
+  .mini-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 0.3rem;
   }
 
-  .hero-label {
+  .mini-trust span {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--accent);
-  }
-
-  .hero-card {
-    display: grid;
-    gap: 1rem;
-    border-radius: 1.75rem;
-    overflow: hidden;
-    border: 1px solid var(--border);
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
     background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .hero-visual {
+    position: relative;
+    min-height: 520px;
+    border-radius: 30px;
+    overflow: hidden;
     box-shadow: var(--shadow);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
-  .hero-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 25px 45px rgba(15, 23, 42, 0.12);
-  }
-
-  .hero-image {
+  .hero-visual img {
     width: 100%;
-    height: 320px;
+    height: 100%;
     object-fit: cover;
   }
 
-  .hero-card-body {
-    padding: 1.5rem;
-    display: grid;
-    gap: 0.9rem;
+  .floating-card {
+    position: absolute;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    background: rgba(15, 23, 42, 0.82);
+    color: white;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
   }
 
-  .hero-card-body .label {
-    display: inline-flex;
-    padding: 0.4rem 0.75rem;
+  .card-tag {
+    display: inline-block;
+    padding: 0.35rem 0.7rem;
     border-radius: 999px;
-    background: var(--surface-alt);
-    color: var(--accent-strong);
-    font-size: 0.82rem;
+    background: rgba(45, 212, 191, 0.2);
+    color: #99f6e4;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
-  .hero-card-body h2 {
-    margin: 0;
-    font-size: clamp(1.8rem, 2.5vw, 2.5rem);
-    line-height: 1.2;
+  .floating-card strong {
+    display: block;
+    font-size: 1.1rem;
+    line-height: 1.5;
   }
 
-  .hero-card-body p {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.75;
-  }
-
-  .hero-card-body .meta {
-    color: var(--muted);
-    font-size: 0.95rem;
-  }
-
-  .home-grid {
+  .trust-intro {
     display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
     gap: 2rem;
-    grid-template-columns: minmax(0, 2.1fr) minmax(280px, 1fr);
-    align-items: start;
+    align-items: end;
+    padding-top: 1rem;
   }
 
-  .main-column {
-    display: grid;
-    gap: 1.5rem;
+  .trust-intro h2 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    margin: 0;
+  }
+
+  .trust-intro p:last-child {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 700px;
+  }
+
+  .section-shell {
+    padding-top: 5rem;
   }
 
   .section-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
   }
 
   .section-header h2 {
     margin: 0;
-    font-size: clamp(2rem, 2.5vw, 2.6rem);
+    font-size: clamp(2rem, 2.8vw, 2.8rem);
+    line-height: 1.15;
   }
 
-  .posts-grid {
-    display: grid;
-    gap: 1.3rem;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .split-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
   }
 
-  .story-card {
-    display: grid;
-    gap: 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 1.25rem;
-    background: var(--surface);
-    overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .story-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
-  }
-
-  .story-image-link {
-    display: block;
-    overflow: hidden;
-  }
-
-  .story-image {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-
-  .story-body {
-    display: grid;
-    gap: 0.6rem;
-    padding: 1rem;
-  }
-
-  .story-body .tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.3rem 0.65rem;
-    border-radius: 999px;
-    background: var(--surface-alt);
-    color: var(--accent-strong);
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .story-body h3 {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 1.25;
-  }
-
-  .story-body p {
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.65;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .story-meta {
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-
-  .sidebar {
+  .service-grid,
+  .demo-grid,
+  .portfolio-grid,
+  .process-grid,
+  .reason-grid {
     display: grid;
     gap: 1.5rem;
   }
 
-  .widget {
-    border: 1px solid var(--border);
-    border-radius: 1.5rem;
-    background: var(--surface);
-    padding: 1.4rem;
-    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.05);
+  .service-grid,
+  .demo-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .widget-header {
-    display: grid;
-    gap: 0.35rem;
+  .service-card,
+  .demo-card,
+  .portfolio-card,
+  .process-card,
+  .reason-card,
+  .content-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .service-tag,
+  .demo-tag {
+    display: inline-flex;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .service-card h3,
+  .demo-card h3,
+  .portfolio-card h3,
+  .process-card h3,
+  .reason-card h3,
+  .content-card h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.4rem;
+  }
+
+  .service-card p,
+  .demo-card p,
+  .portfolio-card p,
+  .process-card p,
+  .reason-card p,
+  .content-card p,
+  .info-copy p,
+  .faq-list p {
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .service-card a,
+  .demo-card a,
+  .portfolio-card a {
+    display: inline-flex;
+    margin-top: 1.2rem;
+    font-weight: 700;
+  }
+
+  .demo-thumb {
+    height: 180px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #0f172a, #475569);
+  }
+
+  .portfolio-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .portfolio-topline {
+    display: flex;
+    justify-content: flex-start;
     margin-bottom: 1rem;
   }
 
-  .widget-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-  }
-
-  .social-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-
-  .social-pill {
+  .portfolio-topline span {
     display: inline-flex;
+    background: var(--surface-strong);
+    color: var(--accent-strong);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag-row span {
+    display: inline-flex;
+    border-radius: 999px;
+    background: var(--surface-soft);
+    padding: 0.35rem 0.7rem;
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+
+  .info-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .alt-panel {
+    padding-top: 2rem;
+  }
+
+  .info-copy h2 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    margin: 0 0 1rem;
+  }
+
+  .info-copy ul {
+    margin: 1.25rem 0 0;
+    padding-left: 1.25rem;
+    color: var(--text-strong);
+    line-height: 1.9;
+  }
+
+  .info-visual img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 26px;
+    box-shadow: var(--shadow);
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .content-card {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+  }
+
+  .content-card.feature {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+  }
+
+  .content-card.feature span,
+  .content-card.feature h3 {
+    color: white;
+  }
+
+  .content-card span {
+    color: var(--accent-strong);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.73rem;
+  }
+
+  .process-grid,
+  .reason-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .process-card {
+    min-height: 240px;
+  }
+
+  .step-number {
+    display: inline-flex;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 12px;
     align-items: center;
     justify-content: center;
-    min-height: 48px;
-    border-radius: 14px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-    color: white;
-    background: #1f2937;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-weight: 800;
+    letter-spacing: 0.06em;
   }
 
-  .social-pill:hover {
-    transform: translateY(-1px);
-    opacity: 0.95;
+  .reason-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .social-pill.facebook { background: #1877f2; }
-  .social-pill.x { background: #0a0a0a; }
-  .social-pill.instagram { background: radial-gradient(circle at 30% 30%, #feda75, #d62976 40%, #962fbf 60%, #4f5bd5); }
-  .social-pill.youtube { background: #ff0000; }
-
-  .popular-list {
+  .faq-list {
     display: grid;
-    gap: 1rem;
+    gap: 0.8rem;
+    max-width: 900px;
   }
 
-  .popular-card {
-    display: grid;
-    grid-template-columns: 90px 1fr;
-    gap: 0.9rem;
-    align-items: flex-start;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .popular-thumb {
-    width: 90px;
-    height: 90px;
-    object-fit: cover;
+  .faq-list details {
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 18px;
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow);
   }
 
-  .popular-card h4 {
-    margin: 0;
-    font-size: 0.98rem;
-    line-height: 1.25;
+  .faq-list summary {
+    cursor: pointer;
+    font-weight: 700;
     color: var(--text-strong);
   }
 
-  .popular-card .tag {
-    background: rgba(37, 99, 235, 0.1);
-    color: #1d4ed8;
-    text-transform: uppercase;
-    font-size: 0.72rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 999px;
+  .faq-list p {
+    margin-top: 0.9rem;
   }
 
-  .newsletter-form {
-    display: grid;
-    gap: 0.9rem;
+  .final-cta {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 5rem auto 0;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border-radius: 28px;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    color: white;
   }
 
-  .newsletter-form input {
-    min-height: 50px;
-    padding: 0.95rem 1rem;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: var(--surface-alt);
+  .final-cta h2 {
+    color: white;
+    margin: 0;
+    font-size: clamp(1.7rem, 2vw, 2.5rem);
+    max-width: 620px;
   }
 
-  .newsletter-form button {
-    width: 100%;
-  }
+  @media (max-width: 980px) {
+    .hero,
+    .trust-intro,
+    .info-panel,
+    .content-grid,
+    .service-grid,
+    .demo-grid,
+    .portfolio-grid,
+    .process-grid,
+    .reason-grid {
+      grid-template-columns: 1fr 1fr;
+    }
 
-  @media (max-width: 1060px) {
-    .home-grid {
+    .hero {
       grid-template-columns: 1fr;
     }
 
-    .posts-grid {
-      grid-template-columns: 1fr;
+    .process-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (max-width: 760px) {
-    .hero-panel,
-    .home-grid {
+  @media (max-width: 720px) {
+    .service-grid,
+    .demo-grid,
+    .portfolio-grid,
+    .info-panel,
+    .content-grid,
+    .process-grid,
+    .reason-grid {
       grid-template-columns: 1fr;
     }
 
-    .hero-image {
-      height: 260px;
-    }
-
-    .story-image {
-      height: 200px;
-    }
-  }
-
-  @media (max-width: 520px) {
-    .hero-copy h1 {
-      font-size: clamp(2.2rem, 8vw, 3.2rem);
-    }
-
-    .social-grid {
-      grid-template-columns: 1fr;
+    .split-header,
+    .final-cta {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 </style>

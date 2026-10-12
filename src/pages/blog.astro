@@ -22,7 +22,7 @@ const posts = (await getCollection('blog'))
   .sort((a, b) => new Date(b.pubDate).valueOf() - new Date(a.pubDate).valueOf());
 ---
 
-<Layout title="Latest Articles | Jutt Solutions" description="Browse the latest posts on AI tools, tech reviews, and guides." url="/blog">
+<Layout title="Latest Articles | Jutt Ai Blog" description="Browse the latest posts on AI tools, tech reviews, and guides." url="/blog">
   <Navbar />
   <main class="blog-page">
     <section class="hero-section">

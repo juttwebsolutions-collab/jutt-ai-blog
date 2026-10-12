@@ -16,6 +16,7 @@ tags:
   - "Perseid peak"
   - "astronomy"
   - "night sky"
+  
 author: "Jutt AI Blog"
 pubDate: 2026-08-08
 heroImage: "https://images.unsplash.com/photo-1534791547706-9e8a5e0a5a5e?auto=format&fit=crop&w=1600&q=80"

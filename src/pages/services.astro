@@ -1,0 +1,183 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import ContactCta from '../components/ContactCta.astro';
+import { servicePages, siteConfig } from '../data/site';
+---
+
+<Layout title="Services | Jutt AI" description="Explore digital services including web design, SEO, Shopify development, conversion improvements, and content strategy." url="/services">
+  <Navbar />
+  <main>
+    <section class="page-top">
+      <p class="eyebrow">Services</p>
+      <h1 class="page-title">Digital services designed around business growth.</h1>
+      <p class="intro">Jutt AI supports the parts of your digital presence that influence trust, customer decisions, and long-term visibility. Every service is structured to improve your website, user journey, and the way your brand communicates value.</p>
+    </section>
+
+    <section class="section-shell">
+      <SectionHeader eyebrow="What we provide" title="Focused digital solutions for real business needs" intro="From websites and Shopify stores to SEO, sales audits, and content systems, each service is built around clarity, usability, and practical business outcomes." />
+      <div class="service-grid">
+        {servicePages.map((service) => (
+          <article class="service-card">
+            <span class="tag">{service.title}</span>
+            <h3>{service.title}</h3>
+            <p>{service.summary}</p>
+            <a href={`/services/${service.slug}`}>Explore service →</a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-shell process-panel">
+      <div class="process-copy">
+        <p class="eyebrow">Our approach</p>
+        <h2>Clear strategy before design and development.</h2>
+        <p>We start by understanding the business, the buyer journey, and where friction or confusion is affecting outcomes. From there, the work is shaped into a more effective user experience and a stronger digital presence.</p>
+      </div>
+      <div class="process-list">
+        <div><strong>01</strong><span>Audit the current experience and goals.</span></div>
+        <div><strong>02</strong><span>Prioritise high-impact improvements.</span></div>
+        <div><strong>03</strong><span>Implement the site, messaging, or system updates.</span></div>
+        <div><strong>04</strong><span>Refine the final experience for clarity and conversion.</span></div>
+      </div>
+    </section>
+
+    <ContactCta title="Need help choosing the right service?" href="/contact" />
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page-top {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 4rem 0 1rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    line-height: 1.06;
+    margin: 0;
+  }
+
+  .intro {
+    max-width: 760px;
+    color: #475569;
+    font-size: 1.08rem;
+    margin-top: 1rem;
+  }
+
+  .section-shell {
+    width: min(1180px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding-top: 4rem;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .service-card {
+    display: grid;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .tag {
+    display: inline-flex;
+    width: fit-content;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.7rem;
+  }
+
+  .service-card h3 {
+    margin: 1rem 0 0.75rem;
+    font-size: 1.5rem;
+  }
+
+  .service-card p {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .service-card a {
+    margin-top: 1.25rem;
+    font-weight: 700;
+  }
+
+  .process-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .process-copy h2 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    margin: 0 0 0.75rem;
+  }
+
+  .process-copy p:last-child {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .process-list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .process-list div {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 1rem 1.2rem;
+    box-shadow: var(--shadow);
+  }
+
+  .process-list strong {
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.9rem;
+  }
+
+  .process-list span {
+    color: var(--text-strong);
+    font-weight: 600;
+  }
+
+  @media (max-width: 960px) {
+    .service-grid,
+    .process-panel {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .service-grid,
+    .process-panel {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
