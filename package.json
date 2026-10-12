@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "npm run build && wrangler deploy",
-    "astro": "astro"
+    "astro": "astro",
+    "generate-types": "wrangler types"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.4",
