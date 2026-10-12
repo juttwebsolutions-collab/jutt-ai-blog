@@ -12,6 +12,6 @@ export default defineConfig({
     imagesBindingName: false,
     prerenderEnvironment: 'node',
   }),
-  site: 'https://yourdomain.com',
+  site: 'https://juttaiblog.online',
   integrations: [sitemap()],
 });
