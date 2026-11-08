@@ -10,7 +10,10 @@ export const siteConfig = {
 };
 
 export const navItems = [
-  { label: 'AI Tools', href: '/' },
+  { label: 'Tools', href: '/' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Services', href: '/services' },
+  { label: 'Demos', href: '/demos' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

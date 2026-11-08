@@ -1,6 +1,6 @@
-# Jutt AI Tools
+# Jutt AI
 
-Jutt AI Tools is a dedicated online utilities hub with tool pages generated from the registry at `/tools/<tool-id>`. It uses Tailwind CSS, Astro server output, and the Cloudflare adapter.
+Jutt AI is a hybrid tools hub and SEO blog. The homepage contains the searchable utility catalog and recent articles, `/blog` lists the full archive, and `/blog/<slug>` serves individual articles. Tool pages are generated from the registry at `/tools/<tool-id>`. The site uses Tailwind CSS, Astro server output, and the Cloudflare adapter.
 
 ## Local development
 
@@ -25,6 +25,10 @@ Append a `Tool` object to [`src/data/tools.ts`](./src/data/tools.ts) with a uniq
 - For browser-only tools, set `type: 'client'` and select a supported `clientAction`. These tools run locally without API requests. Add a new `ClientAction` and handler in the tool page to support a new kind of utility.
 
 The homepage search and category tabs, sitemap, and `/tools/<id>` route all use this registry. The API only accepts configured AI tool IDs.
+
+## Blog content
+
+Add Markdown articles under `src/content/blog/`. Each post requires `title`, `description`, `pubDate`, `category`, and `author`; `tags`, `featured`, `heroImage`, and `slug` are optional. If `slug` is omitted, the Markdown filename determines the `/blog/<slug>` URL. Blog routes are generated from the collection and included in the sitemap.
 
 AI tool usage has a client-side limit of 10 generations per device per UTC day. This is a convenience limit stored in browser local storage, not a server-enforced quota. The AdSense spaces are placeholders; connect them to your approved publisher and ad-unit IDs before serving ads.
 

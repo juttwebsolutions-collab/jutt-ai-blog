@@ -1,0 +1,78 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { getReadingTime, resolveImagePath } from '../../utils/image';
+
+const posts = (await getCollection('blog'))
+  .map((entry) => {
+    const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
+    const pubDate = entry.data.pubDate;
+
+    return {
+      ...entry.data,
+      slug,
+      date: pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+      image: resolveImagePath(entry.data.heroImage),
+      readingTime: getReadingTime(entry.body ?? entry.data.description),
+    };
+  })
+  .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+---
+
+<Layout
+  title="Blog: Latest Articles & Guides | Jutt AI"
+  description="Read the latest AI, technology, and practical online guides from Jutt AI."
+  url="/blog"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1180px,calc(100%-2rem))] pb-16">
+    <header class="py-14 sm:py-20">
+      <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.18em] text-teal-800">Jutt AI Blog</p>
+      <h1 class="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-5xl">
+        Articles, explainers & practical guides
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+        Explore the latest stories on AI, technology, and useful ideas for everyday work and life.
+      </p>
+    </header>
+
+    <section aria-label="All articles">
+      <div class="mb-5 flex items-center justify-between gap-4">
+        <h2 class="text-2xl font-extrabold text-slate-950">All articles</h2>
+        <span class="text-sm text-slate-500">{posts.length} articles</span>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {posts.map((post) => (
+          <article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <a href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>
+              <img
+                src={post.image}
+                alt={post.title}
+                class="h-52 w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            <div class="flex flex-1 flex-col p-5">
+              <div class="mb-3 flex items-center justify-between gap-3 text-xs text-slate-500">
+                <span class="rounded-full bg-teal-50 px-3 py-1 font-bold text-teal-900">{post.category}</span>
+                <span>{post.readingTime}</span>
+              </div>
+              <h3 class="text-lg font-extrabold leading-snug text-slate-950 group-hover:text-teal-800">
+                <a href={`/blog/${post.slug}`}>{post.title}</a>
+              </h3>
+              <p class="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{post.description}</p>
+              <div class="mt-auto flex items-center justify-between gap-3 pt-5 text-xs text-slate-500">
+                <span>{post.author} · {post.date}</span>
+                <a class="shrink-0 font-bold text-teal-800" href={`/blog/${post.slug}`}>Read →</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

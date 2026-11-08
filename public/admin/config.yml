@@ -1,0 +1,28 @@
+backend:
+  name: github
+  repo: juttwebsolutions-collab/jutt-ai-blog
+  branch: main
+
+media_folder: "public/images/blog"
+public_folder: "/images/blog"
+
+publish_mode: editorial_workflow
+
+collections:
+  - name: "blog"
+    label: "Blog Posts"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
+      - { label: "Category", name: "category", widget: "string" }
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
+      - { label: "Tags", name: "tags", widget: "list" }
+      - { label: "Hero Image", name: "heroImage", widget: "image" }
+      - { label: "Body", name: "body", widget: "markdown" }
