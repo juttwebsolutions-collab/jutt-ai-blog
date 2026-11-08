@@ -15,7 +15,7 @@ For local AI generation, create a root `.dev.vars` file (it is git-ignored) and 
 GEMINI_API_KEY=your-key
 ```
 
-Never commit API keys. For Cloudflare Pages, add `GEMINI_API_KEY` as an encrypted secret in the Pages project’s **Settings → Variables and Secrets**, then deploy.
+Never commit API keys. For Cloudflare Pages, add `GEMINI_API_KEY` as an encrypted secret in the `jutt-ai-blog` Pages project’s **Settings → Variables and Secrets**.
 
 ## Adding a tool
 
@@ -39,4 +39,4 @@ npm run build
 npm run deploy
 ```
 
-Configure Cloudflare Pages to use the project’s supported Astro build output and retain the Cloudflare adapter-generated worker files when deploying.
+The Cloudflare adapter emits the Pages Functions worker (`dist/_worker.js`) and route manifest (`dist/_routes.json`) alongside the static assets. The deploy script publishes that output to the existing `jutt-ai-blog` Cloudflare Pages project; it does not create or deploy a separate Worker.

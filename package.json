@@ -9,14 +9,14 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name jutt-ai-blog",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^14.4.6",
+    "@astrojs/cloudflare": "12.6.13",
     "@astrojs/sitemap": "^3.7.3",
-    "@tailwindcss/vite": "^4.3.5",
-    "astro": "^7.1.6",
+    "@tailwindcss/vite": "4.2.0",
+    "astro": "5.18.2",
     "mdn-data": "^2.0.30",
     "tailwindcss": "^4.3.5"
   },
