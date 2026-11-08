@@ -2,8 +2,9 @@ export const siteConfig = {
   siteName: 'Jutt AI',
   shortName: 'Jutt',
   domain: 'https://yourdomain.com',
-  email: 'hello@yourdomain.com',
-  phone: '+00 000 000 000',
+  email: 'juttwebsolutions@gmail.com',
+  phone: '+923006699738',
+  whatsapp: '923006699738',
   location: 'Remote / Worldwide',
   baseDescription:
     'Free online AI tools and browser-based utilities for writing, text conversion, and productivity.',

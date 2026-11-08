@@ -43,31 +43,30 @@ const posts = (await getCollection('blog'))
         <h2 class="text-2xl font-extrabold text-slate-950">All articles</h2>
         <span class="text-sm text-slate-500">{posts.length} articles</span>
       </div>
-      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {posts.map((post) => (
-          <article class="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-            <a href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`}>
+          <article class="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <a href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`} class="block h-44 w-full shrink-0 overflow-hidden bg-slate-100">
               <img
                 src={post.image}
                 alt={post.title}
-                class="h-52 w-full object-cover"
+                class="h-full w-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
             </a>
-            <div class="flex flex-1 flex-col p-5">
-              <div class="mb-3 flex items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex flex-1 flex-col justify-between p-4">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
                 <span class="rounded-full bg-teal-50 px-3 py-1 font-bold text-teal-900">{post.category}</span>
-                <span>{post.readingTime}</span>
               </div>
-              <h3 class="text-lg font-extrabold leading-snug text-slate-950 group-hover:text-teal-800">
+              <h3 class="line-clamp-2 text-lg font-semibold leading-snug text-slate-950 group-hover:text-teal-800">
                 <a href={`/blog/${post.slug}`}>{post.title}</a>
               </h3>
-              <p class="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">{post.description}</p>
-              <div class="mt-auto flex items-center justify-between gap-3 pt-5 text-xs text-slate-500">
-                <span>{post.author} · {post.date}</span>
-                <a class="shrink-0 font-bold text-teal-800" href={`/blog/${post.slug}`}>Read →</a>
-              </div>
+              <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{post.description}</p>
+              <p class="mt-auto flex items-center justify-between gap-2 pt-5 text-xs text-slate-500">
+                <span>{post.date}</span>
+                <span>{post.readingTime}</span>
+              </p>
             </div>
           </article>
         ))}

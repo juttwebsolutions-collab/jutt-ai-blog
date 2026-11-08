@@ -14,7 +14,7 @@ import { tools } from '../data/tools';
         </div>
       </a>
       <div class="social-links" aria-label="Social links">
-        <a href="mailto:hello@yourdomain.com" aria-label="Email Jutt AI">Email</a>
+        <a href={`mailto:${siteConfig.email}`} aria-label="Email Jutt AI">Email</a>
         <a href="/contact" aria-label="Contact Jutt AI">Contact</a>
         <a href="/#tools" aria-label="Browse all tools">All tools</a>
       </div>
@@ -28,6 +28,9 @@ import { tools } from '../data/tools';
     <div class="footer-column footer-contact">
       <h3>Jutt AI Tools</h3>
       <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+      <a href={`tel:${siteConfig.phone}`}>Call {siteConfig.phone}</a>
+      <a href={`sms:${siteConfig.phone}`}>Text us</a>
+      <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
       <a href="/about">About the platform</a>
       <a href="/privacy">Privacy policy</a>
     </div>

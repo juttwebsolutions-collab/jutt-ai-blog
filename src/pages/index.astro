@@ -25,26 +25,34 @@ const latestArticles = (await getCollection('blog'))
 ---
 
 <Layout
-  title="Jutt AI | Free AI Tools, Utilities & Guides"
-  description="Explore free AI generators, browser-based utilities, and practical articles and guides from Jutt AI."
+  title="AI & Utility Tools Hub | Custom Software & Web Development"
+  description="Explore free dynamic web tools, hire us for tailored enterprise software and digital solutions, or read our latest technical articles and guides."
 >
   <Navbar />
   <main class="mx-auto w-[min(1180px,calc(100%-2rem))] pb-16">
     <section class="relative overflow-hidden py-16 sm:py-24">
       <div class="pointer-events-none absolute -right-20 -top-20 -z-10 h-72 w-72 rounded-full bg-teal-200/50 blur-3xl"></div>
-      <p class="mb-4 text-xs font-extrabold uppercase tracking-[0.2em] text-teal-800">Jutt AI Tools</p>
-      <h1 class="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-6xl">
-        Free tools to get more done.
+      <p class="mb-4 text-xs font-extrabold uppercase tracking-[0.2em] text-teal-800">Jutt AI · Tools · Software · Guides</p>
+      <h1 class="max-w-5xl text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-6xl">
+        AI &amp; Utility Tools Hub | Custom Software &amp; Web Development
       </h1>
-      <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-        Generate fresh content with AI or use instant browser-based utilities. Simple, useful, and free.
+      <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
+        Explore free dynamic web tools, hire us for tailored enterprise software &amp; digital solutions, or read our latest technical articles and guides.
       </p>
-      <a
-        href="#tools"
-        class="mt-8 inline-flex min-h-12 items-center justify-center rounded-full bg-slate-950 px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-teal-800"
-      >
-        Explore all tools <span aria-hidden="true" class="ml-2">↓</span>
-      </a>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="#tools"
+          class="inline-flex min-h-12 items-center justify-center rounded-full bg-slate-950 px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-teal-800"
+        >Explore Tools <span aria-hidden="true" class="ml-2">↓</span></a>
+        <a
+          href="/services"
+          class="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 font-bold text-slate-800 transition hover:-translate-y-0.5 hover:border-teal-700 hover:text-teal-800"
+        >Our Services</a>
+        <a
+          href="/blog"
+          class="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 font-bold text-slate-800 transition hover:-translate-y-0.5 hover:border-teal-700 hover:text-teal-800"
+        >Read Blog</a>
+      </div>
     </section>
 
     <section id="tools" class="scroll-mt-24">
@@ -128,28 +136,30 @@ const latestArticles = (await getCollection('blog'))
           class="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-bold text-slate-800 transition hover:border-teal-700 hover:text-teal-800"
         >View all articles <span aria-hidden="true" class="ml-2">→</span></a>
       </div>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {latestArticles.map((article) => (
-          <article class="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-            <a href={`/blog/${article.slug}`} aria-label={`Read ${article.title}`}>
+          <article class="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+            <a href={`/blog/${article.slug}`} aria-label={`Read ${article.title}`} class="block h-44 w-full shrink-0 overflow-hidden bg-slate-100">
               <img
                 src={article.image}
                 alt={article.title}
-                class="h-48 w-full object-cover"
+                class="h-full w-full object-cover"
                 loading="lazy"
                 decoding="async"
               />
             </a>
-            <div class="p-5">
-              <div class="mb-3 flex items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="flex flex-1 flex-col justify-between p-4">
+              <div class="mb-3 flex items-center gap-3 text-xs text-slate-500">
                 <span class="rounded-full bg-teal-50 px-3 py-1 font-bold text-teal-900">{article.category}</span>
-                <span>{article.readingTime}</span>
               </div>
-              <h3 class="text-lg font-extrabold leading-snug text-slate-950 group-hover:text-teal-800">
+              <h3 class="line-clamp-2 text-lg font-semibold leading-snug text-slate-950 group-hover:text-teal-800">
                 <a href={`/blog/${article.slug}`}>{article.title}</a>
               </h3>
               <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{article.description}</p>
-              <p class="mt-4 text-xs text-slate-500">{article.author} · {article.date}</p>
+              <p class="mt-auto flex items-center justify-between gap-2 pt-4 text-xs text-slate-500">
+                <span>{article.date}</span>
+                <span>{article.readingTime}</span>
+              </p>
             </div>
           </article>
         ))}
