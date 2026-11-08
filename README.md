@@ -1,46 +1,38 @@
-# Astro Starter Kit: Basics
+# Jutt AI Tools
+
+Jutt AI Tools is a dedicated online utilities hub with tool pages generated from the registry at `/tools/<tool-id>`. It uses Tailwind CSS, Astro server output, and the Cloudflare adapter.
+
+## Local development
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+For local AI generation, create a root `.dev.vars` file (it is git-ignored) and add your Google AI Studio key. Cloudflare injects this binding through its runtime; the API also retains a legacy runtime-local and `import.meta.env` fallback:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```dotenv
+GEMINI_API_KEY=your-key
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Never commit API keys. For Cloudflare Pages, add `GEMINI_API_KEY` as an encrypted secret in the Pages project’s **Settings → Variables and Secrets**, then deploy.
 
-## 🧞 Commands
+## Adding a tool
 
-All commands are run from the root of the project, from a terminal:
+Append a `Tool` object to [`src/data/tools.ts`](./src/data/tools.ts) with a unique `id`, title, description, category, and `type`.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- For Gemini-powered tools, set `type: 'ai'` and provide `systemPrompt`.
+- For browser-only tools, set `type: 'client'` and select a supported `clientAction`. These tools run locally without API requests. Add a new `ClientAction` and handler in the tool page to support a new kind of utility.
 
-## 👀 Want to learn more?
+The homepage search and category tabs, sitemap, and `/tools/<id>` route all use this registry. The API only accepts configured AI tool IDs.
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+AI tool usage has a client-side limit of 10 generations per device per UTC day. This is a convenience limit stored in browser local storage, not a server-enforced quota. The AdSense spaces are placeholders; connect them to your approved publisher and ad-unit IDs before serving ads.
+
+## Build and deploy
+
+```sh
+npm run build
+npm run deploy
+```
+
+Configure Cloudflare Pages to use the project’s supported Astro build output and retain the Cloudflare adapter-generated worker files when deploying.

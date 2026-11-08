@@ -1,8 +1,6 @@
 ---
-import { navItems, servicePages, demoProjects, portfolioProjects, siteConfig } from '../data/site';
-
-const serviceLinks = servicePages.map(({ slug, title }) => ({ href: `/services/${slug}`, label: title }));
-const portfolioLinks = portfolioProjects.map(({ title, route }) => ({ href: route, label: title }));
+import { siteConfig } from '../data/site';
+import { tools } from '../data/tools';
 ---
 
 <footer class="site-footer">
@@ -18,26 +16,19 @@ const portfolioLinks = portfolioProjects.map(({ title, route }) => ({ href: rout
       <div class="social-links" aria-label="Social links">
         <a href="mailto:hello@yourdomain.com" aria-label="Email Jutt AI">Email</a>
         <a href="/contact" aria-label="Contact Jutt AI">Contact</a>
-        <a href="/portfolio" aria-label="View portfolio">Portfolio</a>
+        <a href="/#tools" aria-label="Browse all tools">All tools</a>
       </div>
     </div>
 
     <div class="footer-column">
-      <h3>Services</h3>
-      {serviceLinks.map((link) => <a href={link.href}>{link.label}</a>)}
-    </div>
-
-    <div class="footer-column">
-      <h3>Portfolio</h3>
-      {portfolioLinks.slice(0, 4).map((link) => <a href={link.href}>{link.label}</a>)}
-      <a href="/demos">Website demos</a>
+      <h3>Popular tools</h3>
+      {tools.slice(0, 5).map((tool) => <a href={`/tools/${tool.id}`}>{tool.title}</a>)}
     </div>
 
     <div class="footer-column footer-contact">
-      <h3>Contact</h3>
+      <h3>Jutt AI Tools</h3>
       <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
-      <span>{siteConfig.location}</span>
-      <a href="/about">About Jutt AI</a>
+      <a href="/about">About the platform</a>
       <a href="/privacy">Privacy policy</a>
     </div>
   </div>
@@ -55,7 +46,7 @@ const portfolioLinks = portfolioProjects.map(({ title, route }) => ({ href: rout
     width: min(1180px, calc(100% - 1.5rem));
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.35fr 1fr 1fr 1fr;
+    grid-template-columns: 1.35fr 1fr 1fr;
     gap: 2rem;
   }
 

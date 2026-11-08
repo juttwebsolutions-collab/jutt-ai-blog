@@ -2,660 +2,146 @@
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import { demoProjects, portfolioProjects, servicePages, defaultFaqs, siteConfig } from '../data/site';
+import { tools } from '../data/tools';
+import '../styles/global.css';
 
-const processSteps = [
-  { title: 'Discover', description: 'Understand your business, audience, and the real bottlenecks slowing growth.' },
-  { title: 'Plan', description: 'Shape the page structure, conversion flow, and content priorities before build begins.' },
-  { title: 'Build', description: 'Design and develop a polished digital experience with practical business logic.' },
-  { title: 'Optimize', description: 'Improve performance, messaging, and UX so the site works harder after launch.' },
-  { title: 'Deliver', description: 'Launch confidently with clear next steps and a solution ready for real use.' },
-];
+const categories = [...new Set(tools.map(({ category }) => category))];
 ---
 
-<Layout title="Jutt AI | Website Development, Shopify & SEO & Digital Growth" description={siteConfig.baseDescription} url="/">
+<Layout
+  title="Jutt AI Tools | Free Online Utilities & AI Tools"
+  description="Free AI generators and browser-based text utilities to help you create, convert, and get things done."
+>
   <Navbar />
-  <main>
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">Digital growth for modern businesses, built by Jutt AI</p>
-        <h1>We build websites, improve online sales, and create digital experiences that help businesses grow.</h1>
-        <p class="lead">Jutt AI helps small businesses, Shopify brands, startups, and service companies create polished online experiences that feel credible, convert better, and support long-term growth.</p>
-        <div class="hero-actions">
-          <a class="button" href="/contact">Discuss Your Project</a>
-          <a class="button secondary" href="/demos">View Website Demos</a>
-        </div>
-        <div class="mini-trust">
-          <span>Web design</span>
-          <span>Shopify</span>
-          <span>SEO</span>
-          <span>Content</span>
-        </div>
-      </div>
-
-      <div class="hero-visual" aria-label="Agency showcase">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80" alt="A digital agency team reviewing website strategy and design" />
-        <div class="floating-card">
-          <span class="card-tag">Focused on growth</span>
-          <strong>Clear strategy. Better customer journeys. Real business impact.</strong>
-        </div>
-      </div>
+  <main class="mx-auto w-[min(1180px,calc(100%-2rem))] pb-16">
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="pointer-events-none absolute -right-20 -top-20 -z-10 h-72 w-72 rounded-full bg-teal-200/50 blur-3xl"></div>
+      <p class="mb-4 text-xs font-extrabold uppercase tracking-[0.2em] text-teal-800">Jutt AI Tools</p>
+      <h1 class="max-w-3xl text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-6xl">
+        Free tools to get more done.
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+        Generate fresh content with AI or use instant browser-based utilities. Simple, useful, and free.
+      </p>
+      <a
+        href="#tools"
+        class="mt-8 inline-flex min-h-12 items-center justify-center rounded-full bg-slate-950 px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-teal-800"
+      >
+        Explore all tools <span aria-hidden="true" class="ml-2">↓</span>
+      </a>
     </section>
 
-    <section class="trust-intro">
-      <div class="intro-copy">
-        <p class="eyebrow">Why Jutt AI</p>
-        <h2>Professional digital services built around business goals.</h2>
-      </div>
-      <p>Jutt AI combines web design, e-commerce strategy, conversion improvements, SEO, and content systems into a practical service for growing businesses. The goal is not simply a pretty website — it is a stronger digital experience that supports enquiries, sales, and customer trust.</p>
-    </section>
-
-    <section class="section-shell">
-      <div class="section-header">
-        <p class="eyebrow">Services</p>
-        <h2>What we do</h2>
-      </div>
-      <div class="grid-3 service-grid">
-        {servicePages.map((service) => (
-          <article class="service-card">
-            <span class="service-tag">{service.title}</span>
-            <h3>{service.title}</h3>
-            <p>{service.summary}</p>
-            <a href={`/services/${service.slug}`}>Learn more →</a>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="section-shell">
-      <div class="section-header">
-        <p class="eyebrow">Website demos</p>
-        <h2>Example work and storefront concepts</h2>
-      </div>
-      <div class="grid-3 demo-grid">
-        {demoProjects.map((demo) => (
-          <article class="demo-card">
-            <div class="demo-thumb" style={{ background: demo.accent }} />
-            <div class="demo-body">
-              <span class="demo-tag">{demo.tag}</span>
-              <h3>{demo.title}</h3>
-              <p>{demo.description}</p>
-              <a href={demo.route}>Open demo →</a>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="section-shell portfolio-section">
-      <div class="section-header split-header">
+    <section id="tools" class="scroll-mt-24">
+      <div class="mb-7 flex flex-col gap-5">
         <div>
-          <p class="eyebrow">Portfolio</p>
-          <h2>Selected demonstration projects</h2>
+          <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-teal-800">Tool library</p>
+          <h2 class="text-3xl font-extrabold tracking-tight text-slate-950">Find the right tool</h2>
         </div>
-        <a class="button secondary" href="/portfolio">Explore portfolio</a>
+        <label class="relative block max-w-xl">
+          <span class="sr-only">Search tools</span>
+          <span aria-hidden="true" class="absolute left-4 top-1/2 -translate-y-1/2 text-lg text-slate-400">⌕</span>
+          <input
+            id="tool-search"
+            type="search"
+            placeholder="Search tools..."
+            class="w-full rounded-2xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-slate-900 outline-none focus:border-teal-700 focus:ring-4 focus:ring-teal-100"
+          />
+        </label>
+        <nav id="category-filters" class="flex flex-wrap gap-2" aria-label="Filter tools by category">
+          <button
+            type="button"
+            data-category="all"
+            aria-pressed="true"
+            class="category-filter rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white"
+          >All tools</button>
+          {categories.map((category) => (
+            <button
+              type="button"
+              data-category={category}
+              aria-pressed="false"
+              class="category-filter rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800"
+            >{category}</button>
+          ))}
+        </nav>
       </div>
-      <div class="portfolio-grid">
-        {portfolioProjects.map((project) => (
-          <article class="portfolio-card">
-            <div class="portfolio-topline">
-              <span>{project.category}</span>
+
+      <p id="tool-result-count" class="mb-4 text-sm text-slate-500" aria-live="polite">
+        Showing {tools.length} tools
+      </p>
+      <div id="tool-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tools.map((tool) => (
+          <a
+            href={`/tools/${tool.id}`}
+            data-tool-card
+            data-category={tool.category}
+            data-search={`${tool.title} ${tool.description} ${tool.category} ${tool.type}`}
+            class="group flex min-h-56 flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-teal-300 hover:shadow-xl"
+          >
+            <div class="mb-6 flex items-start justify-between gap-3">
+              <span class="grid h-12 min-w-12 place-items-center rounded-2xl bg-teal-50 px-2 text-xl font-bold text-teal-800">
+                {tool.icon ?? (tool.type === 'ai' ? '✦' : '↔')}
+              </span>
+              <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-600">
+                {tool.type === 'ai' ? 'AI' : 'In-browser'}
+              </span>
             </div>
-            <h3>{project.title}</h3>
-            <p>{project.summary}</p>
-            <div class="tag-row">
-              {project.tags.map((tag) => <span>{tag}</span>)}
+            <h3 class="text-lg font-extrabold text-slate-950 group-hover:text-teal-800">{tool.title}</h3>
+            <p class="mt-2 text-sm leading-6 text-slate-600">{tool.description}</p>
+            <div class="mt-auto flex items-center justify-between gap-3 pt-5">
+              <span class="text-xs font-semibold text-slate-500">{tool.category}</span>
+              <span class="text-sm font-bold text-teal-800">Open <span aria-hidden="true">→</span></span>
             </div>
-            <a href={project.route}>View project →</a>
-          </article>
+          </a>
         ))}
       </div>
+      <p id="no-tools-found" class="hidden rounded-2xl border border-dashed border-slate-300 py-12 text-center text-slate-600">
+        No tools match your search. Try another term or category.
+      </p>
     </section>
-
-    <section class="section-shell info-panel">
-      <div class="info-copy">
-        <p class="eyebrow">Sales improvement</p>
-        <h2>Many websites lose sales because the user journey is unclear.</h2>
-        <p>Common issues include weak product messaging, cluttered navigation, unclear CTAs, and a mobile experience that makes buying harder than it should be. Jutt AI focuses on the points that actually influence decisions: trust, clarity, message hierarchy, and purchase flow.</p>
-        <ul>
-          <li>Landing page and product page improvements</li>
-          <li>CTA placement and message refinement</li>
-          <li>Navigation and mobile UX improvements</li>
-          <li>Trust signals and checkout friction review</li>
-        </ul>
-      </div>
-      <div class="info-visual">
-        <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1000&q=80" alt="Business discussion about website optimisation and conversion strategy" />
-      </div>
-    </section>
-
-    <section class="section-shell info-panel alt-panel">
-      <div class="info-visual">
-        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80" alt="Digital analytics and SEO dashboard on a laptop" />
-      </div>
-      <div class="info-copy">
-        <p class="eyebrow">SEO and optimisation</p>
-        <h2>Search-friendly websites need structure, not guesswork.</h2>
-        <p>Good SEO is not just keywords. It starts with technical quality, meaningful content structure, page hierarchy, metadata, and a positive user experience. Jutt AI works to improve the parts of the site that support visibility and usability without guaranteeing rankings or traffic.</p>
-        <ul>
-          <li>Technical SEO and on-page improvements</li>
-          <li>Metadata, heading structure, and internal links</li>
-          <li>Image optimisation and performance improvements</li>
-          <li>Search-friendly content and sitemap guidance</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="section-shell content-showcase">
-      <div class="section-header">
-        <p class="eyebrow">Social media content</p>
-        <h2>Content systems for product stories and launch moments</h2>
-      </div>
-      <div class="content-grid">
-        <div class="content-card feature">
-          <span>Instagram carousels</span>
-          <h3>Product-led storytelling that builds desire.</h3>
-        </div>
-        <div class="content-card">
-          <span>Reels concepts</span>
-          <h3>Short-form hooks for product value and launch campaigns.</h3>
-        </div>
-        <div class="content-card">
-          <span>Content calendars</span>
-          <h3>Planned, repeatable posting ideas for shops and brands.</h3>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-shell">
-      <div class="section-header">
-        <p class="eyebrow">Process</p>
-        <h2>How projects move forward</h2>
-      </div>
-      <div class="process-grid">
-        {processSteps.map((step, index) => (
-          <article class="process-card">
-            <span class="step-number">0{index + 1}</span>
-            <h3>{step.title}</h3>
-            <p>{step.description}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="section-shell reasons">
-      <div class="section-header">
-        <p class="eyebrow">Why choose Jutt AI</p>
-        <h2>Practical work, clear thinking, and business-focused design.</h2>
-      </div>
-      <div class="reason-grid">
-        <article class="reason-card">
-          <h3>Business-first thinking</h3>
-          <p>Every page and system is designed to support real goals, not just an aesthetic trend.</p>
-        </article>
-        <article class="reason-card">
-          <h3>Clear conversion focus</h3>
-          <p>Messaging, layout, and navigation are shaped around user intent and purchase flow.</p>
-        </article>
-        <article class="reason-card">
-          <h3>Practical digital systems</h3>
-          <p>From websites to Shopify improvements and lightweight software, the work is built for use.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section-shell faq-section">
-      <div class="section-header">
-        <p class="eyebrow">FAQs</p>
-        <h2>Frequently asked questions</h2>
-      </div>
-      <div class="faq-list">
-        {defaultFaqs.map((faq) => (
-          <details>
-            <summary>{faq.question}</summary>
-            <p>{faq.answer}</p>
-          </details>
-        ))}
-      </div>
-    </section>
-
-    <div class="final-cta">
-      <div>
-        <p class="eyebrow">Ready to build smarter?</p>
-        <h2>Let’s create a website or digital system that works harder for your business.</h2>
-      </div>
-      <a class="button" href="/contact">Get a Quote</a>
-    </div>
   </main>
   <Footer />
 </Layout>
 
-<style>
-  .hero {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 2rem;
-    padding: 4rem 0 2rem;
-    align-items: center;
-  }
+<script>
+  const search = document.querySelector<HTMLInputElement>('#tool-search');
+  const cards = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-tool-card]'));
+  const filters = Array.from(document.querySelectorAll<HTMLButtonElement>('.category-filter'));
+  const count = document.querySelector<HTMLElement>('#tool-result-count');
+  const empty = document.querySelector<HTMLElement>('#no-tools-found');
+  let selectedCategory = 'all';
 
-  .hero-copy {
-    display: grid;
-    gap: 1.2rem;
-  }
+  const updateTools = () => {
+    const query = search?.value.trim().toLocaleLowerCase() ?? '';
+    let visibleCount = 0;
 
-  .hero-copy h1 {
-    font-size: clamp(2.8rem, 5vw, 5rem);
-    line-height: 1.02;
-    margin: 0;
-  }
-
-  .lead {
-    font-size: 1.1rem;
-    color: var(--muted);
-    max-width: 650px;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.9rem;
-    margin-top: 0.6rem;
-  }
-
-  .mini-trust {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
-    margin-top: 0.3rem;
-  }
-
-  .mini-trust span {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.45rem 0.8rem;
-    border-radius: 999px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-
-  .hero-visual {
-    position: relative;
-    min-height: 520px;
-    border-radius: 30px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-
-  .hero-visual img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .floating-card {
-    position: absolute;
-    left: 1.25rem;
-    bottom: 1.25rem;
-    right: 1.25rem;
-    background: rgba(15, 23, 42, 0.82);
-    color: white;
-    padding: 1rem 1.1rem;
-    border-radius: 18px;
-    backdrop-filter: blur(10px);
-  }
-
-  .card-tag {
-    display: inline-block;
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
-    background: rgba(45, 212, 191, 0.2);
-    color: #99f6e4;
-    font-size: 0.72rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
-  .floating-card strong {
-    display: block;
-    font-size: 1.1rem;
-    line-height: 1.5;
-  }
-
-  .trust-intro {
-    display: grid;
-    grid-template-columns: 0.95fr 1.05fr;
-    gap: 2rem;
-    align-items: end;
-    padding-top: 1rem;
-  }
-
-  .trust-intro h2 {
-    font-size: clamp(2rem, 3vw, 3rem);
-    margin: 0;
-  }
-
-  .trust-intro p:last-child {
-    margin: 0;
-    color: var(--muted);
-    font-size: 1.05rem;
-    max-width: 700px;
-  }
-
-  .section-shell {
-    padding-top: 5rem;
-  }
-
-  .section-header {
-    margin-bottom: 1.5rem;
-  }
-
-  .section-header h2 {
-    margin: 0;
-    font-size: clamp(2rem, 2.8vw, 2.8rem);
-    line-height: 1.15;
-  }
-
-  .split-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    gap: 1rem;
-  }
-
-  .service-grid,
-  .demo-grid,
-  .portfolio-grid,
-  .process-grid,
-  .reason-grid {
-    display: grid;
-    gap: 1.5rem;
-  }
-
-  .service-grid,
-  .demo-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .service-card,
-  .demo-card,
-  .portfolio-card,
-  .process-card,
-  .reason-card,
-  .content-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-  }
-
-  .service-tag,
-  .demo-tag {
-    display: inline-flex;
-    padding: 0.35rem 0.7rem;
-    border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent-strong);
-    font-size: 0.74rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-
-  .service-card h3,
-  .demo-card h3,
-  .portfolio-card h3,
-  .process-card h3,
-  .reason-card h3,
-  .content-card h3 {
-    margin-top: 1rem;
-    margin-bottom: 0.75rem;
-    font-size: 1.4rem;
-  }
-
-  .service-card p,
-  .demo-card p,
-  .portfolio-card p,
-  .process-card p,
-  .reason-card p,
-  .content-card p,
-  .info-copy p,
-  .faq-list p {
-    color: var(--muted);
-    margin: 0;
-  }
-
-  .service-card a,
-  .demo-card a,
-  .portfolio-card a {
-    display: inline-flex;
-    margin-top: 1.2rem;
-    font-weight: 700;
-  }
-
-  .demo-thumb {
-    height: 180px;
-    border-radius: 20px;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #0f172a, #475569);
-  }
-
-  .portfolio-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .portfolio-topline {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 1rem;
-  }
-
-  .portfolio-topline span {
-    display: inline-flex;
-    background: var(--surface-strong);
-    color: var(--accent-strong);
-    border-radius: 999px;
-    padding: 0.3rem 0.7rem;
-    font-size: 0.76rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .tag-row span {
-    display: inline-flex;
-    border-radius: 999px;
-    background: var(--surface-soft);
-    padding: 0.35rem 0.7rem;
-    color: var(--muted);
-    font-size: 0.74rem;
-    font-weight: 700;
-  }
-
-  .info-panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: center;
-  }
-
-  .alt-panel {
-    padding-top: 2rem;
-  }
-
-  .info-copy h2 {
-    font-size: clamp(2rem, 3vw, 3rem);
-    margin: 0 0 1rem;
-  }
-
-  .info-copy ul {
-    margin: 1.25rem 0 0;
-    padding-left: 1.25rem;
-    color: var(--text-strong);
-    line-height: 1.9;
-  }
-
-  .info-visual img {
-    width: 100%;
-    max-height: 500px;
-    object-fit: cover;
-    border-radius: 26px;
-    box-shadow: var(--shadow);
-  }
-
-  .content-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr;
-    gap: 1.5rem;
-  }
-
-  .content-card {
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
-    background: linear-gradient(135deg, #f8fafc, #ffffff);
-  }
-
-  .content-card.feature {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: white;
-  }
-
-  .content-card.feature span,
-  .content-card.feature h3 {
-    color: white;
-  }
-
-  .content-card span {
-    color: var(--accent-strong);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 0.73rem;
-  }
-
-  .process-grid,
-  .reason-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .process-card {
-    min-height: 240px;
-  }
-
-  .step-number {
-    display: inline-flex;
-    width: 2.8rem;
-    height: 2.8rem;
-    border-radius: 12px;
-    align-items: center;
-    justify-content: center;
-    background: var(--accent-soft);
-    color: var(--accent-strong);
-    font-weight: 800;
-    letter-spacing: 0.06em;
-  }
-
-  .reason-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .faq-list {
-    display: grid;
-    gap: 0.8rem;
-    max-width: 900px;
-  }
-
-  .faq-list details {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 1.1rem 1.2rem;
-    box-shadow: var(--shadow);
-  }
-
-  .faq-list summary {
-    cursor: pointer;
-    font-weight: 700;
-    color: var(--text-strong);
-  }
-
-  .faq-list p {
-    margin-top: 0.9rem;
-  }
-
-  .final-cta {
-    width: min(1180px, calc(100% - 2rem));
-    margin: 5rem auto 0;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    border-radius: 28px;
-    padding: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    color: white;
-  }
-
-  .final-cta h2 {
-    color: white;
-    margin: 0;
-    font-size: clamp(1.7rem, 2vw, 2.5rem);
-    max-width: 620px;
-  }
-
-  @media (max-width: 980px) {
-    .hero,
-    .trust-intro,
-    .info-panel,
-    .content-grid,
-    .service-grid,
-    .demo-grid,
-    .portfolio-grid,
-    .process-grid,
-    .reason-grid {
-      grid-template-columns: 1fr 1fr;
+    for (const card of cards) {
+      const matchesCategory =
+        selectedCategory === 'all' || card.dataset.category === selectedCategory;
+      const matchesSearch = card.dataset.search?.toLocaleLowerCase().includes(query) ?? false;
+      const visible = matchesCategory && matchesSearch;
+      card.classList.toggle('hidden', !visible);
+      if (visible) visibleCount += 1;
     }
 
-    .hero {
-      grid-template-columns: 1fr;
-    }
+    if (count) count.textContent = `Showing ${visibleCount} ${visibleCount === 1 ? 'tool' : 'tools'}`;
+    empty?.classList.toggle('hidden', visibleCount > 0);
+  };
 
-    .process-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 720px) {
-    .service-grid,
-    .demo-grid,
-    .portfolio-grid,
-    .info-panel,
-    .content-grid,
-    .process-grid,
-    .reason-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .split-header,
-    .final-cta {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
-</style>
+  search?.addEventListener('input', updateTools);
+  filters.forEach((filter) => {
+    filter.addEventListener('click', () => {
+      selectedCategory = filter.dataset.category ?? 'all';
+      filters.forEach((item) => {
+        const selected = item === filter;
+        item.setAttribute('aria-pressed', String(selected));
+        item.classList.toggle('bg-slate-950', selected);
+        item.classList.toggle('text-white', selected);
+        item.classList.toggle('border', !selected);
+        item.classList.toggle('border-slate-300', !selected);
+        item.classList.toggle('bg-white', !selected);
+        item.classList.toggle('text-slate-700', !selected);
+      });
+      updateTools();
+    });
+  });
+</script>

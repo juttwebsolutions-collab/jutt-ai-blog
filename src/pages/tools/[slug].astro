@@ -1,0 +1,388 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import { tools, type Tool } from '../../data/tools';
+import '../../styles/global.css';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return tools.map((tool) => ({
+    params: { slug: tool.id },
+    props: { tool },
+  }));
+}
+
+const { tool } = Astro.props as { tool: Tool };
+---
+
+<Layout
+  title={`${tool.title} | Jutt AI Tools`}
+  description={tool.description}
+  url={`/tools/${tool.id}`}
+>
+  <Navbar />
+  <main class="mx-auto w-[min(900px,calc(100%-2rem))] pb-12">
+    <>
+        <div class="pb-8 pt-12 sm:pt-16">
+          <a href="/" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+          <div class="mt-7 flex items-start gap-4">
+            <span class="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-teal-100 px-2 text-2xl font-bold text-teal-900">
+              {tool.icon ?? (tool.type === 'ai' ? '✦' : '↔')}
+            </span>
+            <div>
+              <p class="mb-2 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">
+                {tool.category} · {tool.type === 'ai' ? 'AI tool' : 'Runs in your browser'}
+              </p>
+              <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">{tool.title}</h1>
+              <p class="mt-3 max-w-2xl leading-7 text-slate-600">{tool.description}</p>
+            </div>
+          </div>
+        </div>
+
+        <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+          <aside
+            class="mb-7 grid min-h-24 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-center"
+            aria-label="Google AdSense banner ad space"
+          >
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Advertisement</p>
+              <p class="mt-1 text-xs text-slate-500">Ad space</p>
+            </div>
+          </aside>
+
+          <form id="tool-form" data-tool-id={tool.id} data-tool-type={tool.type} data-client-action={tool.type === 'client' ? tool.clientAction : ''} class="space-y-4">
+            {tool.type === 'ai' ? (
+              <>
+                <label for="tool-input" class="block text-sm font-bold text-slate-900">Your prompt</label>
+                <textarea
+                  id="tool-input"
+                  name="input"
+                  rows="7"
+                  maxlength="10000"
+                  required
+                  placeholder={tool.placeholder ?? 'Enter the details for your request...'}
+                  class="block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                ></textarea>
+                <p id="usage-count" class="m-0 text-sm text-slate-500" aria-live="polite"></p>
+              </>
+            ) : tool.clientAction === 'unit-converter' ? (
+              <div class="grid gap-4 sm:grid-cols-3">
+                <label class="block text-sm font-bold text-slate-900">
+                  Value
+                  <input id="unit-value" type="number" step="any" value="1" class="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100" />
+                </label>
+                <label class="block text-sm font-bold text-slate-900">
+                  From
+                  <select id="unit-from" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100">
+                    <option value="meter">Meters</option>
+                    <option value="kilometer">Kilometers</option>
+                    <option value="mile">Miles</option>
+                    <option value="foot">Feet</option>
+                    <option value="celsius">Celsius</option>
+                    <option value="fahrenheit">Fahrenheit</option>
+                  </select>
+                </label>
+                <label class="block text-sm font-bold text-slate-900">
+                  To
+                  <select id="unit-to" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100">
+                    <option value="kilometer">Kilometers</option>
+                    <option value="meter">Meters</option>
+                    <option value="mile">Miles</option>
+                    <option value="foot">Feet</option>
+                    <option value="celsius">Celsius</option>
+                    <option value="fahrenheit">Fahrenheit</option>
+                  </select>
+                </label>
+              </div>
+            ) : (
+              <>
+                <label for="tool-input" class="block text-sm font-bold text-slate-900">
+                  {tool.clientAction === 'json-formatter' ? 'JSON input' : 'Your text'}
+                </label>
+                <textarea
+                  id="tool-input"
+                  name="input"
+                  rows="7"
+                  maxlength="100000"
+                  required
+                  placeholder={tool.placeholder ?? 'Enter text...'}
+                  class="block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 text-base leading-7 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
+                ></textarea>
+                {tool.clientAction === 'text-case-converter' && (
+                  <label class="block text-sm font-bold text-slate-900">
+                    Convert to
+                    <select id="client-mode" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-xs">
+                      <option value="uppercase">UPPERCASE</option>
+                      <option value="lowercase">lowercase</option>
+                      <option value="title">Title Case</option>
+                      <option value="sentence">Sentence case</option>
+                    </select>
+                  </label>
+                )}
+                {tool.clientAction === 'base64' && (
+                  <label class="block text-sm font-bold text-slate-900">
+                    Action
+                    <select id="client-mode" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-xs">
+                      <option value="encode">Encode to Base64</option>
+                      <option value="decode">Decode from Base64</option>
+                    </select>
+                  </label>
+                )}
+              </>
+            )}
+
+            <div class="flex justify-end">
+              <button
+                id="run-tool"
+                type="submit"
+                class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-teal-800 px-6 py-3 font-bold text-white transition hover:bg-teal-950 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {tool.type === 'ai' && (
+                  <svg id="loading-spinner" class="hidden h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"></path>
+                  </svg>
+                )}
+                <span id="run-label">{tool.type === 'ai' ? 'Generate' : tool.clientAction === 'word-counter' ? 'Count text' : tool.clientAction === 'unit-converter' ? 'Convert' : 'Run tool'}</span>
+              </button>
+            </div>
+            <p id="tool-status" class="m-0 text-sm text-rose-700" role="status" aria-live="polite"></p>
+          </form>
+
+          <section id="output-panel" class="mt-8 hidden" aria-labelledby="output-heading">
+            <div class="mb-3 flex items-center justify-between gap-4">
+              <h2 id="output-heading" class="m-0 text-lg font-extrabold text-slate-950">Your result</h2>
+              <button
+                id="copy-button"
+                type="button"
+                class="rounded-full border border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800"
+              >Copy to clipboard</button>
+            </div>
+            <div
+              id="tool-output"
+              class="min-h-24 whitespace-pre-wrap rounded-2xl bg-slate-50 p-5 leading-7 text-slate-800"
+              tabindex="0"
+              aria-live="polite"
+            ></div>
+          </section>
+
+          <aside
+            class="mt-7 grid min-h-24 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-center"
+            aria-label="Google AdSense banner ad space"
+          >
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Advertisement</p>
+              <p class="mt-1 text-xs text-slate-500">Ad space</p>
+            </div>
+          </aside>
+        </section>
+
+        {tool.type === 'ai' && (
+          <p class="mt-5 text-center text-xs leading-5 text-slate-500">
+            AI use is limited to 10 generations per device per UTC day. Avoid submitting sensitive personal information.
+          </p>
+        )}
+    </>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#tool-form');
+  const input = document.querySelector<HTMLTextAreaElement>('#tool-input');
+  const button = document.querySelector<HTMLButtonElement>('#run-tool');
+  const label = document.querySelector<HTMLElement>('#run-label');
+  const spinner = document.querySelector<SVGElement>('#loading-spinner');
+  const status = document.querySelector<HTMLElement>('#tool-status');
+  const usageCount = document.querySelector<HTMLElement>('#usage-count');
+  const outputPanel = document.querySelector<HTMLElement>('#output-panel');
+  const output = document.querySelector<HTMLElement>('#tool-output');
+  const copyButton = document.querySelector<HTMLButtonElement>('#copy-button');
+
+  if (form && button && label && status && outputPanel && output && copyButton) {
+    const toolType = form.dataset.toolType;
+    const clientAction = form.dataset.clientAction;
+    const day = new Date().toISOString().slice(0, 10);
+    const storageKey = `jutt-ai-tool-usage:${day}`;
+    const limit = 10;
+
+    const revealOutput = (text: string) => {
+      output.textContent = text;
+      outputPanel.classList.remove('hidden');
+    };
+
+    const readUsage = (): number => {
+      const saved = Number.parseInt(localStorage.getItem(storageKey) ?? '0', 10);
+      return Number.isFinite(saved) && saved >= 0 ? saved : 0;
+    };
+
+    const renderUsage = (): boolean => {
+      if (!usageCount) return true;
+      try {
+        usageCount.textContent = `${Math.max(0, limit - readUsage())} of ${limit} generations left today (UTC)`;
+        return true;
+      } catch {
+        usageCount.textContent = 'Daily usage tracking requires browser local storage.';
+        status.textContent = 'Local storage is unavailable, so the daily usage limit cannot be applied. Enable browser storage and try again.';
+        button.disabled = true;
+        return false;
+      }
+    };
+
+    if (toolType === 'ai') renderUsage();
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      status.textContent = '';
+
+      if (toolType === 'ai') {
+        const text = input?.value.trim() ?? '';
+        if (!text) {
+          status.textContent = 'Enter some text before generating.';
+          return;
+        }
+
+        try {
+          const used = readUsage();
+          if (used >= limit) {
+            status.textContent = 'You’ve reached today’s free limit. Your generations reset at 00:00 UTC.';
+            return;
+          }
+          localStorage.setItem(storageKey, String(used + 1));
+          renderUsage();
+        } catch {
+          status.textContent = 'Local storage is unavailable, so the daily usage limit cannot be applied. Enable browser storage and try again.';
+          return;
+        }
+
+        button.disabled = true;
+        label.textContent = 'Generating...';
+        spinner?.classList.remove('hidden');
+
+        try {
+          const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ toolId: form.dataset.toolId, input: text }),
+          });
+          const result: unknown = await response.json();
+
+          if (!response.ok || typeof result !== 'object' || result === null) {
+            const message =
+              typeof result === 'object' && result !== null && 'error' in result && typeof result.error === 'string'
+                ? result.error
+                : 'The request could not be completed. Please try again.';
+            throw new Error(message);
+          }
+          if (!('text' in result) || typeof result.text !== 'string' || !result.text.trim()) {
+            throw new Error('The AI service returned an empty response. Please try again.');
+          }
+          revealOutput(result.text);
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+        } finally {
+          button.disabled = false;
+          label.textContent = 'Generate';
+          spinner?.classList.add('hidden');
+        }
+        return;
+      }
+
+      try {
+        const text = input?.value ?? '';
+        let result: string;
+
+        switch (clientAction) {
+          case 'word-counter': {
+            const words = text.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu) ?? [];
+            const sentences = text.trim() ? (text.match(/[^.!?]+[.!?]*/g) ?? []).filter((part) => part.trim()).length : 0;
+            result = [
+              `Words: ${words.length}`,
+              `Characters (with spaces): ${text.length}`,
+              `Characters (without spaces): ${text.replace(/\s/g, '').length}`,
+              `Sentences: ${sentences}`,
+              `Estimated reading time: ${Math.max(1, Math.ceil(words.length / 200))} min`,
+            ].join('\n');
+            break;
+          }
+          case 'text-case-converter': {
+            const mode = document.querySelector<HTMLSelectElement>('#client-mode')?.value;
+            if (mode === 'uppercase') result = text.toLocaleUpperCase();
+            else if (mode === 'lowercase') result = text.toLocaleLowerCase();
+            else if (mode === 'title') {
+              result = text.toLocaleLowerCase().replace(/(^|[\s'-])\p{L}/gu, (letter) => letter.toLocaleUpperCase());
+            } else {
+              result = text.toLocaleLowerCase().replace(/(^\s*\p{L}|[.!?]\s*\p{L})/gu, (letter) => letter.toLocaleUpperCase());
+            }
+            break;
+          }
+          case 'base64': {
+            const mode = document.querySelector<HTMLSelectElement>('#client-mode')?.value;
+            if (mode === 'decode') {
+              const binary = atob(text.trim());
+              const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+              result = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+            } else {
+              const bytes = new TextEncoder().encode(text);
+              const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
+              result = btoa(binary);
+            }
+            break;
+          }
+          case 'json-formatter':
+            result = JSON.stringify(JSON.parse(text), null, 2);
+            break;
+          case 'unit-converter': {
+            const value = Number(document.querySelector<HTMLInputElement>('#unit-value')?.value);
+            const from = document.querySelector<HTMLSelectElement>('#unit-from')?.value ?? '';
+            const to = document.querySelector<HTMLSelectElement>('#unit-to')?.value ?? '';
+            const lengthUnits: Record<string, number> = {
+              meter: 1,
+              kilometer: 1000,
+              mile: 1609.344,
+              foot: 0.3048,
+            };
+            const isLengthConversion = from in lengthUnits && to in lengthUnits;
+            const isTemperatureConversion = ['celsius', 'fahrenheit'].includes(from) && ['celsius', 'fahrenheit'].includes(to);
+            if (!Number.isFinite(value)) throw new Error('Enter a valid number to convert.');
+            if (!isLengthConversion && !isTemperatureConversion) {
+              throw new Error('Choose units from the same category: length or temperature.');
+            }
+            let converted: number;
+            if (from === to) converted = value;
+            else if (isLengthConversion) converted = (value * lengthUnits[from]) / lengthUnits[to];
+            else if (from === 'celsius') converted = (value * 9) / 5 + 32;
+            else converted = ((value - 32) * 5) / 9;
+            result = `${value} ${from} = ${Number(converted.toPrecision(10))} ${to}`;
+            break;
+          }
+          default:
+            throw new Error('This client-side tool does not have an action configured yet.');
+        }
+
+        revealOutput(result);
+      } catch (error) {
+        status.textContent =
+          error instanceof SyntaxError && clientAction === 'json-formatter'
+            ? 'That is not valid JSON. Check the syntax and try again.'
+            : error instanceof Error
+              ? error.message
+              : 'Unable to run this utility.';
+      }
+    });
+
+    copyButton.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(output.textContent ?? '');
+        copyButton.textContent = 'Copied!';
+        window.setTimeout(() => {
+          copyButton.textContent = 'Copy to clipboard';
+        }, 1800);
+      } catch {
+        status.textContent = 'Could not copy automatically. Select the result text and copy it manually.';
+      }
+    });
+  }
+</script>

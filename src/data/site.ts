@@ -6,14 +6,11 @@ export const siteConfig = {
   phone: '+00 000 000 000',
   location: 'Remote / Worldwide',
   baseDescription:
-    'Jutt AI builds conversion-focused websites, e-commerce experiences, and digital growth systems for small businesses, startups, and online brands.',
+    'Free online AI tools and browser-based utilities for writing, text conversion, and productivity.',
 };
 
 export const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Services', href: '/services' },
-  { label: 'Portfolio', href: '/portfolio' },
-  { label: 'Website Demos', href: '/demos' },
+  { label: 'AI Tools', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

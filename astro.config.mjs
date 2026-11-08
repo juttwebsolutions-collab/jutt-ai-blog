@@ -1,8 +1,14 @@
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  output: 'static',
+  output: 'server',
+  adapter: cloudflare(),
   site: 'https://juttaiblog.online',
   integrations: [sitemap()],
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });
