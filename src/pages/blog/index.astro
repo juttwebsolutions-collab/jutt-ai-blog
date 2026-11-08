@@ -63,7 +63,7 @@ const posts = (await getCollection('blog'))
                 <a href={`/blog/${post.slug}`}>{post.title}</a>
               </h3>
               <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">{post.description}</p>
-              <p class="mt-auto flex items-center justify-between gap-2 pt-5 text-xs text-slate-500">
+              <p class="mt-auto flex items-center justify-between gap-2 pt-4 text-xs text-slate-500">
                 <span>{post.date}</span>
                 <span>{post.readingTime}</span>
               </p>
