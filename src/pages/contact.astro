@@ -77,16 +77,18 @@ import { siteConfig } from '../data/site';
         </ul>
         <div class="contact-block">
           <strong>Email</strong>
-          <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          <a class="button contact-action" href={`mailto:${siteConfig.email}`}>Email us</a>
+          <span class="contact-detail">{siteConfig.email}</span>
         </div>
         <div class="contact-block">
-          <strong>Phone &amp; SMS</strong>
-          <a href={`tel:${siteConfig.phone}`}>{siteConfig.phone}</a>
-          <a href={`sms:${siteConfig.phone}`}>Send a text message</a>
+          <strong>Phone &amp; text</strong>
+          <a class="button contact-action" href={`tel:${siteConfig.phone}`}>Call us</a>
+          <a class="button contact-action" href={`sms:${siteConfig.phone}`}>Send a text message</a>
+          <span class="contact-detail">{siteConfig.phone}</span>
         </div>
         <div class="contact-block">
           <strong>WhatsApp</strong>
-          <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">Chat with us</a>
+          <a class="button contact-action" href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">Chat with us</a>
         </div>
         <div class="contact-block">
           <strong>Location</strong>
@@ -224,9 +226,21 @@ import { siteConfig } from '../data/site';
     color: var(--text-strong);
   }
 
-  .contact-block a,
-  .contact-block span {
+  .contact-block .contact-detail,
+  .contact-block > span {
     color: var(--muted);
+  }
+
+  .contact-block .contact-action {
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.7rem 1rem;
+    text-align: center;
+  }
+
+  .contact-block .contact-action:hover,
+  .contact-block .contact-action:focus-visible {
+    color: white;
   }
 
   @media (max-width: 860px) {
