@@ -67,6 +67,73 @@ const { tool } = Astro.props as { tool: Tool };
                 ></textarea>
                 <p id="usage-count" class="m-0 text-sm text-slate-500" aria-live="polite"></p>
               </>
+            ) : tool.clientAction === 'password-pin-generator' ? (
+              <div class="space-y-5">
+                <label class="block text-sm font-bold text-slate-900">
+                  Generate
+                  <select id="password-mode" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-xs">
+                    <option value="password">Password</option>
+                    <option value="pin">Numeric PIN</option>
+                  </select>
+                </label>
+                <label class="block text-sm font-bold text-slate-900 sm:max-w-xs">
+                  Length
+                  <input id="password-length" type="number" min="4" max="64" value="16" class="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100" />
+                </label>
+                <div id="password-options" class="flex flex-wrap gap-x-6 gap-y-3">
+                  <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                    <input id="password-uppercase" type="checkbox" checked class="h-4 w-4 accent-teal-800" /> Uppercase letters
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                    <input id="password-numbers" type="checkbox" checked class="h-4 w-4 accent-teal-800" /> Numbers
+                  </label>
+                  <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                    <input id="password-symbols" type="checkbox" class="h-4 w-4 accent-teal-800" /> Symbols
+                  </label>
+                </div>
+                <p class="m-0 text-xs text-slate-500">Passwords and PINs are generated using your browser’s cryptographic random number generator.</p>
+              </div>
+            ) : tool.clientAction === 'lorem-ipsum-generator' ? (
+              <div class="grid gap-4 sm:grid-cols-2">
+                <label class="block text-sm font-bold text-slate-900">
+                  Generate
+                  <select id="lorem-mode" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100">
+                    <option value="paragraphs">Paragraphs</option>
+                    <option value="words">Words</option>
+                  </select>
+                </label>
+                <label class="block text-sm font-bold text-slate-900">
+                  <span id="lorem-count-label">Number of paragraphs</span>
+                  <input id="lorem-count" type="number" min="1" max="10" value="3" class="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100" />
+                </label>
+              </div>
+            ) : tool.clientAction === 'epoch-date-converter' ? (
+              <div class="space-y-4">
+                <label class="block text-sm font-bold text-slate-900">
+                  Conversion
+                  <select id="epoch-mode" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-sm">
+                    <option value="date-to-epoch">Date to Unix timestamp</option>
+                    <option value="epoch-to-date">Unix timestamp to date</option>
+                  </select>
+                </label>
+                <div id="epoch-date-fields">
+                  <label for="epoch-date" class="block text-sm font-bold text-slate-900">Date and time</label>
+                  <input id="epoch-date" type="datetime-local" step="1" class="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-sm" />
+                </div>
+                <div id="epoch-value-fields" class="hidden grid gap-4 sm:grid-cols-2">
+                  <label class="block text-sm font-bold text-slate-900">
+                    Timestamp
+                    <input id="epoch-value" type="number" step="any" placeholder="e.g. 1735689600" class="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100" />
+                  </label>
+                  <label class="block text-sm font-bold text-slate-900">
+                    Unit
+                    <select id="epoch-unit" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100">
+                      <option value="seconds">Seconds</option>
+                      <option value="milliseconds">Milliseconds</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
             ) : tool.clientAction === 'unit-converter' ? (
               <div class="grid gap-4 sm:grid-cols-3">
                 <label class="block text-sm font-bold text-slate-900">
@@ -130,6 +197,16 @@ const { tool } = Astro.props as { tool: Tool };
                     </select>
                   </label>
                 )}
+                {tool.clientAction === 'text-hash-generator' && (
+                  <label class="block text-sm font-bold text-slate-900">
+                    Hash algorithm
+                    <select id="client-mode" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-3 py-3 font-normal outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-xs">
+                      <option value="SHA-256">SHA-256</option>
+                      <option value="SHA-1">SHA-1</option>
+                      <option value="MD5">MD5 (legacy, not secure)</option>
+                    </select>
+                  </label>
+                )}
               </>
             )}
 
@@ -145,7 +222,7 @@ const { tool } = Astro.props as { tool: Tool };
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"></path>
                   </svg>
                 )}
-                <span id="run-label">{tool.type === 'ai' ? 'Generate' : tool.clientAction === 'word-counter' ? 'Count text' : tool.clientAction === 'unit-converter' ? 'Convert' : 'Run tool'}</span>
+                <span id="run-label">{tool.type === 'ai' ? 'Generate' : tool.clientAction === 'word-counter' ? 'Count text' : tool.clientAction === 'unit-converter' || tool.clientAction === 'epoch-date-converter' ? 'Convert' : tool.clientAction === 'password-pin-generator' ? 'Generate securely' : tool.clientAction === 'lorem-ipsum-generator' ? 'Generate text' : tool.clientAction === 'slug-generator' ? 'Create slug' : tool.clientAction === 'text-hash-generator' ? 'Generate hash' : 'Run tool'}</span>
               </button>
             </div>
             <p id="tool-status" class="m-0 text-sm text-rose-700" role="status" aria-live="polite"></p>
@@ -190,6 +267,76 @@ const { tool } = Astro.props as { tool: Tool };
 </Layout>
 
 <script>
+  const calculateMd5 = (text: string): string => {
+    const bytes = new TextEncoder().encode(text);
+    const paddedLength = Math.ceil((bytes.length + 9) / 64) * 64;
+    const buffer = new Uint8Array(paddedLength);
+    buffer.set(bytes);
+    buffer[bytes.length] = 0x80;
+    new DataView(buffer.buffer).setBigUint64(paddedLength - 8, BigInt(bytes.length) * 8n, true);
+
+    const shifts = [
+      7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+      5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+      4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+      6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
+    ];
+    const constants = Array.from({ length: 64 }, (_, index) =>
+      Math.floor(Math.abs(Math.sin(index + 1)) * 0x1_0000_0000) >>> 0,
+    );
+    let a0 = 0x67452301;
+    let b0 = 0xefcdab89;
+    let c0 = 0x98badcfe;
+    let d0 = 0x10325476;
+    const rotateLeft = (value: number, amount: number) =>
+      (value << amount) | (value >>> (32 - amount));
+
+    for (let offset = 0; offset < paddedLength; offset += 64) {
+      const words = new Uint32Array(16);
+      const view = new DataView(buffer.buffer, offset, 64);
+      for (let index = 0; index < 16; index += 1) words[index] = view.getUint32(index * 4, true);
+
+      let a = a0;
+      let b = b0;
+      let c = c0;
+      let d = d0;
+      for (let index = 0; index < 64; index += 1) {
+        let value: number;
+        let wordIndex: number;
+        if (index < 16) {
+          value = (b & c) | (~b & d);
+          wordIndex = index;
+        } else if (index < 32) {
+          value = (d & b) | (~d & c);
+          wordIndex = (5 * index + 1) % 16;
+        } else if (index < 48) {
+          value = b ^ c ^ d;
+          wordIndex = (3 * index + 5) % 16;
+        } else {
+          value = c ^ (b | ~d);
+          wordIndex = (7 * index) % 16;
+        }
+
+        const sum = (a + value + constants[index] + words[wordIndex]) >>> 0;
+        const rotated = rotateLeft(sum, shifts[index]);
+        const nextB = (b + rotated) >>> 0;
+        a = d;
+        d = c;
+        c = b;
+        b = nextB;
+      }
+
+      a0 = (a0 + a) >>> 0;
+      b0 = (b0 + b) >>> 0;
+      c0 = (c0 + c) >>> 0;
+      d0 = (d0 + d) >>> 0;
+    }
+
+    return [a0, b0, c0, d0]
+      .flatMap((word) => [0, 8, 16, 24].map((shift) => ((word >>> shift) & 0xff).toString(16).padStart(2, '0')))
+      .join('');
+  };
+
   const form = document.querySelector<HTMLFormElement>('#tool-form');
   const input = document.querySelector<HTMLTextAreaElement>('#tool-input');
   const button = document.querySelector<HTMLButtonElement>('#run-tool');
@@ -204,9 +351,36 @@ const { tool } = Astro.props as { tool: Tool };
   if (form && button && label && status && outputPanel && output && copyButton) {
     const toolType = form.dataset.toolType;
     const clientAction = form.dataset.clientAction;
+    const passwordMode = document.querySelector<HTMLSelectElement>('#password-mode');
+    const passwordOptions = document.querySelector<HTMLElement>('#password-options');
+    const loremMode = document.querySelector<HTMLSelectElement>('#lorem-mode');
+    const loremCountLabel = document.querySelector<HTMLElement>('#lorem-count-label');
+    const epochMode = document.querySelector<HTMLSelectElement>('#epoch-mode');
+    const epochDateFields = document.querySelector<HTMLElement>('#epoch-date-fields');
+    const epochValueFields = document.querySelector<HTMLElement>('#epoch-value-fields');
     const day = new Date().toISOString().slice(0, 10);
     const storageKey = `jutt-ai-tool-usage:${day}`;
     const limit = 10;
+
+    passwordMode?.addEventListener('change', () => {
+      passwordOptions?.classList.toggle('hidden', passwordMode.value === 'pin');
+    });
+
+    loremMode?.addEventListener('change', () => {
+      const words = loremMode.value === 'words';
+      if (loremCountLabel) loremCountLabel.textContent = words ? 'Number of words' : 'Number of paragraphs';
+      const countInput = document.querySelector<HTMLInputElement>('#lorem-count');
+      if (countInput) {
+        countInput.max = words ? '500' : '10';
+        countInput.value = words ? '100' : '3';
+      }
+    });
+
+    epochMode?.addEventListener('change', () => {
+      const timestampMode = epochMode.value === 'epoch-to-date';
+      epochDateFields?.classList.toggle('hidden', timestampMode);
+      epochValueFields?.classList.toggle('hidden', !timestampMode);
+    });
 
     const revealOutput = (text: string) => {
       output.textContent = text;
@@ -356,6 +530,110 @@ const { tool } = Astro.props as { tool: Tool };
             else if (from === 'celsius') converted = (value * 9) / 5 + 32;
             else converted = ((value - 32) * 5) / 9;
             result = `${value} ${from} = ${Number(converted.toPrecision(10))} ${to}`;
+            break;
+          }
+          case 'password-pin-generator': {
+            const length = Number(document.querySelector<HTMLInputElement>('#password-length')?.value);
+            const isPin = passwordMode?.value === 'pin';
+            if (!Number.isInteger(length) || length < 4 || length > 64) {
+              throw new Error('Choose a length between 4 and 64 characters.');
+            }
+
+            const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+            const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const digits = '0123456789';
+            const symbols = '!@#$%^&*()-_=+[]{};:,.?';
+            const characterSets = isPin
+              ? [digits]
+              : [
+                  lowercase,
+                  ...(document.querySelector<HTMLInputElement>('#password-uppercase')?.checked ? [uppercase] : []),
+                  ...(document.querySelector<HTMLInputElement>('#password-numbers')?.checked ? [digits] : []),
+                  ...(document.querySelector<HTMLInputElement>('#password-symbols')?.checked ? [symbols] : []),
+                ];
+            const randomIndex = (maximum: number): number => {
+              const ceiling = Math.floor(0x1_0000_0000 / maximum) * maximum;
+              const random = new Uint32Array(1);
+              do {
+                crypto.getRandomValues(random);
+              } while (random[0] >= ceiling);
+              return random[0] % maximum;
+            };
+            const characters = characterSets.map((set) => set[randomIndex(set.length)]);
+            const allCharacters = characterSets.join('');
+            while (characters.length < length) {
+              characters.push(allCharacters[randomIndex(allCharacters.length)]);
+            }
+            for (let index = characters.length - 1; index > 0; index -= 1) {
+              const swapIndex = randomIndex(index + 1);
+              [characters[index], characters[swapIndex]] = [characters[swapIndex], characters[index]];
+            }
+            result = characters.join('');
+            break;
+          }
+          case 'slug-generator': {
+            if (!text.trim()) throw new Error('Enter a title or phrase to create a slug.');
+            result = text
+              .normalize('NFKD')
+              .replace(/\p{Diacritic}/gu, '')
+              .toLocaleLowerCase()
+              .trim()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '');
+            if (!result) throw new Error('This text does not contain characters that can be used in a URL slug.');
+            break;
+          }
+          case 'text-hash-generator': {
+            if (!text) throw new Error('Enter text to generate its hash.');
+            const algorithm = document.querySelector<HTMLSelectElement>('#client-mode')?.value ?? 'SHA-256';
+            const digest =
+              algorithm === 'MD5'
+                ? calculateMd5(text)
+                : Array.from(
+                    new Uint8Array(await crypto.subtle.digest(algorithm, new TextEncoder().encode(text))),
+                    (byte) => byte.toString(16).padStart(2, '0'),
+                  ).join('');
+            result = `${algorithm}: ${digest}${algorithm === 'MD5' || algorithm === 'SHA-1' ? '\nNote: This legacy hash is not suitable for password storage or security-sensitive uses.' : ''}`;
+            break;
+          }
+          case 'lorem-ipsum-generator': {
+            const mode = loremMode?.value ?? 'paragraphs';
+            const count = Number(document.querySelector<HTMLInputElement>('#lorem-count')?.value);
+            const maximum = mode === 'words' ? 500 : 10;
+            if (!Number.isInteger(count) || count < 1 || count > maximum) {
+              throw new Error(`Choose a quantity between 1 and ${maximum}.`);
+            }
+
+            const loremWords = 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum'.split(' ');
+            const words = Array.from({ length: mode === 'words' ? count : count * 50 }, (_, index) => loremWords[index % loremWords.length]);
+            if (mode === 'words') {
+              result = words.join(' ');
+            } else {
+              result = Array.from({ length: count }, (_, paragraph) => {
+                const paragraphWords = words.slice(paragraph * 50, (paragraph + 1) * 50);
+                paragraphWords[0] = paragraphWords[0].charAt(0).toUpperCase() + paragraphWords[0].slice(1);
+                return `${paragraphWords.join(' ')}.`;
+              }).join('\n\n');
+            }
+            break;
+          }
+          case 'epoch-date-converter': {
+            if (epochMode?.value === 'epoch-to-date') {
+              const timestamp = Number(document.querySelector<HTMLInputElement>('#epoch-value')?.value);
+              const milliseconds = document.querySelector<HTMLSelectElement>('#epoch-unit')?.value === 'seconds'
+                ? timestamp * 1000
+                : timestamp;
+              const date = new Date(milliseconds);
+              if (!Number.isFinite(timestamp) || Number.isNaN(date.getTime())) {
+                throw new Error('Enter a valid Unix timestamp.');
+              }
+              result = `UTC: ${date.toISOString()}\nLocal time: ${date.toLocaleString()}\nUnix seconds: ${Math.floor(date.getTime() / 1000)}\nUnix milliseconds: ${date.getTime()}`;
+            } else {
+              const dateValue = document.querySelector<HTMLInputElement>('#epoch-date')?.value ?? '';
+              const date = new Date(dateValue);
+              if (!dateValue || Number.isNaN(date.getTime())) throw new Error('Choose a valid date and time.');
+              result = `Unix seconds: ${Math.floor(date.getTime() / 1000)}\nUnix milliseconds: ${date.getTime()}\nUTC: ${date.toISOString()}`;
+            }
             break;
           }
           default:

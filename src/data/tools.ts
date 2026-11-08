@@ -3,7 +3,12 @@ export type ClientAction =
   | 'text-case-converter'
   | 'base64'
   | 'json-formatter'
-  | 'unit-converter';
+  | 'unit-converter'
+  | 'password-pin-generator'
+  | 'slug-generator'
+  | 'text-hash-generator'
+  | 'lorem-ipsum-generator'
+  | 'epoch-date-converter';
 
 interface ToolBase {
   id: string;
@@ -131,5 +136,52 @@ export const tools: Tool[] = [
     type: 'client',
     clientAction: 'unit-converter',
     icon: '↔',
+  },
+  {
+    id: 'password-pin-generator',
+    title: 'Password & PIN Generator',
+    category: 'Converters & Text Tools',
+    description: 'Generate a random password or numeric PIN with options you control.',
+    type: 'client',
+    clientAction: 'password-pin-generator',
+    icon: '🔐',
+  },
+  {
+    id: 'slug-generator',
+    title: 'Slug & URL Friendly Text Generator',
+    category: 'Converters & Text Tools',
+    description: 'Turn titles and phrases into clean, URL-friendly slugs.',
+    type: 'client',
+    clientAction: 'slug-generator',
+    icon: '🔗',
+    placeholder: 'Enter a title or phrase to turn into a URL slug...',
+  },
+  {
+    id: 'text-hash-generator',
+    title: 'MD5 / Text Hash Generator',
+    category: 'Converters & Text Tools',
+    description: 'Generate MD5, SHA-1, or SHA-256 text digests in your browser.',
+    type: 'client',
+    clientAction: 'text-hash-generator',
+    icon: '#',
+    placeholder: 'Enter text to hash...',
+  },
+  {
+    id: 'lorem-ipsum-generator',
+    title: 'Lorem Ipsum Dummy Text Generator',
+    category: 'Converters & Text Tools',
+    description: 'Generate placeholder words, sentences, or paragraphs for mockups.',
+    type: 'client',
+    clientAction: 'lorem-ipsum-generator',
+    icon: '¶',
+  },
+  {
+    id: 'epoch-date-converter',
+    title: 'Epoch Timestamp & Date Converter',
+    category: 'Converters & Text Tools',
+    description: 'Convert dates and Unix timestamps in seconds or milliseconds.',
+    type: 'client',
+    clientAction: 'epoch-date-converter',
+    icon: '◷',
   },
 ];
