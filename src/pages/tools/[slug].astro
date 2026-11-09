@@ -8,7 +8,8 @@ import '../../styles/global.css';
 export const prerender = true;
 
 export function getStaticPaths() {
-  return tools.map((tool) => ({
+  const dedicatedToolPages = new Set(['text-formatter', 'json-formatter', 'password-generator']);
+  return tools.filter((tool) => !dedicatedToolPages.has(tool.id)).map((tool) => ({
     params: { slug: tool.id },
     props: { tool },
   }));
