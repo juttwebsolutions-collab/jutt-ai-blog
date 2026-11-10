@@ -22,7 +22,7 @@ function getBlogPages(directory) {
       path.relative(blogDirectory, filePath).replace(/\\/g, '/').replace(/\.md$/, '');
     const encodedSlug = slug.split('/').map(encodeURIComponent).join('/');
 
-    return [new URL(`/blog/${encodedSlug}/`, site).href];
+    return [new URL(`/blog/${encodedSlug}`, site).href];
   });
 }
 
@@ -30,6 +30,10 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   site,
+  trailingSlash: 'never',
+  build: {
+    format: 'directory',
+  },
   integrations: [sitemap({ customPages: getBlogPages(blogDirectory) })],
   vite: {
     plugins: [tailwindcss()],

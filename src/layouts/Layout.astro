@@ -8,13 +8,14 @@ const {
   image = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80',
 } = Astro.props;
 
-const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? siteConfig.domain;
-const canonical = `${siteUrl}${url.startsWith('/') ? url : `/${url}`}`;
+const siteUrl = Astro.site?.origin ?? new URL(siteConfig.domain).origin;
+const canonicalPath = url === '/' ? '' : `/${url.replace(/^\/+|\/+$/g, '')}`;
+const canonical = `${siteUrl}${canonicalPath}`;
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: siteConfig.siteName,
-  url: `${siteUrl}/`,
+  url: siteUrl,
   description: siteConfig.baseDescription,
 };
 ---
