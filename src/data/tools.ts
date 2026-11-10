@@ -237,3 +237,6 @@ export const tools: Tool[] = [
     placeholder: 'Enter text to hash...',
   },
 ];
+
+// Keep tools in launch order; append new entries so they appear first in listings.
+export const newestTools = [...tools].reverse();

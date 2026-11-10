@@ -1,5 +1,6 @@
 ---
 import { navItems } from '../data/site';
+import { newestTools } from '../data/tools';
 
 const { pathname } = Astro.url;
 const isActive = (href: string) => {
@@ -26,12 +27,28 @@ const isActive = (href: string) => {
 
     <nav class="nav-panel" aria-label="Primary navigation">
       <div class="nav-links">
-        {navItems.map((link) => (
-          <a href={link.href} class={isActive(link.href) ? 'active' : ''}>{link.label}</a>
-        ))}
+        {navItems.map((link) =>
+          link.label === 'Tools' ? (
+            <details class:list={['tools-menu', 'primary-tools-menu', pathname.startsWith('/tools') || pathname === '/' ? 'active' : '']}>
+              <summary>Tools</summary>
+              <div class="tools-menu-panel primary-tools-menu-panel">
+                <a class="all-tools-menu-link" href="/tools">All Tools <span>{newestTools.length}</span></a>
+                <div class="tools-menu-divider" aria-hidden="true"></div>
+                {newestTools.map((tool) => (
+                  <a href={`/tools/${tool.id}`} aria-current={pathname === `/tools/${tool.id}` ? 'page' : undefined}>
+                    {tool.title}
+                  </a>
+                ))}
+              </div>
+            </details>
+          ) : (
+            <a href={link.href} class={isActive(link.href) ? 'active' : ''}>{link.label}</a>
+          ),
+        )}
         <details class="tools-menu">
           <summary>Quick tools</summary>
           <div class="tools-menu-panel">
+            <a href="/tools">All Tools</a>
             <a href="/tools/text-formatter">Text Formatter</a>
             <a href="/tools/json-formatter">JSON Prettifier</a>
             <a href="/tools/password-generator">Password Generator</a>
@@ -185,7 +202,8 @@ const isActive = (href: string) => {
   }
 
   .tools-menu[open] summary,
-  .tools-menu summary:hover {
+  .tools-menu summary:hover,
+  .primary-tools-menu.active summary {
     color: var(--accent-strong);
     background: var(--accent-soft);
   }
@@ -213,6 +231,53 @@ const isActive = (href: string) => {
 
   .tools-menu-panel a:hover {
     background: var(--accent-soft);
+  }
+
+  .primary-tools-menu-panel {
+    max-height: min(72vh, 34rem);
+    min-width: 17rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-width: thin;
+  }
+
+  .primary-tools-menu-panel .all-tools-menu-link {
+    position: sticky;
+    top: -0.5rem;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem;
+    border: 1px solid rgba(15, 118, 110, 0.14);
+    background: #f0fdfa;
+    color: #115e59;
+    font-weight: 800;
+  }
+
+  .all-tools-menu-link span {
+    display: inline-grid;
+    min-width: 1.65rem;
+    min-height: 1.65rem;
+    place-items: center;
+    border-radius: 999px;
+    background: #ccfbf1;
+    color: #115e59;
+    font-size: 0.72rem;
+  }
+
+  .primary-tools-menu-panel a[aria-current='page'] {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-weight: 700;
+  }
+
+  .tools-menu-divider {
+    height: 1px;
+    margin: 0.25rem 0;
+    background: var(--border);
   }
 
   .quote-button {
@@ -305,6 +370,11 @@ const isActive = (href: string) => {
       position: static;
       margin-top: 0.35rem;
       box-shadow: none;
+    }
+
+    .primary-tools-menu-panel {
+      max-height: 40vh;
+      min-width: 0;
     }
 
     .nav-links a,
