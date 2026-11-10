@@ -1,0 +1,293 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+---
+
+<Layout
+  title="Fast CSS Minifier & Un-minifier | Jutt AI Tools"
+  description="Minify, format, and validate CSS locally in your browser, with live syntax checks and byte savings."
+  url="/tools/css-minifier"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(900px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Fast CSS Minifier &amp; Un-minifier</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Compress or format CSS with local syntax checks. Your stylesheet never leaves this browser.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8" aria-label="CSS minifier">
+      <div>
+        <label for="css-input" class="mb-2 block text-sm font-bold text-slate-900">Raw CSS</label>
+        <textarea id="css-input" rows="11" spellcheck="false" placeholder=".card {\n  color: #0f766e;\n  padding: 1rem;\n}" class="block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+      </div>
+
+      <div id="css-alert" class="hidden rounded-2xl border px-4 py-3 text-sm" role="status" aria-live="polite"></div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="minify-css" type="button" class="rounded-full bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-teal-800">Minify (Single Line)</button>
+        <button id="beautify-css" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Beautify / Format (2 Spaces)</button>
+        <span id="css-stats" class="ml-auto text-sm text-slate-500" aria-live="polite">Byte reduction: 0%</span>
+      </div>
+
+      <div>
+        <div class="mb-2 flex items-center justify-between gap-2">
+          <label for="css-output" class="text-sm font-bold text-slate-900">Output</label>
+          <button id="copy-css" type="button" class="text-sm font-bold text-teal-800 hover:text-teal-950">Copy Output</button>
+        </div>
+        <textarea id="css-output" rows="11" spellcheck="false" readonly placeholder="Minified or formatted CSS will appear here..." class="block w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const cssInput = document.querySelector<HTMLTextAreaElement>('#css-input');
+  const cssOutput = document.querySelector<HTMLTextAreaElement>('#css-output');
+  const cssAlert = document.querySelector<HTMLDivElement>('#css-alert');
+  const cssStats = document.querySelector<HTMLSpanElement>('#css-stats');
+
+  function showCssMessage(message: string, isError = false): void {
+    if (!cssAlert) return;
+    cssAlert.textContent = message;
+    cssAlert.className = isError
+      ? 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+      : 'rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900';
+  }
+
+  function validateCss(source: string): string | null {
+    let quote = '';
+    let inComment = false;
+    const stack: { character: string; index: number }[] = [];
+    for (let index = 0; index < source.length; index += 1) {
+      const character = source[index];
+      const next = source[index + 1];
+      if (inComment) {
+        if (character === '*' && next === '/') {
+          inComment = false;
+          index += 1;
+        }
+        continue;
+      }
+      if (quote) {
+        if (character === '\\') index += 1;
+        else if (character === quote) quote = '';
+        continue;
+      }
+      if (character === '/' && next === '*') {
+        inComment = true;
+        index += 1;
+      } else if (character === '"' || character === "'") {
+        quote = character;
+      } else if (character === '{' || character === '(' || character === '[') {
+        stack.push({ character, index });
+      } else if (character === '}' || character === ')' || character === ']') {
+        const opening = stack.pop();
+        const expected = character === '}' ? '{' : character === ')' ? '(' : '[';
+        if (!opening || opening.character !== expected) return `Unexpected "${character}" near character ${index + 1}.`;
+      }
+    }
+    if (inComment) return 'A CSS comment is not closed.';
+    if (quote) return 'A quoted string is not closed.';
+    if (stack.length) {
+      const last = stack[stack.length - 1];
+      return `The "${last.character}" opened near character ${last.index + 1} is not closed.`;
+    }
+
+    const cleaned = source.replace(/\/\*[\s\S]*?\*\//g, '');
+    let depth = 0;
+    let start = 0;
+    let inString = '';
+    const blockHeaders: string[] = [];
+    for (let index = 0; index < cleaned.length; index += 1) {
+      const character = cleaned[index];
+      if (inString) {
+        if (character === '\\') index += 1;
+        else if (character === inString) inString = '';
+      } else if (character === '"' || character === "'") {
+        inString = character;
+      } else if (character === '{') {
+        const header = cleaned.slice(start, index).trim();
+        if (!header) return `Missing selector or at-rule before character ${index + 1}.`;
+        blockHeaders.push(header);
+        depth += 1;
+        start = index + 1;
+      } else if (character === '}') {
+        const body = cleaned.slice(start, index).trim();
+        const header = blockHeaders.pop() ?? '';
+        const nestedRuleAtRule = /^@(media|supports|container|layer|document|scope|starting-style|[\w-]*keyframes)\b/i.test(header);
+        if (body && !nestedRuleAtRule) {
+          const declarations = body.split(';').map((item) => item.trim()).filter(Boolean);
+          for (const declaration of declarations) {
+            const colon = declaration.indexOf(':');
+            if (colon < 1 || !declaration.slice(0, colon).trim() || !declaration.slice(colon + 1).trim()) {
+              return `Invalid CSS declaration in "${header}".`;
+            }
+          }
+        }
+        depth -= 1;
+        start = index + 1;
+      } else if (character === ';' && depth === 0) {
+        const statement = cleaned.slice(start, index).trim();
+        if (statement && !/^@(charset|import|namespace)\b/i.test(statement)) {
+          return `Unexpected statement "${statement.slice(0, 40)}" outside a CSS rule.`;
+        }
+        start = index + 1;
+      }
+    }
+    const trailing = cleaned.slice(start).trim();
+    if (trailing && depth === 0 && !/^@(charset|import|namespace)\b/i.test(trailing)) {
+      return `Unexpected content outside a CSS rule: "${trailing.slice(0, 40)}".`;
+    }
+    return null;
+  }
+
+  function minifyCss(source: string): string {
+    let result = '';
+    let quote = '';
+    let pendingSpace = false;
+    for (let index = 0; index < source.length; index += 1) {
+      const character = source[index];
+      const next = source[index + 1];
+      if (quote) {
+        result += character;
+        if (character === '\\' && next) result += source[++index];
+        else if (character === quote) quote = '';
+        continue;
+      }
+      if (character === '/' && next === '*') {
+        pendingSpace = true;
+        index += 1;
+        while (index + 1 < source.length && !(source[index] === '*' && source[index + 1] === '/')) index += 1;
+        index += 1;
+        continue;
+      }
+      if (character === '"' || character === "'") {
+        if (pendingSpace && result && !/[{(:,;>+~]$/.test(result)) result += ' ';
+        pendingSpace = false;
+        quote = character;
+        result += character;
+        continue;
+      }
+      if (/\s/.test(character)) {
+        pendingSpace = true;
+        continue;
+      }
+      if (character === ':') {
+        if (pendingSpace && result) result += ' ';
+        result += character;
+        pendingSpace = false;
+        continue;
+      }
+      if (/[{};,>+~]/.test(character)) {
+        result = result.trimEnd();
+        result += character;
+        pendingSpace = false;
+        continue;
+      }
+      if (pendingSpace && result && !/[{(:,;>+~]$/.test(result)) result += ' ';
+      pendingSpace = false;
+      result += character;
+    }
+    return result.replace(/;}/g, '}').trim();
+  }
+
+  function beautifyCss(source: string): string {
+    const minified = minifyCss(source);
+    let result = '';
+    let indent = 0;
+    let quote = '';
+    const pad = () => '  '.repeat(indent);
+    for (let index = 0; index < minified.length; index += 1) {
+      const character = minified[index];
+      const next = minified[index + 1];
+      if (quote) {
+        result += character;
+        if (character === '\\' && next) result += minified[++index];
+        else if (character === quote) quote = '';
+      } else if (character === '"' || character === "'") {
+        quote = character;
+        result += character;
+      } else if (character === '{') {
+        result = `${result.trimEnd()} {\n`;
+        indent += 1;
+        result += pad();
+      } else if (character === ';') {
+        result = `${result.trimEnd()};\n${pad()}`;
+      } else if (character === '}') {
+        indent = Math.max(0, indent - 1);
+        result = `${result.trimEnd()}\n${pad()}}`;
+        if (next && next !== '}') result += '\n';
+        if (next && next !== '}') result += pad();
+      } else {
+        result += character;
+      }
+    }
+    return result.trim();
+  }
+
+  function processCss(format: 'minify' | 'beautify'): void {
+    if (!cssInput || !cssOutput || !cssStats) return;
+    const source = cssInput.value;
+    if (!source.trim()) {
+      cssOutput.value = '';
+      cssStats.textContent = 'Byte reduction: 0%';
+      showCssMessage('Enter CSS to process.', true);
+      return;
+    }
+    const syntaxError = validateCss(source);
+    if (syntaxError) {
+      cssOutput.value = '';
+      cssStats.textContent = 'Byte reduction: —';
+      showCssMessage(`CSS syntax error: ${syntaxError}`, true);
+      return;
+    }
+    const output = format === 'minify' ? minifyCss(source) : beautifyCss(source);
+    cssOutput.value = output;
+    const inputBytes = new TextEncoder().encode(source).byteLength;
+    const outputBytes = new TextEncoder().encode(output).byteLength;
+    const reduction = inputBytes ? Math.round(((inputBytes - outputBytes) / inputBytes) * 100) : 0;
+    cssStats.textContent = `Byte reduction: ${reduction}% (${outputBytes.toLocaleString()} of ${inputBytes.toLocaleString()} B)`;
+    showCssMessage('CSS syntax looks valid. Output is ready.');
+  }
+
+  cssInput?.addEventListener('input', () => {
+    if (cssOutput) cssOutput.value = '';
+    if (!cssInput.value.trim()) {
+      if (cssStats) cssStats.textContent = 'Byte reduction: 0%';
+      if (cssAlert) cssAlert.className = 'hidden rounded-2xl border px-4 py-3 text-sm';
+      return;
+    }
+    const error = validateCss(cssInput.value);
+    if (error) {
+      if (cssOutput) cssOutput.value = '';
+      if (cssStats) cssStats.textContent = 'Byte reduction: —';
+      showCssMessage(`CSS syntax error: ${error}`, true);
+    } else {
+      const inputBytes = new TextEncoder().encode(cssInput.value).byteLength;
+      const minifiedBytes = new TextEncoder().encode(minifyCss(cssInput.value)).byteLength;
+      const reduction = inputBytes ? Math.round(((inputBytes - minifiedBytes) / inputBytes) * 100) : 0;
+      if (cssStats) cssStats.textContent = `Potential minified reduction: ${reduction}%`;
+      showCssMessage('CSS syntax looks valid.');
+    }
+  });
+  document.querySelector<HTMLButtonElement>('#minify-css')?.addEventListener('click', () => processCss('minify'));
+  document.querySelector<HTMLButtonElement>('#beautify-css')?.addEventListener('click', () => processCss('beautify'));
+  document.querySelector<HTMLButtonElement>('#copy-css')?.addEventListener('click', async () => {
+    if (!cssOutput?.value || !cssAlert) {
+      showCssMessage('Process valid CSS before copying.', true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(cssOutput.value);
+      showCssMessage('CSS output copied to the clipboard.');
+    } catch {
+      showCssMessage('Could not access the clipboard. Please copy the output manually.', true);
+    }
+  });
+</script>

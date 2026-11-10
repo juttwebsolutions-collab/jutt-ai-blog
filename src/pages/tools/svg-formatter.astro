@@ -1,0 +1,218 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+---
+
+<Layout
+  title="SVG Optimizer & Code Sanitizer | Jutt AI Tools"
+  description="Clean, preview, and optimize SVG code in your browser. SVG input stays on your device."
+  url="/tools/svg-formatter"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(900px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">SVG Optimizer &amp; Code Sanitizer</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Clean and preview SVG markup locally. Scripts, embedded HTML, and event-handler attributes are always removed.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8" aria-label="SVG optimizer">
+      <div>
+        <label for="svg-input" class="mb-2 block text-sm font-bold text-slate-900">Raw SVG code</label>
+        <textarea id="svg-input" rows="10" spellcheck="false" placeholder='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">...</svg>' class="block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+      </div>
+
+      <fieldset class="space-y-3">
+        <legend class="mb-2 text-sm font-bold text-slate-900">Optimization options</legend>
+        <div class="flex flex-wrap gap-x-6 gap-y-3">
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700"><input class="svg-option h-4 w-4 accent-teal-800" type="checkbox" data-option="comments" checked /> Strip comments</label>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700"><input class="svg-option h-4 w-4 accent-teal-800" type="checkbox" data-option="headers" checked /> Strip XML headers</label>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700"><input class="svg-option h-4 w-4 accent-teal-800" type="checkbox" data-option="whitespace" checked /> Remove formatting whitespace</label>
+          <label class="inline-flex items-center gap-2 text-sm text-slate-700"><input class="svg-option h-4 w-4 accent-teal-800" type="checkbox" data-option="attributes" checked /> Remove unused editor/data attributes</label>
+        </div>
+      </fieldset>
+
+      <div id="svg-alert" class="hidden rounded-2xl border px-4 py-3 text-sm" role="status" aria-live="polite"></div>
+      <div class="grid gap-5 md:grid-cols-2">
+        <div>
+          <div class="mb-2 flex items-center justify-between gap-2">
+            <h2 class="text-sm font-bold text-slate-900">Live preview</h2>
+            <span id="svg-stats" class="text-xs text-slate-500">Original: 0 B · Optimized: 0 B</span>
+          </div>
+          <div class="grid min-h-56 place-items-center overflow-hidden rounded-2xl border border-slate-200 bg-[linear-gradient(45deg,#f1f5f9_25%,transparent_25%),linear-gradient(-45deg,#f1f5f9_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f1f5f9_75%),linear-gradient(-45deg,transparent_75%,#f1f5f9_75%)] bg-[length:24px_24px] bg-[position:0_0,0_12px,12px_-12px,-12px_0] p-5">
+            <img id="svg-preview" class="max-h-64 max-w-full object-contain" alt="Preview of the sanitized SVG" />
+            <p id="svg-preview-empty" class="text-sm text-slate-500">Enter valid SVG code to preview it.</p>
+          </div>
+        </div>
+        <div>
+          <label for="svg-output" class="mb-2 block text-sm font-bold text-slate-900">Clean SVG output</label>
+          <textarea id="svg-output" rows="10" spellcheck="false" readonly placeholder="Your optimized SVG will appear here..." class="block w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button id="copy-svg" type="button" class="rounded-full bg-slate-950 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-teal-800">Copy Clean SVG</button>
+        <button id="download-svg" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Download .svg File</button>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const svgInput = document.querySelector<HTMLTextAreaElement>('#svg-input');
+  const svgOutput = document.querySelector<HTMLTextAreaElement>('#svg-output');
+  const svgAlert = document.querySelector<HTMLDivElement>('#svg-alert');
+  const svgPreview = document.querySelector<HTMLImageElement>('#svg-preview');
+  const svgPreviewEmpty = document.querySelector<HTMLParagraphElement>('#svg-preview-empty');
+  const svgStats = document.querySelector<HTMLSpanElement>('#svg-stats');
+  let previewUrl = '';
+
+  function showSvgMessage(message: string, isError = false): void {
+    if (!svgAlert) return;
+    svgAlert.textContent = message;
+    svgAlert.className = isError
+      ? 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+      : 'rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900';
+  }
+
+  function formatBytes(bytes: number): string {
+    return `${bytes.toLocaleString()} B`;
+  }
+
+  function optimizeSvg(source: string): string {
+    const removeComments = document.querySelector<HTMLInputElement>('[data-option="comments"]')?.checked ?? false;
+    const removeHeaders = document.querySelector<HTMLInputElement>('[data-option="headers"]')?.checked ?? false;
+    const removeWhitespace = document.querySelector<HTMLInputElement>('[data-option="whitespace"]')?.checked ?? false;
+    const removeAttributes = document.querySelector<HTMLInputElement>('[data-option="attributes"]')?.checked ?? false;
+    const xmlHeader = source.match(/^\uFEFF?(<\?xml\b[^?]*\?>)\s*/i)?.[1] ?? '';
+    const svgDocument = new DOMParser().parseFromString(source, 'image/svg+xml');
+    if (svgDocument.querySelector('parsererror')) throw new Error('The SVG markup is not valid XML.');
+    if (svgDocument.documentElement.localName !== 'svg') throw new Error('The document root must be an <svg> element.');
+
+    svgDocument.querySelectorAll('script, foreignObject').forEach((element) => element.remove());
+    svgDocument.querySelectorAll('*').forEach((element) => {
+      Array.from(element.attributes).forEach((attribute) => {
+        const name = attribute.name.toLowerCase();
+        const value = attribute.value.trim();
+        if (
+          name.startsWith('on') ||
+          ((name === 'href' || name.endsWith(':href')) && /^(?:javascript:|data:text\/html)/i.test(value)) ||
+          (name === 'style' && /(?:expression\s*\(|javascript\s*:)/i.test(value))
+        ) {
+          element.removeAttributeNode(attribute);
+        }
+      });
+    });
+
+    if (removeHeaders) {
+      Array.from(svgDocument.childNodes).forEach((node) => {
+        if (node.nodeType === Node.PROCESSING_INSTRUCTION_NODE) node.remove();
+      });
+    }
+
+    if (removeComments) {
+      const comments = svgDocument.createTreeWalker(svgDocument, NodeFilter.SHOW_COMMENT);
+      const toRemove: Node[] = [];
+      while (comments.nextNode()) toRemove.push(comments.currentNode);
+      toRemove.forEach((node) => node.remove());
+    }
+
+    if (removeAttributes) {
+      svgDocument.querySelectorAll('*').forEach((element) => {
+        Array.from(element.attributes).forEach((attribute) => {
+          const name = attribute.name.toLowerCase();
+          if (name.startsWith('data-') || name.startsWith('inkscape:') || name.startsWith('sodipodi:')) {
+            element.removeAttributeNode(attribute);
+          }
+        });
+      });
+    }
+
+    if (removeWhitespace) {
+      const whitespace = svgDocument.createTreeWalker(svgDocument.documentElement, NodeFilter.SHOW_TEXT);
+      const toRemove: Node[] = [];
+      while (whitespace.nextNode()) {
+        const node = whitespace.currentNode;
+        const parentName = node.parentElement?.localName;
+        if (!node.textContent?.trim() && parentName !== 'text' && parentName !== 'tspan') toRemove.push(node);
+      }
+      toRemove.forEach((node) => node.remove());
+    }
+
+    const serialized = new XMLSerializer().serializeToString(svgDocument.documentElement);
+    return !removeHeaders && xmlHeader ? `${xmlHeader}\n${serialized}` : serialized;
+  }
+
+  function updateSvg(): void {
+    if (!svgInput || !svgOutput || !svgStats || !svgPreview || !svgPreviewEmpty || !svgAlert) return;
+    const source = svgInput.value;
+    const originalBytes = new TextEncoder().encode(source).byteLength;
+    svgStats.textContent = `Original: ${formatBytes(originalBytes)} · Optimized: 0 B`;
+
+    if (!source.trim()) {
+      svgOutput.value = '';
+      svgPreview.removeAttribute('src');
+      svgPreview.classList.add('hidden');
+      svgPreviewEmpty.classList.remove('hidden');
+      svgAlert.textContent = '';
+      svgAlert.className = 'hidden rounded-2xl border px-4 py-3 text-sm';
+      return;
+    }
+
+    try {
+      const optimized = optimizeSvg(source);
+      const optimizedBytes = new TextEncoder().encode(optimized).byteLength;
+      svgOutput.value = optimized;
+      svgStats.textContent = `Original: ${formatBytes(originalBytes)} · Optimized: ${formatBytes(optimizedBytes)}`;
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = URL.createObjectURL(new Blob([optimized], { type: 'image/svg+xml' }));
+      svgPreview.src = previewUrl;
+      svgPreview.classList.remove('hidden');
+      svgPreviewEmpty.classList.add('hidden');
+      showSvgMessage('SVG is valid. Preview and output are updated locally.');
+    } catch (error) {
+      svgOutput.value = '';
+      svgPreview.removeAttribute('src');
+      svgPreview.classList.add('hidden');
+      svgPreviewEmpty.classList.remove('hidden');
+      const message = error instanceof Error ? error.message : 'Could not process this SVG.';
+      showSvgMessage(message, true);
+    }
+  }
+
+  svgInput?.addEventListener('input', updateSvg);
+  document.querySelectorAll<HTMLInputElement>('.svg-option').forEach((option) => option.addEventListener('change', updateSvg));
+  document.querySelector<HTMLButtonElement>('#copy-svg')?.addEventListener('click', async () => {
+    if (!svgOutput?.value) {
+      showSvgMessage('Enter valid SVG code before copying.', true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(svgOutput.value);
+      showSvgMessage('Clean SVG copied to the clipboard.');
+    } catch {
+      showSvgMessage('Could not access the clipboard. Please copy the output manually.', true);
+    }
+  });
+  document.querySelector<HTMLButtonElement>('#download-svg')?.addEventListener('click', () => {
+    if (!svgOutput?.value) {
+      showSvgMessage('Enter valid SVG code before downloading.', true);
+      return;
+    }
+    const downloadUrl = URL.createObjectURL(new Blob([svgOutput.value], { type: 'image/svg+xml' }));
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'optimized.svg';
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+  });
+  window.addEventListener('pagehide', () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  });
+</script>

@@ -8,7 +8,10 @@ export type ClientAction =
   | 'slug-generator'
   | 'text-hash-generator'
   | 'lorem-ipsum-generator'
-  | 'epoch-date-converter';
+  | 'epoch-date-converter'
+  | 'svg-formatter'
+  | 'css-minifier'
+  | 'hash-generator';
 
 interface ToolBase {
   id: string;
@@ -202,5 +205,35 @@ export const tools: Tool[] = [
     type: 'client',
     clientAction: 'epoch-date-converter',
     icon: '◷',
+  },
+  {
+    id: 'svg-formatter',
+    title: 'SVG Optimizer & Code Sanitizer',
+    category: 'Design & Developer Tools',
+    description: 'Sanitize, preview, and optimize SVG code locally in your browser.',
+    type: 'client',
+    clientAction: 'svg-formatter',
+    icon: '◇',
+    placeholder: 'Paste SVG code to sanitize and optimize...',
+  },
+  {
+    id: 'css-minifier',
+    title: 'Fast CSS Minifier & Un-minifier',
+    category: 'Design & Developer Tools',
+    description: 'Minify, format, and validate CSS in your browser with live byte savings.',
+    type: 'client',
+    clientAction: 'css-minifier',
+    icon: '{}',
+    placeholder: 'Paste CSS to minify or format...',
+  },
+  {
+    id: 'hash-generator',
+    title: 'MD5, SHA-256 & SHA-512 Hash Generator',
+    category: 'Design & Developer Tools',
+    description: 'Generate MD5, SHA-1, SHA-256, and SHA-512 hashes locally from text.',
+    type: 'client',
+    clientAction: 'hash-generator',
+    icon: '#',
+    placeholder: 'Enter text to hash...',
   },
 ];
