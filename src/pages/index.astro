@@ -55,11 +55,11 @@ const latestArticles = (await getCollection('blog'))
       </div>
     </section>
 
-    <section id="tools" class="scroll-mt-24">
+    <section id="tools" class="scroll-mt-24" aria-labelledby="tools-heading">
       <div class="mb-7 flex flex-col gap-5">
         <div>
           <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-teal-800">Tool library</p>
-          <h2 class="text-3xl font-extrabold tracking-tight text-slate-950">Find the right tool</h2>
+          <h2 id="tools-heading" class="text-3xl font-extrabold tracking-tight text-slate-950">Find the right tool</h2>
         </div>
         <label class="relative block max-w-xl">
           <span class="sr-only">Search tools</span>
@@ -96,6 +96,7 @@ const latestArticles = (await getCollection('blog'))
         {tools.map((tool) => (
           <a
             href={`/tools/${tool.id}`}
+            aria-label={`Open ${tool.title}: ${tool.description}`}
             data-tool-card
             data-category={tool.category}
             data-search={`${tool.title} ${tool.description} ${tool.category} ${tool.type}`}

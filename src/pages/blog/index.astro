@@ -46,7 +46,7 @@ const posts = (await getCollection('blog'))
       </div>
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {posts.map((post) => (
-          <article class="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
+          <article data-blog-post data-category={post.category} class="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
             <a href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`} class="h-44 w-full shrink-0 overflow-hidden bg-slate-100">
               <img
                 src={post.image}
@@ -75,3 +75,20 @@ const posts = (await getCollection('blog'))
   </main>
   <Footer />
 </Layout>
+
+<script>
+  const selectedCategory = new URLSearchParams(window.location.search).get('category');
+  if (selectedCategory) {
+    const posts = [...document.querySelectorAll<HTMLElement>('[data-blog-post]')];
+    const matchingPosts = posts.filter((post) => post.dataset.category === selectedCategory);
+    posts.forEach((post) => {
+      post.style.display = post.dataset.category === selectedCategory ? '' : 'none';
+    });
+
+    const heading = document.querySelector('h2');
+    if (heading) heading.textContent = `${selectedCategory} articles`;
+
+    const count = document.querySelector('section[aria-label="All articles"] > div:first-child > span');
+    if (count) count.textContent = `${matchingPosts.length} articles`;
+  }
+</script>

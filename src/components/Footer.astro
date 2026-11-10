@@ -1,6 +1,25 @@
 ---
 import { siteConfig } from '../data/site';
 import { tools } from '../data/tools';
+import { getCollection } from 'astro:content';
+
+const coreToolIds = [
+  'text-formatter',
+  'json-formatter',
+  'password-generator',
+  'word-counter',
+  'base64-encoder-decoder',
+  'slug-generator',
+];
+const coreTools = tools.filter((tool) => coreToolIds.includes(tool.id));
+const blogEntries = await getCollection('blog');
+const blogCategories = [...blogEntries.reduce((counts, entry) => {
+  counts.set(entry.data.category, (counts.get(entry.data.category) ?? 0) + 1);
+  return counts;
+}, new Map<string, number>())]
+  .sort(([categoryA, countA], [categoryB, countB]) => countB - countA || categoryA.localeCompare(categoryB))
+  .slice(0, 6)
+  .map(([category]) => category);
 ---
 
 <footer class="site-footer">
@@ -21,8 +40,26 @@ import { tools } from '../data/tools';
     </div>
 
     <div class="footer-column">
-      <h3>Popular tools</h3>
-      {tools.slice(0, 5).map((tool) => <a href={`/tools/${tool.id}`}>{tool.title}</a>)}
+      <h3>Core tools</h3>
+      {coreTools.map((tool) => <a href={`/tools/${tool.id}`}>{tool.title}</a>)}
+      <a href="/#tools">Browse all tools</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Blog categories</h3>
+      {blogCategories.map((category) => (
+        <a href={`/blog?category=${encodeURIComponent(category)}`}>{category}</a>
+      ))}
+      <a href="/blog">All articles</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Explore</h3>
+      <a href="/about">About the platform</a>
+      <a href="/services">Services</a>
+      <a href="/demos">Demos</a>
+      <a href="/contact">Contact</a>
+      <a href="/privacy">Privacy policy</a>
     </div>
 
     <div class="footer-column footer-contact">
@@ -31,8 +68,6 @@ import { tools } from '../data/tools';
       <a href={`tel:${siteConfig.phone}`}>Call {siteConfig.phone}</a>
       <a href={`sms:${siteConfig.phone}`}>Text us</a>
       <a href={`https://wa.me/${siteConfig.whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp us</a>
-      <a href="/about">About the platform</a>
-      <a href="/privacy">Privacy policy</a>
     </div>
   </div>
 </footer>
@@ -49,7 +84,7 @@ import { tools } from '../data/tools';
     width: min(1180px, calc(100% - 1.5rem));
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.35fr 1fr 1fr;
+    grid-template-columns: 1.35fr repeat(2, minmax(0, 1fr)) 1.1fr 1.1fr;
     gap: 2rem;
   }
 
