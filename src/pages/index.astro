@@ -30,28 +30,34 @@ const latestArticles = (await getCollection('blog'))
 >
   <Navbar />
   <main class="mx-auto w-[min(1180px,calc(100%-2rem))] pb-16">
-    <section class="relative overflow-hidden py-16 sm:py-24">
-      <div class="pointer-events-none absolute -right-20 -top-20 -z-10 h-72 w-72 rounded-full bg-teal-200/50 blur-3xl"></div>
-      <p class="mb-4 text-xs font-extrabold uppercase tracking-[0.2em] text-teal-800">Jutt AI · Tools · Software · Guides</p>
-      <h1 class="max-w-5xl text-4xl font-black leading-tight tracking-tight text-slate-950 sm:text-6xl">
-        AI &amp; Utility Tools Hub | Custom Software &amp; Web Development
-      </h1>
-      <p class="mt-6 max-w-3xl text-lg leading-8 text-slate-600">
-        Explore free dynamic web tools, hire us for tailored enterprise software &amp; digital solutions, or read our latest technical articles and guides.
-      </p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a
-          href="#tools"
-          class="inline-flex min-h-12 items-center justify-center rounded-full bg-slate-950 px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-teal-800"
-        >Explore Tools <span aria-hidden="true" class="ml-2">↓</span></a>
-        <a
-          href="/services"
-          class="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 font-bold text-slate-800 transition hover:-translate-y-0.5 hover:border-teal-700 hover:text-teal-800"
-        >Our Services</a>
-        <a
-          href="/blog"
-          class="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 font-bold text-slate-800 transition hover:-translate-y-0.5 hover:border-teal-700 hover:text-teal-800"
-        >Read Blog</a>
+    <section class="relative overflow-hidden py-12 sm:py-16">
+      <div class="hero-panel rounded-[1.75rem] p-px">
+        <div class="hero-panel-content rounded-[calc(1.75rem-1px)] px-5 py-8 sm:px-10 sm:py-11">
+          <p class="mb-3 text-[11px] font-extrabold uppercase tracking-[0.18em] text-teal-800">Jutt AI · Tools · Software · Guides</p>
+          <h1 class="max-w-5xl text-3xl font-black leading-tight tracking-tight text-slate-950 sm:text-5xl">
+            AI &amp; Utility Tools Hub | Custom Software &amp; Web Development
+          </h1>
+          <p class="hero-typing-line mt-3 min-h-[1.6em] text-base font-bold tracking-tight text-teal-800 sm:text-lg" aria-label="Instant Developer Utilities">
+            <span id="hero-typing-text" aria-hidden="true">Instant Developer Utilities</span><span class="hero-typing-cursor" aria-hidden="true"></span>
+          </p>
+          <p class="mt-3 max-w-3xl text-base leading-7 text-slate-600">
+            Use free browser tools, explore digital services, and read practical guides.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a
+              href="#tools"
+              class="inline-flex min-h-12 items-center justify-center rounded-full bg-slate-950 px-6 py-3 font-bold text-white transition hover:-translate-y-0.5 hover:bg-teal-800"
+            >Explore Tools <span aria-hidden="true" class="ml-2">↓</span></a>
+            <a
+              href="/services"
+              class="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 font-bold text-slate-800 transition hover:-translate-y-0.5 hover:border-teal-700 hover:text-teal-800"
+            >Our Services</a>
+            <a
+              href="/blog"
+              class="inline-flex min-h-12 items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 font-bold text-slate-800 transition hover:-translate-y-0.5 hover:border-teal-700 hover:text-teal-800"
+            >Read Blog</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -59,7 +65,7 @@ const latestArticles = (await getCollection('blog'))
       <div class="mb-7 flex flex-col gap-5">
         <div>
           <p class="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-teal-800">Tool library</p>
-          <h2 id="tools-heading" class="text-3xl font-extrabold tracking-tight text-slate-950">Find the right tool</h2>
+          <h2 id="tools-heading" class="text-2xl font-extrabold tracking-tight text-slate-950">Find the right tool</h2>
         </div>
         <label class="relative block max-w-xl">
           <span class="sr-only">Search tools</span>
@@ -92,29 +98,30 @@ const latestArticles = (await getCollection('blog'))
       <p id="tool-result-count" class="mb-4 text-sm text-slate-500" aria-live="polite">
         Showing {tools.length} tools
       </p>
-      <div id="tool-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tools.map((tool) => (
+      <div id="tool-grid" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {tools.map((tool, index) => (
           <a
             href={`/tools/${tool.id}`}
             aria-label={`Open ${tool.title}: ${tool.description}`}
             data-tool-card
             data-category={tool.category}
             data-search={`${tool.title} ${tool.description} ${tool.category} ${tool.type}`}
-            class="group flex min-h-56 flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-teal-300 hover:shadow-xl"
+            style={`--card-index: ${index}`}
+            class="tool-card group grid min-h-[112px] grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-x-3 gap-y-1 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:min-h-[158px] sm:grid-cols-1 sm:items-stretch sm:rounded-3xl sm:p-4"
           >
-            <div class="mb-6 flex items-start justify-between gap-3">
-              <span class="grid h-12 min-w-12 place-items-center rounded-2xl bg-teal-50 px-2 text-xl font-bold text-teal-800">
-                {tool.icon ?? (tool.type === 'ai' ? '✦' : '↔')}
-              </span>
-              <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-600">
-                {tool.type === 'ai' ? 'AI' : 'In-browser'}
+            <span class="tool-card-icon row-span-3 grid h-10 w-10 place-items-center rounded-xl bg-teal-50 px-1 text-lg font-bold text-teal-800 transition-transform duration-200 group-hover:scale-105 sm:row-span-1 sm:mb-3">
+              {tool.icon ?? (tool.type === 'ai' ? '✦' : '↔')}
+            </span>
+            <div class="flex min-w-0 items-start justify-between gap-2">
+              <h3 class="line-clamp-2 text-sm font-extrabold leading-5 text-slate-950 group-hover:text-teal-800">{tool.title}</h3>
+              <span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-slate-600">
+                {tool.type === 'ai' ? 'AI' : 'Browser'}
               </span>
             </div>
-            <h3 class="text-lg font-extrabold text-slate-950 group-hover:text-teal-800">{tool.title}</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">{tool.description}</p>
-            <div class="mt-auto flex items-center justify-between gap-3 pt-5">
-              <span class="text-xs font-semibold text-slate-500">{tool.category}</span>
-              <span class="text-sm font-bold text-teal-800">Open <span aria-hidden="true">→</span></span>
+            <p class="line-clamp-2 text-xs leading-4 text-slate-600 sm:mt-1">{tool.description}</p>
+            <div class="col-start-2 flex min-w-0 items-center justify-between gap-2 pt-1 sm:col-start-auto sm:mt-auto sm:pt-3">
+              <span class="truncate text-[10px] font-semibold text-slate-500">{tool.category}</span>
+              <span class="shrink-0 text-xs font-bold text-teal-800">Open <span aria-hidden="true">→</span></span>
             </div>
           </a>
         ))}
@@ -168,6 +175,160 @@ const latestArticles = (await getCollection('blog'))
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .hero-panel {
+    --hero-angle: 0deg;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.26), rgba(148, 163, 184, 0.12) 48%, rgba(45, 212, 191, 0.28));
+    box-shadow: 0 20px 60px rgba(15, 118, 110, 0.08);
+  }
+
+  .hero-panel::before {
+    position: absolute;
+    z-index: 0;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--hero-angle),
+      transparent 0deg,
+      transparent 235deg,
+      rgba(45, 212, 191, 0.12) 258deg,
+      rgba(45, 212, 191, 0.9) 278deg,
+      rgba(94, 234, 212, 0.72) 292deg,
+      transparent 316deg,
+      transparent 360deg
+    );
+    content: '';
+    pointer-events: none;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: hero-border-glow 8s linear infinite;
+  }
+
+  .hero-panel-content {
+    position: relative;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse at 100% 0%, rgba(204, 251, 241, 0.52), transparent 26rem),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 249, 0.97));
+  }
+
+  .hero-typing-line {
+    white-space: nowrap;
+  }
+
+  .hero-typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 3px;
+    vertical-align: -0.12em;
+    background: currentColor;
+    animation: hero-cursor-blink 850ms steps(2, start) infinite;
+  }
+
+  @property --hero-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes hero-border-glow {
+    to {
+      --hero-angle: 360deg;
+    }
+  }
+
+  @keyframes hero-cursor-blink {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .tool-card {
+    animation: tool-card-enter 420ms both;
+    animation-delay: calc(var(--card-index, 0) * 35ms);
+  }
+
+  @keyframes tool-card-enter {
+    from {
+      opacity: 0;
+      translate: 0 10px;
+    }
+
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-panel::before,
+    .hero-typing-cursor {
+      animation: none;
+    }
+
+    .hero-typing-cursor {
+      opacity: 0;
+    }
+
+    .tool-card {
+      animation: none;
+    }
+
+  }
+</style>
+
+<script>
+  const heroTypingText = document.querySelector<HTMLElement>('#hero-typing-text');
+  const heroReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const heroPhrases = [
+    'Instant Developer Utilities',
+    'Zero-API Browser Tools',
+    'High-Performance Web Suite',
+  ];
+
+  if (heroTypingText && !heroReducedMotion.matches) {
+    let phraseIndex = 0;
+    let characterIndex = heroTypingText.textContent?.length ?? 0;
+    let deleting = false;
+
+    const typeNextCharacter = () => {
+      if (heroReducedMotion.matches || !heroTypingText) return;
+      const phrase = heroPhrases[phraseIndex];
+
+      if (deleting) {
+        characterIndex = Math.max(0, characterIndex - 1);
+        heroTypingText.textContent = phrase.slice(0, characterIndex);
+        if (characterIndex === 0) {
+          deleting = false;
+          phraseIndex = (phraseIndex + 1) % heroPhrases.length;
+          window.setTimeout(typeNextCharacter, 180);
+          return;
+        }
+        window.setTimeout(typeNextCharacter, 28);
+        return;
+      }
+
+      characterIndex = Math.min(phrase.length, characterIndex + 1);
+      heroTypingText.textContent = phrase.slice(0, characterIndex);
+      if (characterIndex === phrase.length) {
+        deleting = true;
+        window.setTimeout(typeNextCharacter, 1500);
+        return;
+      }
+      window.setTimeout(typeNextCharacter, 48);
+    };
+
+    window.setTimeout(typeNextCharacter, 1500);
+  }
+</script>
 
 <script>
   const search = document.querySelector<HTMLInputElement>('#tool-search');
