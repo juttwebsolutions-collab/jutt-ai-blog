@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import { readdirSync, readFileSync } from 'node:fs';
+import { copyFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import cloudflare from '@astrojs/cloudflare';
@@ -26,6 +27,15 @@ function getBlogPages(directory) {
   });
 }
 
+const sitemapAlias = {
+  name: 'sitemap-root-alias',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      await copyFile(new URL('sitemap-index.xml', dir), new URL('sitemap.xml', dir));
+    },
+  },
+};
+
 export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
@@ -34,7 +44,10 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  integrations: [sitemap({ customPages: getBlogPages(blogDirectory) })],
+  integrations: [
+    sitemap({ customPages: getBlogPages(blogDirectory) }),
+    sitemapAlias,
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

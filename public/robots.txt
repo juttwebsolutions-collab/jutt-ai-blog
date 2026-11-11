@@ -3,3 +3,4 @@ Allow: /
 Disallow:
 
 Sitemap: https://juttaiblog.online/sitemap.xml
+Sitemap: https://juttaiblog.online/sitemap-index.xml
