@@ -1,0 +1,200 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+---
+
+<Layout
+  title="Cron Expression Generator & Human Reader | Jutt AI Tools"
+  description="Understand five-field cron expressions and calculate the next five scheduled run times using your local timezone."
+  url="/tools/cron-parser"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(900px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Cron Expression Reader</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Read standard five-field cron syntax in plain English and see upcoming runs in your local time.</p>
+    </header>
+
+    <section class="space-y-6 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="Cron expression parser">
+      <div>
+        <label for="cron-input" class="mb-2 block text-sm font-bold text-slate-900">Cron expression</label>
+        <input id="cron-input" type="text" spellcheck="false" value="*/15 * * * *" placeholder="*/15 * * * *" class="block w-full rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-lg text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100" />
+        <p class="mt-2 text-xs text-slate-500">Format: minute · hour · day of month · month · day of week</p>
+      </div>
+      <div>
+        <p class="mb-2 text-sm font-bold text-slate-900">Common schedules</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" data-cron="* * * * *" class="cron-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Every minute</button>
+          <button type="button" data-cron="0 * * * *" class="cron-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Every hour at :00</button>
+          <button type="button" data-cron="0 0 * * *" class="cron-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Daily at midnight</button>
+          <button type="button" data-cron="0 0 * * 1" class="cron-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Weekly (Monday)</button>
+        </div>
+      </div>
+      <div id="cron-error" class="hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800" role="alert"></div>
+      <div class="rounded-2xl border border-teal-200 bg-teal-50/80 p-5">
+        <p class="mb-1 text-xs font-extrabold uppercase tracking-[0.14em] text-teal-800">In plain English</p>
+        <p id="cron-description" class="m-0 text-lg font-bold leading-7 text-slate-950" aria-live="polite"></p>
+      </div>
+      <div>
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="m-0 text-base font-extrabold text-slate-950">Next 5 scheduled runs</h2>
+          <span id="cron-timezone" class="text-xs text-slate-500"></span>
+        </div>
+        <ol id="cron-next-runs" class="m-0 grid list-none gap-2 p-0 sm:grid-cols-2"></ol>
+      </div>
+      <p class="m-0 text-xs leading-5 text-slate-500">Uses standard five-field cron syntax with numeric values, lists, ranges, and steps. Day-of-month and day-of-week follow traditional cron OR behavior when both are restricted.</p>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  type CronField = { values: Set<number>; wildcard: boolean; source: string };
+
+  const cronInput = document.querySelector<HTMLInputElement>('#cron-input');
+  const cronError = document.querySelector<HTMLDivElement>('#cron-error');
+  const cronDescription = document.querySelector<HTMLParagraphElement>('#cron-description');
+  const nextRuns = document.querySelector<HTMLOListElement>('#cron-next-runs');
+  const timezoneLabel = document.querySelector<HTMLSpanElement>('#cron-timezone');
+  const ranges = [[0, 59], [0, 23], [1, 31], [1, 12], [0, 7]];
+  const fieldNames = ['minute', 'hour', 'day of month', 'month', 'day of week'];
+  const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  function parseField(source: string, index: number): CronField {
+    const [minimum, maximum] = ranges[index];
+    const values = new Set<number>();
+    const wildcard = source === '*';
+    for (const part of source.split(',')) {
+      const pieces = part.split('/');
+      if (pieces.length > 2) throw new Error(`Invalid ${fieldNames[index]} segment "${part}".`);
+      const step = pieces[1] === undefined ? 1 : Number(pieces[1]);
+      if (!Number.isInteger(step) || step < 1 || step > maximum - minimum + 1) throw new Error(`Invalid step in ${fieldNames[index]} segment "${part}".`);
+      const base = pieces[0];
+      let start: number;
+      let end: number;
+      if (base === '*') {
+        start = minimum;
+        end = maximum;
+      } else if (base.includes('-')) {
+        const bounds = base.split('-').map(Number);
+        if (bounds.length !== 2 || bounds.some((value) => !Number.isInteger(value)) || bounds[0] < minimum || bounds[1] > maximum || bounds[0] > bounds[1]) {
+          throw new Error(`Invalid range in ${fieldNames[index]} segment "${part}".`);
+        }
+        [start, end] = bounds;
+      } else {
+        start = Number(base);
+        if (!Number.isInteger(start) || start < minimum || start > maximum) throw new Error(`Value "${base}" is out of range for ${fieldNames[index]} (${minimum}–${maximum}).`);
+        end = pieces[1] === undefined ? start : maximum;
+      }
+      for (let value = start; value <= end; value += step) values.add(index === 4 && value === 7 ? 0 : value);
+    }
+    if (!values.size) throw new Error(`${fieldNames[index]} field cannot be empty.`);
+    return { values, wildcard, source };
+  }
+
+  function describeField(field: CronField, index: number): string {
+    if (field.source === '*') return '';
+    const stepMatch = field.source.match(/^\*\/(\d+)$/);
+    if (stepMatch) {
+      const unit = index === 0 ? 'minute' : index === 1 ? 'hour' : fieldNames[index];
+      return `Every ${stepMatch[1]} ${unit}${stepMatch[1] === '1' ? '' : 's'}`;
+    }
+    const values = [...field.values].sort((a, b) => a - b);
+    const readable = values.map((value) => {
+      if (index === 3) return monthNames[value - 1];
+      if (index === 4) return weekdayNames[value];
+      return String(value);
+    });
+    if (index === 0) return `At minute ${readable.join(', ')}`;
+    if (index === 1) return `At hour ${readable.join(', ')}`;
+    if (index === 2) return `On day-of-month ${readable.join(', ')}`;
+    if (index === 3) return `In ${readable.join(', ')}`;
+    return `On ${readable.join(', ')}`;
+  }
+
+  function matchesDayOfMonthAndWeek(date: Date, dayField: CronField, weekdayField: CronField): boolean {
+    const dayMatch = dayField.values.has(date.getDate());
+    const weekdayMatch = weekdayField.values.has(date.getDay());
+    if (dayField.wildcard) return weekdayMatch;
+    if (weekdayField.wildcard) return dayMatch;
+    return dayMatch || weekdayMatch;
+  }
+
+  function updateCron(): void {
+    if (!cronInput || !cronError || !cronDescription || !nextRuns || !timezoneLabel) return;
+    cronError.classList.add('hidden');
+    nextRuns.replaceChildren();
+    const parts = cronInput.value.trim().split(/\s+/);
+    if (parts.length !== 5) {
+      cronDescription.textContent = 'Enter exactly five fields: minute hour day-of-month month day-of-week.';
+      cronError.textContent = 'A cron expression must contain exactly five space-separated fields.';
+      cronError.classList.remove('hidden');
+      return;
+    }
+
+    try {
+      const fields = parts.map((part, index) => parseField(part, index));
+      const specific = fields.map((field, index) => describeField(field, index)).filter(Boolean);
+      const expression = parts.join(' ');
+      const commonDescriptions: Record<string, string> = {
+        '* * * * *': 'Every minute',
+        '0 * * * *': 'Every hour, at minute 0',
+        '0 0 * * *': 'Every day at midnight',
+        '0 0 * * 1': 'Every Monday at midnight',
+        '*/15 * * * *': 'Every 15 minutes',
+      };
+      cronDescription.textContent = commonDescriptions[expression] ?? (specific.length ? specific.join(' · ') : 'Every minute');
+      timezoneLabel.textContent = `Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time'}`;
+      const formatter = new Intl.DateTimeFormat(undefined, {
+        year: 'numeric', month: 'short', day: 'numeric', weekday: 'short',
+        hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+      });
+      const candidate = new Date();
+      candidate.setSeconds(0, 0);
+      candidate.setMinutes(candidate.getMinutes() + 1);
+      let found = 0;
+      const searchLimit = 5 * 366 * 24 * 60;
+      for (let minute = 0; minute < searchLimit && found < 5; minute += 1) {
+        if (
+          fields[0].values.has(candidate.getMinutes())
+          && fields[1].values.has(candidate.getHours())
+          && fields[3].values.has(candidate.getMonth() + 1)
+          && matchesDayOfMonthAndWeek(candidate, fields[2], fields[4])
+        ) {
+          const item = document.createElement('li');
+          item.className = 'rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm';
+          item.textContent = formatter.format(candidate);
+          nextRuns.append(item);
+          found += 1;
+        }
+        candidate.setMinutes(candidate.getMinutes() + 1);
+      }
+      if (!found) {
+        cronError.textContent = 'No execution times found in the next five years for this expression.';
+        cronError.classList.remove('hidden');
+      }
+    } catch (error) {
+      cronDescription.textContent = 'Check the expression format and allowed field values.';
+      cronError.textContent = error instanceof Error ? error.message : 'Invalid cron expression.';
+      cronError.classList.remove('hidden');
+    }
+  }
+
+  cronInput?.addEventListener('input', updateCron);
+  document.querySelectorAll<HTMLButtonElement>('.cron-preset').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!cronInput) return;
+      cronInput.value = button.dataset.cron ?? '';
+      updateCron();
+      cronInput.focus();
+    });
+  });
+  updateCron();
+</script>

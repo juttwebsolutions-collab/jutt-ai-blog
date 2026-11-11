@@ -1,0 +1,178 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+---
+
+<Layout
+  title="Interactive Regex Tester & Pattern Visualizer | Jutt AI Tools"
+  description="Test regular expressions locally, highlight matches, and inspect capture groups and character indexes."
+  url="/tools/regex-tester"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1000px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Interactive Regex Tester</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Build and test JavaScript regular expressions against sample text. Matching happens locally in your browser.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="Regular expression tester">
+      <div>
+        <label for="regex-pattern" class="mb-2 block text-sm font-bold text-slate-900">Regular expression</label>
+        <div class="flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-3 focus-within:border-teal-600 focus-within:ring-4 focus-within:ring-teal-100">
+          <span aria-hidden="true" class="font-mono text-slate-400">/</span>
+          <input id="regex-pattern" type="text" spellcheck="false" placeholder="e.g. (\\w+)@(\\w+\\.\\w+)" class="min-w-0 flex-1 border-0 bg-transparent py-3 font-mono text-sm text-slate-900 outline-none placeholder:text-slate-400" />
+          <span aria-hidden="true" class="font-mono text-slate-400">/</span>
+          <input id="regex-flags" type="text" value="g" aria-label="Regular expression flags" maxlength="4" class="w-14 rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-center font-mono text-sm text-slate-900 outline-none focus:border-teal-600" />
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Supported flags: g (global), i (ignore case), m (multiline), s (dot all).</p>
+      </div>
+      <div>
+        <p class="mb-2 text-sm font-bold text-slate-900">Quick patterns</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" data-pattern="email" class="regex-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Email</button>
+          <button type="button" data-pattern="url" class="regex-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">URL</button>
+          <button type="button" data-pattern="ip" class="regex-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">IPv4 address</button>
+          <button type="button" data-pattern="phone" class="regex-preset rounded-full border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Phone number</button>
+        </div>
+      </div>
+      <label class="block text-sm font-bold text-slate-900">
+        Test string
+        <textarea id="regex-text" rows="8" spellcheck="false" placeholder="Type or paste text to find matches..." class="mt-2 block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+      </label>
+      <div id="regex-status" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status" aria-live="polite">Enter a pattern and test string to see matches.</div>
+      <div>
+        <h2 class="mb-2 text-sm font-bold text-slate-900">Highlighted text</h2>
+        <div id="regex-highlight" class="min-h-24 whitespace-pre-wrap break-words rounded-2xl border border-slate-200 bg-slate-50 p-4 font-mono text-sm leading-6 text-slate-700" aria-label="Text with matches highlighted"></div>
+      </div>
+      <div>
+        <h2 class="mb-2 text-sm font-bold text-slate-900">Matches &amp; indexes</h2>
+        <div id="regex-matches" class="space-y-2" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const patternInput = document.querySelector<HTMLInputElement>('#regex-pattern');
+  const flagsInput = document.querySelector<HTMLInputElement>('#regex-flags');
+  const testInput = document.querySelector<HTMLTextAreaElement>('#regex-text');
+  const regexStatus = document.querySelector<HTMLDivElement>('#regex-status');
+  const highlightedText = document.querySelector<HTMLDivElement>('#regex-highlight');
+  const matchesPanel = document.querySelector<HTMLDivElement>('#regex-matches');
+  const presets: Record<string, string> = {
+    email: '[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}',
+    url: 'https?:\\/\\/[\\w.-]+(?:\\.[\\w.-]+)+(?:[/?#][^\\s]*)?',
+    ip: '\\b(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}\\b',
+    phone: '(?:\\+?\\d{1,3}[ .-]?)?(?:\\(?\\d{2,4}\\)?[ .-]?)?\\d{3,4}[ .-]?\\d{3,4}',
+  };
+  const matchColors = ['bg-teal-200 text-teal-950', 'bg-amber-200 text-amber-950', 'bg-violet-200 text-violet-950', 'bg-sky-200 text-sky-950'];
+
+  function addText(parent: Node, text: string): void {
+    parent.append(document.createTextNode(text));
+  }
+
+  function testRegex(): void {
+    if (!patternInput || !flagsInput || !testInput || !regexStatus || !highlightedText || !matchesPanel) return;
+    const text = testInput.value;
+    highlightedText.replaceChildren();
+    matchesPanel.replaceChildren();
+    if (!patternInput.value) {
+      addText(highlightedText, text);
+      regexStatus.textContent = 'Enter a regular expression pattern.';
+      return;
+    }
+    if (/[^gims]/.test(flagsInput.value) || new Set(flagsInput.value).size !== flagsInput.value.length) {
+      addText(highlightedText, text);
+      regexStatus.textContent = 'Use each supported flag at most once: g, i, m, s.';
+      return;
+    }
+    let expression: RegExp;
+    try {
+      expression = new RegExp(patternInput.value, flagsInput.value);
+    } catch (error) {
+      addText(highlightedText, text);
+      regexStatus.textContent = `Invalid regular expression: ${error instanceof Error ? error.message : 'check the pattern syntax.'}`;
+      return;
+    }
+    if (!text) {
+      regexStatus.textContent = 'Pattern is valid. Add a test string to find matches.';
+      return;
+    }
+
+    const matches: RegExpExecArray[] = [];
+    const scanningExpression = new RegExp(expression.source, expression.flags.includes('g') ? expression.flags : `${expression.flags}g`);
+    let match: RegExpExecArray | null;
+    while ((match = scanningExpression.exec(text)) !== null) {
+      matches.push(match);
+      if (!expression.global) break;
+      if (matches.length >= 500) break;
+      if (match[0] === '') {
+        const codePoint = text.codePointAt(scanningExpression.lastIndex);
+        scanningExpression.lastIndex += codePoint !== undefined && codePoint > 0xffff ? 2 : 1;
+      }
+    }
+    let cursor = 0;
+    matches.forEach((item, index) => {
+      addText(highlightedText, text.slice(cursor, item.index));
+      const mark = document.createElement('mark');
+      mark.className = `rounded px-0.5 ${matchColors[index % matchColors.length]}`;
+      mark.textContent = item[0] || '∅';
+      mark.title = `Match ${index + 1}, index ${item.index}`;
+      highlightedText.append(mark);
+      cursor = item.index + item[0].length;
+
+      const card = document.createElement('div');
+      card.className = 'rounded-xl border border-slate-200 bg-white p-3 text-sm';
+      const heading = document.createElement('p');
+      heading.className = 'm-0 font-bold text-slate-900';
+      heading.textContent = `Match ${index + 1} · index ${item.index}–${item.index + item[0].length}`;
+      card.append(heading);
+      const value = document.createElement('p');
+      value.className = 'mb-0 mt-1 break-all font-mono text-slate-700';
+      value.textContent = item[0] || '(empty match)';
+      card.append(value);
+      if (item.length > 1) {
+        const groups = document.createElement('div');
+        groups.className = 'mt-2 flex flex-wrap gap-1.5';
+        for (let groupIndex = 1; groupIndex < item.length; groupIndex += 1) {
+          const pill = document.createElement('span');
+          pill.className = `rounded-full px-2.5 py-1 text-xs font-semibold ${matchColors[(groupIndex - 1) % matchColors.length]}`;
+          pill.textContent = `Group ${groupIndex}: ${item[groupIndex] ?? '(not captured)'}`;
+          groups.append(pill);
+        }
+        if (item.groups) {
+          Object.entries(item.groups).forEach(([name, value]) => {
+            const pill = document.createElement('span');
+            pill.className = 'rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-800';
+            pill.textContent = `${name}: ${value ?? '(not captured)'}`;
+            groups.append(pill);
+          });
+        }
+        card.append(groups);
+      }
+      matchesPanel?.append(card);
+    });
+    addText(highlightedText, text.slice(cursor));
+    regexStatus.textContent = `${matches.length}${matches.length === 500 ? '+' : ''} match${matches.length === 1 ? '' : 'es'} found${matches.length === 500 ? ' (display capped at 500).' : '.'}`;
+    if (!matches.length) regexStatus.textContent = 'No matches found.';
+  }
+
+  [patternInput, flagsInput, testInput].forEach((field) => field?.addEventListener('input', testRegex));
+  document.querySelectorAll<HTMLButtonElement>('.regex-preset').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!patternInput) return;
+      patternInput.value = presets[button.dataset.pattern ?? ''] ?? '';
+      if (flagsInput) flagsInput.value = 'gi';
+      testRegex();
+      patternInput.focus();
+    });
+  });
+  testRegex();
+</script>

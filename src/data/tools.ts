@@ -11,7 +11,10 @@ export type ClientAction =
   | 'epoch-date-converter'
   | 'svg-formatter'
   | 'css-minifier'
-  | 'hash-generator';
+  | 'hash-generator'
+  | 'diff-checker'
+  | 'regex-tester'
+  | 'cron-parser';
 
 interface ToolBase {
   id: string;
@@ -235,6 +238,36 @@ export const tools: Tool[] = [
     clientAction: 'hash-generator',
     icon: '#',
     placeholder: 'Enter text to hash...',
+  },
+  {
+    id: 'diff-checker',
+    title: 'Code & Text Diff Checker',
+    category: 'Design & Developer Tools',
+    description: 'Compare two versions of text or code locally and highlight every added or removed line.',
+    type: 'client',
+    clientAction: 'diff-checker',
+    icon: '±',
+    placeholder: 'Paste the original text or code...',
+  },
+  {
+    id: 'regex-tester',
+    title: 'Interactive Regex Tester & Pattern Visualizer',
+    category: 'Design & Developer Tools',
+    description: 'Test regular expressions against sample text and inspect matches, groups, and indexes in real time.',
+    type: 'client',
+    clientAction: 'regex-tester',
+    icon: '.*',
+    placeholder: 'Enter a regular expression...',
+  },
+  {
+    id: 'cron-parser',
+    title: 'Cron Expression Generator & Human Reader',
+    category: 'Design & Developer Tools',
+    description: 'Understand five-field cron expressions and preview the next five run times in your local timezone.',
+    type: 'client',
+    clientAction: 'cron-parser',
+    icon: '◷',
+    placeholder: '*/15 * * * *',
   },
 ];
 

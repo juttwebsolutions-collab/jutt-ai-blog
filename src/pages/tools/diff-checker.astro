@@ -1,0 +1,225 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+---
+
+<Layout
+  title="Code & Text Diff Checker | Jutt AI Tools"
+  description="Compare two versions of code or text locally. Highlight added and removed lines, then copy a concise diff summary."
+  url="/tools/diff-checker"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1100px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">Code &amp; Text Diff Checker</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Compare text or code line by line. Changes stay on this device.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="Diff checker">
+      <div class="grid gap-4 md:grid-cols-2">
+        <label class="block text-sm font-bold text-slate-900">
+          Original text / code
+          <textarea id="diff-original" rows="12" spellcheck="false" placeholder="Paste the original version..." class="mt-2 block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+        </label>
+        <label class="block text-sm font-bold text-slate-900">
+          Modified text / code
+          <textarea id="diff-modified" rows="12" spellcheck="false" placeholder="Paste the modified version..." class="mt-2 block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+        </label>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="mr-1 text-sm font-bold text-slate-700">View</span>
+        <button id="diff-side-view" type="button" aria-pressed="true" class="diff-view-button rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white transition active:scale-[0.98]">Side-by-side</button>
+        <button id="diff-inline-view" type="button" aria-pressed="false" class="diff-view-button rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Inline</button>
+        <span id="diff-count" class="ml-auto text-sm text-slate-500" aria-live="polite">Enter text to compare</span>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button id="diff-clear" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Clear</button>
+        <button id="diff-swap" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]">Swap inputs</button>
+        <button id="diff-copy" type="button" class="rounded-full bg-teal-800 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-teal-950 active:scale-[0.98]">Copy diff summary</button>
+      </div>
+      <p id="diff-status" class="m-0 text-sm text-slate-600" role="status" aria-live="polite"></p>
+      <div id="diff-output" class="hidden overflow-hidden rounded-2xl border border-slate-200 bg-slate-50" aria-label="Diff results"></div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  type DiffOperation = { kind: 'equal' | 'added' | 'removed'; line: string };
+  type AlignedLine = { original?: DiffOperation; modified?: DiffOperation };
+
+  const originalInput = document.querySelector<HTMLTextAreaElement>('#diff-original');
+  const modifiedInput = document.querySelector<HTMLTextAreaElement>('#diff-modified');
+  const diffOutput = document.querySelector<HTMLDivElement>('#diff-output');
+  const diffCount = document.querySelector<HTMLSpanElement>('#diff-count');
+  const diffStatus = document.querySelector<HTMLParagraphElement>('#diff-status');
+  const sideButton = document.querySelector<HTMLButtonElement>('#diff-side-view');
+  const inlineButton = document.querySelector<HTMLButtonElement>('#diff-inline-view');
+  let diffView: 'side' | 'inline' = 'side';
+  let latestOperations: DiffOperation[] = [];
+
+  function calculateDiff(before: string[], after: string[]): DiffOperation[] | null {
+    if (before.length * after.length > 2_000_000) return null;
+    const rows = Array.from({ length: before.length + 1 }, () => new Uint32Array(after.length + 1));
+    for (let i = before.length - 1; i >= 0; i -= 1) {
+      for (let j = after.length - 1; j >= 0; j -= 1) {
+        rows[i][j] = before[i] === after[j]
+          ? rows[i + 1][j + 1] + 1
+          : Math.max(rows[i + 1][j], rows[i][j + 1]);
+      }
+    }
+
+    const operations: DiffOperation[] = [];
+    let i = 0;
+    let j = 0;
+    while (i < before.length && j < after.length) {
+      if (before[i] === after[j]) {
+        operations.push({ kind: 'equal', line: before[i] });
+        i += 1;
+        j += 1;
+      } else if (rows[i + 1][j] >= rows[i][j + 1]) {
+        operations.push({ kind: 'removed', line: before[i++] });
+      } else {
+        operations.push({ kind: 'added', line: after[j++] });
+      }
+    }
+    while (i < before.length) operations.push({ kind: 'removed', line: before[i++] });
+    while (j < after.length) operations.push({ kind: 'added', line: after[j++] });
+    return operations;
+  }
+
+  function linesFromText(text: string): string[] {
+    return text === '' ? [] : text.split('\n');
+  }
+
+  function createDiffLine(operation?: DiffOperation, number?: number): HTMLDivElement {
+    const row = document.createElement('div');
+    row.className = `grid min-h-7 grid-cols-[2.5rem_minmax(0,1fr)] border-l-2 px-2 py-0.5 font-mono text-xs leading-5 sm:text-sm ${
+      operation?.kind === 'added'
+        ? 'border-emerald-500 bg-emerald-50 text-emerald-950'
+        : operation?.kind === 'removed'
+          ? 'border-rose-500 bg-rose-50 text-rose-950'
+          : 'border-transparent text-slate-700'
+    }`;
+    const lineNumber = document.createElement('span');
+    lineNumber.className = 'select-none pr-2 text-right text-slate-400';
+    lineNumber.textContent = number === undefined ? '' : String(number);
+    const content = document.createElement('span');
+    content.className = 'whitespace-pre-wrap break-all';
+    content.textContent = operation?.line || ' ';
+    row.append(lineNumber, content);
+    return row;
+  }
+
+  function renderDiff(): void {
+    if (!originalInput || !modifiedInput || !diffOutput || !diffCount || !diffStatus) return;
+    const before = linesFromText(originalInput.value);
+    const after = linesFromText(modifiedInput.value);
+    const operations = calculateDiff(before, after);
+    if (!operations) {
+      diffOutput.classList.add('hidden');
+      diffCount.textContent = 'Input too large for exact comparison';
+      diffStatus.textContent = 'For performance, exact comparison is limited to 2 million line-pairs. Try comparing smaller sections.';
+      diffStatus.className = 'm-0 text-sm text-rose-700';
+      latestOperations = [];
+      return;
+    }
+    latestOperations = operations;
+    const removed = operations.filter(({ kind }) => kind === 'removed').length;
+    const added = operations.filter(({ kind }) => kind === 'added').length;
+    diffCount.textContent = `${added} added · ${removed} removed`;
+    diffStatus.textContent = operations.some(({ kind }) => kind !== 'equal') ? 'Changes highlighted below.' : 'No line changes found.';
+    diffStatus.className = 'm-0 text-sm text-slate-600';
+    diffOutput.replaceChildren();
+    diffOutput.classList.toggle('hidden', !originalInput.value && !modifiedInput.value);
+
+    if (diffView === 'inline') {
+      const list = document.createElement('div');
+      operations.forEach((operation, index) => list.append(createDiffLine(operation, index + 1)));
+      diffOutput.append(list);
+      return;
+    }
+
+    const aligned: AlignedLine[] = [];
+    for (let index = 0; index < operations.length; index += 1) {
+      const operation = operations[index];
+      if (operation.kind === 'equal') {
+        aligned.push({ original: operation, modified: operation });
+      } else if (operation.kind === 'removed') {
+        aligned.push({ original: operation });
+      } else {
+        aligned.push({ modified: operation });
+      }
+    }
+    const grid = document.createElement('div');
+    grid.className = 'grid min-w-[640px] grid-cols-2 divide-x divide-slate-200';
+    const left = document.createElement('div');
+    const right = document.createElement('div');
+    left.setAttribute('aria-label', 'Original lines');
+    right.setAttribute('aria-label', 'Modified lines');
+    let originalNumber = 0;
+    let modifiedNumber = 0;
+    aligned.forEach(({ original, modified }) => {
+      if (original) originalNumber += 1;
+      if (modified) modifiedNumber += 1;
+      left.append(createDiffLine(original, original ? originalNumber : undefined));
+      right.append(createDiffLine(modified, modified ? modifiedNumber : undefined));
+    });
+    grid.append(left, right);
+    diffOutput.append(grid);
+  }
+
+  [originalInput, modifiedInput].forEach((input) => input?.addEventListener('input', renderDiff));
+  sideButton?.addEventListener('click', () => {
+    diffView = 'side';
+    sideButton.setAttribute('aria-pressed', 'true');
+    sideButton.className = 'diff-view-button rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white transition active:scale-[0.98]';
+    inlineButton?.setAttribute('aria-pressed', 'false');
+    if (inlineButton) inlineButton.className = 'diff-view-button rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]';
+    renderDiff();
+  });
+  inlineButton?.addEventListener('click', () => {
+    diffView = 'inline';
+    inlineButton.setAttribute('aria-pressed', 'true');
+    inlineButton.className = 'diff-view-button rounded-full bg-slate-950 px-4 py-2 text-sm font-bold text-white transition active:scale-[0.98]';
+    sideButton?.setAttribute('aria-pressed', 'false');
+    if (sideButton) sideButton.className = 'diff-view-button rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 active:scale-[0.98]';
+    renderDiff();
+  });
+  document.querySelector<HTMLButtonElement>('#diff-clear')?.addEventListener('click', () => {
+    if (originalInput) originalInput.value = '';
+    if (modifiedInput) modifiedInput.value = '';
+    renderDiff();
+  });
+  document.querySelector<HTMLButtonElement>('#diff-swap')?.addEventListener('click', () => {
+    if (!originalInput || !modifiedInput) return;
+    [originalInput.value, modifiedInput.value] = [modifiedInput.value, originalInput.value];
+    renderDiff();
+  });
+  document.querySelector<HTMLButtonElement>('#diff-copy')?.addEventListener('click', async () => {
+    if (!diffStatus) return;
+    if (!latestOperations.length) {
+      diffStatus.textContent = 'Enter text and compare it before copying a summary.';
+      diffStatus.className = 'm-0 text-sm text-rose-700';
+      return;
+    }
+    const summary = latestOperations
+      .filter(({ kind }) => kind !== 'equal')
+      .map(({ kind, line }) => `${kind === 'added' ? '+' : '-'} ${line}`)
+      .join('\n') || 'No changes.';
+    try {
+      await navigator.clipboard.writeText(summary);
+      diffStatus.textContent = 'Diff summary copied to the clipboard.';
+      diffStatus.className = 'm-0 text-sm text-teal-800';
+    } catch {
+      diffStatus.textContent = 'Clipboard access failed. Select and copy the highlighted lines manually.';
+      diffStatus.className = 'm-0 text-sm text-rose-700';
+    }
+  });
+</script>

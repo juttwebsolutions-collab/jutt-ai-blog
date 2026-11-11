@@ -15,6 +15,9 @@ export function getStaticPaths() {
     'svg-formatter',
     'css-minifier',
     'hash-generator',
+    'diff-checker',
+    'regex-tester',
+    'cron-parser',
   ]);
   return tools.filter((tool) => !dedicatedToolPages.has(tool.id)).map((tool) => ({
     params: { slug: tool.id },
