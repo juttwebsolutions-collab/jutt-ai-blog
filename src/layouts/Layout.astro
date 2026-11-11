@@ -42,6 +42,14 @@ const websiteSchema = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-T7LVF7HZ"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'GTM-T7LVF7HZ');
+    </script>
   </head>
   <body>
     <div class="page-shell">
