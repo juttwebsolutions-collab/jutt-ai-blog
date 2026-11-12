@@ -42,8 +42,16 @@ const toc = headingMatches
   })
   .filter((item) => item.text !== 'Table of Contents' && item.text !== 'FAQs' && item.text !== 'Conclusion');
 
+const currentTags = new Set(entry.data.tags ?? []);
+const sharedTagCount = (tags: string[]) => tags.filter((tag) => currentTags.has(tag)).length;
 const relatedPosts = entries
-  .filter((item) => (item.data.slug ?? item.id.replace(/\.md$/, '')) !== post.slug)
+  .filter((item) =>
+    (item.data.slug ?? item.id.replace(/\.md$/, '')) !== post.slug &&
+    item.data.category === entry.data.category
+  )
+  .sort((a, b) => {
+    return sharedTagCount(b.data.tags ?? []) - sharedTagCount(a.data.tags ?? []);
+  })
   .slice(0, 3)
   .map((item) => ({
     title: item.data.title,

@@ -1,0 +1,26 @@
+---
+import { coreToolIds, tools } from '../data/tools';
+
+const coreTools = coreToolIds
+  .map((id) => tools.find((tool) => tool.id === id))
+  .filter((tool) => tool !== undefined);
+---
+
+<section class="my-8 rounded-2xl border border-teal-200 bg-teal-50/70 p-5 sm:p-6" aria-labelledby="core-tools-heading">
+  <p class="mb-1 text-xs font-extrabold uppercase tracking-[0.14em] text-teal-800">Free browser-based utilities</p>
+  <h2 id="core-tools-heading" class="mb-2 mt-0 text-xl font-extrabold text-slate-950">Try our developer tools</h2>
+  <p class="mb-4 text-sm leading-6 text-slate-700">Use these free tools directly in your browser. Your input stays on your device.</p>
+  <ul class="m-0 grid list-none gap-3 p-0 sm:grid-cols-3">
+    {coreTools.map((tool) => (
+      <li>
+        <a
+          href={`/tools/${tool.id}`}
+          class="block h-full rounded-xl border border-slate-200 bg-white p-4 transition hover:border-teal-400 hover:shadow-sm"
+        >
+          <span class="block font-bold text-teal-800">{tool.title} <span aria-hidden="true">→</span></span>
+          <span class="mt-1 block text-sm leading-5 text-slate-600">{tool.description}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

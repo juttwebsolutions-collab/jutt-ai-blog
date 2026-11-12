@@ -1,4 +1,7 @@
 ---
+---
+import CoreToolLinks from './CoreToolLinks.astro';
+
 const { post, relatedPosts = [], toc = [] } = Astro.props;
 ---
 
@@ -45,6 +48,7 @@ const { post, relatedPosts = [], toc = [] } = Astro.props;
           </div>
         </aside>
         <slot />
+        <CoreToolLinks />
         <aside class="article-ad-slot" aria-label="Google AdSense banner ad space">
           <div>
             <span class="ad-label">Advertisement</span>

@@ -1,16 +1,8 @@
 ---
 import { siteConfig } from '../data/site';
-import { tools } from '../data/tools';
+import { coreToolIds, tools } from '../data/tools';
 import { getCollection } from 'astro:content';
 
-const coreToolIds = [
-  'text-formatter',
-  'json-formatter',
-  'password-generator',
-  'word-counter',
-  'base64-encoder-decoder',
-  'slug-generator',
-];
 const coreTools = tools.filter((tool) => coreToolIds.includes(tool.id));
 const blogEntries = await getCollection('blog');
 const blogCategories = [...blogEntries.reduce((counts, entry) => {

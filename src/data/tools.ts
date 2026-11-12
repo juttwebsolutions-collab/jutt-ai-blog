@@ -301,5 +301,17 @@ export const tools: Tool[] = [
   },
 ];
 
+export const coreToolIds: string[] = [
+  'text-formatter',
+  'json-formatter',
+  'password-generator',
+  'word-counter',
+  'base64-encoder-decoder',
+  'slug-generator',
+  'json-to-ts',
+  'css-box-shadow-generator',
+  'url-encoder-decoder',
+];
+
 // Keep tools in launch order; append new entries so they appear first in listings.
 export const newestTools = [...tools].reverse();
