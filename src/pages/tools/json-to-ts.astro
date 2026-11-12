@@ -1,0 +1,157 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+---
+
+<Layout
+  title="JSON to TypeScript Interface Generator | Jutt AI Tools"
+  description="Convert JSON into TypeScript interfaces for nested objects, arrays, and primitive values. Generate and copy types securely in your browser."
+  url="/tools/json-to-ts"
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1000px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">JSON to TypeScript Interface Generator</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Paste JSON to infer interfaces for nested objects, arrays, and primitive values. Your data stays in your browser.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="JSON to TypeScript generator">
+      <div>
+        <label for="json-input" class="mb-2 block text-sm font-bold text-slate-900">JSON input</label>
+        <textarea id="json-input" rows="10" spellcheck="false" placeholder='{"user":{"name":"Amina","active":true},"tags":["astro","typescript"]}' class="block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+      </div>
+      <div id="json-status" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status" aria-live="polite">Type or paste valid JSON to generate TypeScript.</div>
+      <div>
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <label for="typescript-output" class="text-sm font-bold text-slate-900">TypeScript output</label>
+          <button id="copy-typescript" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Copy to Clipboard</button>
+        </div>
+        <textarea id="typescript-output" rows="12" spellcheck="false" readonly placeholder="Generated TypeScript interfaces will appear here..." class="block w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none"></textarea>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const jsonInput = document.querySelector<HTMLTextAreaElement>('#json-input');
+  const typescriptOutput = document.querySelector<HTMLTextAreaElement>('#typescript-output');
+  const jsonStatus = document.querySelector<HTMLDivElement>('#json-status');
+
+  function showJsonStatus(message: string, isError = false): void {
+    if (!jsonStatus) return;
+    jsonStatus.textContent = message;
+    jsonStatus.className = isError
+      ? 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+      : 'rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900';
+  }
+
+  function typeName(value: string): string {
+    const name = value
+      .replace(/[^a-zA-Z0-9_$]+(.)?/g, (_match, next: string | undefined) => next ? next.toUpperCase() : '')
+      .replace(/^[^a-zA-Z_$]+/, '');
+    return name ? `${name[0].toUpperCase()}${name.slice(1)}` : 'Type';
+  }
+
+  function isRecord(value: unknown): value is Record<string, unknown> {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  function generateTypes(root: unknown): string {
+    const declarations: string[] = [];
+    const usedNames = new Set<string>();
+
+    function uniqueName(requested: string): string {
+      const base = typeName(requested);
+      let candidate = base;
+      let suffix = 2;
+      while (usedNames.has(candidate)) {
+        candidate = `${base}${suffix}`;
+        suffix += 1;
+      }
+      usedNames.add(candidate);
+      return candidate;
+    }
+
+    function propertyName(value: string): string {
+      return /^[a-zA-Z_$][\w$]*$/.test(value) ? value : JSON.stringify(value);
+    }
+
+    function interfaceFor(objects: Record<string, unknown>[], requested: string): string {
+      const name = uniqueName(requested);
+      const keys = [...new Set(objects.flatMap((object) => Object.keys(object)))];
+      const properties = keys.map((key) => {
+        const values = objects.flatMap((object) => Object.prototype.hasOwnProperty.call(object, key) ? [object[key]] : []);
+        const optional = values.length < objects.length ? '?' : '';
+        return `  ${propertyName(key)}${optional}: ${inferUnion(values, `${name}${typeName(key)}`)};`;
+      });
+      declarations.push(`export interface ${name} {\n${properties.join('\n')}\n}`);
+      return name;
+    }
+
+    function infer(value: unknown, requested: string): string {
+      if (value === null) return 'null';
+      if (Array.isArray(value)) {
+        if (value.length === 0) return 'unknown[]';
+        const itemType = inferUnion(value, `${requested}Item`);
+        return itemType.includes(' | ') ? `(${itemType})[]` : `${itemType}[]`;
+      }
+      if (isRecord(value)) return interfaceFor([value], requested);
+      return typeof value;
+    }
+
+    function inferUnion(values: unknown[], requested: string): string {
+      const objects = values.filter(isRecord);
+      const otherValues = values.filter((value) => !isRecord(value));
+      const types = otherValues.map((value) => infer(value, requested));
+      if (objects.length) types.push(interfaceFor(objects, requested));
+      return [...new Set(types)].join(' | ');
+    }
+
+    if (isRecord(root)) {
+      infer(root, 'Root');
+    } else {
+      declarations.push(`export type Root = ${infer(root, 'Root')};`);
+    }
+    return declarations.join('\n\n');
+  }
+
+  function convertJson(): void {
+    if (!jsonInput || !typescriptOutput) return;
+    const source = jsonInput.value.trim();
+    if (!source) {
+      typescriptOutput.value = '';
+      showJsonStatus('Enter JSON to generate TypeScript.', true);
+      return;
+    }
+    try {
+      const parsed: unknown = JSON.parse(source);
+      typescriptOutput.value = generateTypes(parsed);
+      showJsonStatus('TypeScript generated successfully.');
+    } catch (error) {
+      typescriptOutput.value = '';
+      showJsonStatus(`Invalid JSON: ${error instanceof Error ? error.message : 'check the JSON syntax.'}`, true);
+    }
+  }
+
+  jsonInput?.addEventListener('input', convertJson);
+  document.querySelector<HTMLButtonElement>('#copy-typescript')?.addEventListener('click', async () => {
+    if (!typescriptOutput) return;
+    if (!typescriptOutput.value) {
+      showJsonStatus('There is no TypeScript output to copy yet.', true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(typescriptOutput.value);
+      showJsonStatus('TypeScript copied to clipboard.');
+    } catch {
+      showJsonStatus('Could not access the clipboard. Please copy the output manually.', true);
+    }
+  });
+</script>
