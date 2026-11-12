@@ -18,6 +18,9 @@ export function getStaticPaths() {
     'diff-checker',
     'regex-tester',
     'cron-parser',
+    'css-box-shadow-generator',
+    'json-to-ts',
+    'url-encoder-decoder',
   ]);
   return tools.filter((tool) => !dedicatedToolPages.has(tool.id)).map((tool) => ({
     params: { slug: tool.id },

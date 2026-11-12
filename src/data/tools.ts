@@ -14,7 +14,10 @@ export type ClientAction =
   | 'hash-generator'
   | 'diff-checker'
   | 'regex-tester'
-  | 'cron-parser';
+  | 'cron-parser'
+  | 'css-box-shadow-generator'
+  | 'json-to-ts'
+  | 'url-encoder-decoder';
 
 interface ToolBase {
   id: string;
@@ -268,6 +271,33 @@ export const tools: Tool[] = [
     clientAction: 'cron-parser',
     icon: '◷',
     placeholder: '*/15 * * * *',
+  },
+  {
+    id: 'css-box-shadow-generator',
+    title: 'CSS Box Shadow Generator',
+    category: 'Design & Developer Tools',
+    description: 'Create CSS box shadows with interactive offset, blur, spread, color, and opacity controls.',
+    type: 'client',
+    clientAction: 'css-box-shadow-generator',
+    icon: '▧',
+  },
+  {
+    id: 'json-to-ts',
+    title: 'JSON to TypeScript Interface Generator',
+    category: 'Design & Developer Tools',
+    description: 'Convert JSON into TypeScript interfaces for nested objects, arrays, and primitive values locally.',
+    type: 'client',
+    clientAction: 'json-to-ts',
+    icon: '{ }',
+  },
+  {
+    id: 'url-encoder-decoder',
+    title: 'URL Encoder / Decoder',
+    category: 'Design & Developer Tools',
+    description: 'Encode or decode URL components with browser APIs and copy the result in one click.',
+    type: 'client',
+    clientAction: 'url-encoder-decoder',
+    icon: '↔',
   },
 ];
 
