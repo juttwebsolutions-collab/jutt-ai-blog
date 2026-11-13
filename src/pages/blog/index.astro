@@ -4,11 +4,12 @@ import Layout from '../../layouts/Layout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import { getReadingTime, resolveImagePath } from '../../utils/image';
+import { getBlogEntrySlug, getBlogPostPath } from '../../utils/blog';
 import '../../styles/global.css';
 
 const posts = (await getCollection('blog'))
   .map((entry) => {
-    const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
+    const slug = getBlogEntrySlug(entry);
     const pubDate = entry.data.pubDate;
 
     return {
@@ -47,7 +48,7 @@ const posts = (await getCollection('blog'))
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {posts.map((post) => (
           <article data-blog-post data-category={post.category} class="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
-            <a href={`/blog/${post.slug}`} aria-label={`Read ${post.title}`} class="h-44 w-full shrink-0 overflow-hidden bg-slate-100">
+            <a href={getBlogPostPath(post.slug)} aria-label={`Read ${post.title}`} class="h-44 w-full shrink-0 overflow-hidden bg-slate-100">
               <img
                 src={post.image}
                 alt={post.title}
@@ -59,7 +60,7 @@ const posts = (await getCollection('blog'))
             <div class="flex flex-1 flex-col justify-between p-4">
               <div>
                 <h3 class="line-clamp-2 text-base font-bold text-slate-900">
-                  <a href={`/blog/${post.slug}`}>{post.title}</a>
+                  <a href={getBlogPostPath(post.slug)}>{post.title}</a>
                 </h3>
                 <p class="mt-2 line-clamp-2 text-xs text-slate-600">{post.description}</p>
               </div>

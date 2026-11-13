@@ -5,12 +5,13 @@ import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
 import ArticlePage from '../../components/ArticlePage.astro';
 import { getReadingTime, resolveImagePath } from '../../utils/image';
+import { getBlogEntrySlug, getBlogPostPath } from '../../utils/blog';
 
 export const prerender = false;
 
 const slug = Astro.params.slug;
 const entries = await getCollection('blog');
-const entry = entries.find((item) => (item.data.slug ?? item.id.replace(/\.md$/, '')) === slug);
+const entry = entries.find((item) => getBlogEntrySlug(item) === slug);
 
 if (!entry) {
   return new Response('Article not found', { status: 404 });
@@ -23,7 +24,7 @@ const post = {
   category: entry.data.category,
   author: entry.data.author,
   tags: entry.data.tags ?? [],
-  slug: entry.data.slug ?? entry.id.replace(/\.md$/, ''),
+  slug: getBlogEntrySlug(entry),
   date: pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
   image: resolveImagePath(entry.data.heroImage),
   readingTime: getReadingTime(entry.body ?? entry.data.description),
@@ -46,7 +47,7 @@ const currentTags = new Set(entry.data.tags ?? []);
 const sharedTagCount = (tags: string[]) => tags.filter((tag) => currentTags.has(tag)).length;
 const relatedPosts = entries
   .filter((item) =>
-    (item.data.slug ?? item.id.replace(/\.md$/, '')) !== post.slug &&
+    getBlogEntrySlug(item) !== post.slug &&
     item.data.category === entry.data.category
   )
   .sort((a, b) => {
@@ -55,13 +56,14 @@ const relatedPosts = entries
   .slice(0, 3)
   .map((item) => ({
     title: item.data.title,
-    slug: item.data.slug ?? item.id.replace(/\.md$/, ''),
+    slug: getBlogEntrySlug(item),
+    path: getBlogPostPath(getBlogEntrySlug(item)),
     description: item.data.description,
   }));
 const { Content } = await render(entry);
 ---
 
-<Layout title={`${post.title} | Jutt AI Blog`} description={post.description} url={`/blog/${post.slug}`} image={post.image}>
+<Layout title={`${post.title} | Jutt AI Blog`} description={post.description} url={getBlogPostPath(post.slug)} image={post.image}>
   <Navbar />
   <main>
     <ArticlePage post={post} relatedPosts={relatedPosts} toc={toc}>

@@ -81,9 +81,9 @@ const { post, relatedPosts = [], toc = [] } = Astro.props;
         <div class="related-grid">
           {relatedPosts.map((item) => (
             <article class="related-card">
-              <h3><a href={`/blog/${item.slug}`}>{item.title}</a></h3>
+              <h3><a href={item.path}>{item.title}</a></h3>
               <p>{item.description}</p>
-              <a class="read-more" href={`/blog/${item.slug}`}>Read article</a>
+              <a class="read-more" href={item.path}>Read article</a>
             </article>
           ))}
         </div>

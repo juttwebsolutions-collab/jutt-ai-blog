@@ -19,8 +19,9 @@ function getBlogPages(directory) {
     const content = readFileSync(filePath, 'utf8');
     const frontmatter = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     const slugField = frontmatter?.[1].match(/^slug:\s*(?:"([^"]+)"|'([^']+)'|([^#\s]+))\s*$/m);
-    const slug = slugField?.[1] ?? slugField?.[2] ?? slugField?.[3] ??
-      path.relative(blogDirectory, filePath).replace(/\\/g, '/').replace(/\.md$/, '');
+    const slug = (slugField?.[1] ?? slugField?.[2] ?? slugField?.[3] ??
+      path.relative(blogDirectory, filePath).replace(/\\/g, '/').replace(/\.md$/, ''))
+      .replace(/^\/+|\/+$/g, '');
     const encodedSlug = slug.split('/').map(encodeURIComponent).join('/');
 
     return [new URL(`/blog/${encodedSlug}`, site).href];

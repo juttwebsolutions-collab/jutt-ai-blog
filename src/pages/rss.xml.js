@@ -1,15 +1,16 @@
 import { getCollection } from 'astro:content';
+import { getBlogEntrySlug, getBlogPostPath } from '../utils/blog';
 
 export async function GET() {
   const baseUrl = 'https://juttaiblog.online';
   const posts = (await getCollection('blog'))
     .map((entry) => {
-      const slug = entry.data.slug ?? entry.id.replace(/\.md$/, '');
+      const slug = getBlogEntrySlug(entry);
       const pubDate = entry.data.pubDate instanceof Date ? entry.data.pubDate : new Date(entry.data.pubDate);
       return {
         title: entry.data.title,
         description: entry.data.description,
-        link: `${baseUrl}/blog/${slug}`,
+        link: `${baseUrl}${getBlogPostPath(slug)}`,
         pubDate: pubDate.toUTCString()
       };
     })
