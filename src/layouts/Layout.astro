@@ -1,11 +1,13 @@
 ---
 import { siteConfig } from '../data/site';
+import Analytics from '../components/Analytics.astro';
 
 const {
   title = 'Jutt AI Tools | Free Online Utilities & AI Tools',
   description = 'Free online AI tools and browser-based utilities for writing, text conversion, and productivity.',
   url = '/',
   image = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1400&q=80',
+  analytics = true,
 } = Astro.props;
 
 const siteUrl = Astro.site?.origin ?? new URL(siteConfig.domain).origin;
@@ -42,14 +44,7 @@ const websiteSchema = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
-    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-T7LVF7HZ"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'GTM-T7LVF7HZ');
-    </script>
+    {analytics && <Analytics />}
   </head>
   <body>
     <div class="page-shell">

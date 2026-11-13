@@ -17,7 +17,10 @@ export type ClientAction =
   | 'cron-parser'
   | 'css-box-shadow-generator'
   | 'json-to-ts'
-  | 'url-encoder-decoder';
+  | 'url-encoder-decoder'
+  | 'html-entity-encoder-decoder'
+  | 'uuid-generator'
+  | 'color-converter';
 
 interface ToolBase {
   id: string;
@@ -299,6 +302,34 @@ export const tools: Tool[] = [
     clientAction: 'url-encoder-decoder',
     icon: '↔',
   },
+  {
+    id: 'html-encoder-decoder',
+    title: 'HTML Entity Encoder & Decoder',
+    category: 'Design & Developer Tools',
+    description: 'Encode HTML-sensitive characters or decode named and numeric entities locally in your browser.',
+    type: 'client',
+    clientAction: 'html-entity-encoder-decoder',
+    icon: '<>',
+    placeholder: 'Enter text or HTML entities...',
+  },
+  {
+    id: 'uuid-generator',
+    title: 'UUID v4 Generator',
+    category: 'Design & Developer Tools',
+    description: 'Generate secure, random version 4 UUIDs locally with your browser’s cryptographic random number generator.',
+    type: 'client',
+    clientAction: 'uuid-generator',
+    icon: '◈',
+  },
+  {
+    id: 'color-converter',
+    title: 'HEX, RGB & HSL Color Converter',
+    category: 'Design & Developer Tools',
+    description: 'Convert colors between HEX, RGB, and HSL formats and preview the result in your browser.',
+    type: 'client',
+    clientAction: 'color-converter',
+    icon: '◉',
+  },
 ];
 
 export const coreToolIds: string[] = [
@@ -311,6 +342,9 @@ export const coreToolIds: string[] = [
   'json-to-ts',
   'css-box-shadow-generator',
   'url-encoder-decoder',
+  'html-encoder-decoder',
+  'uuid-generator',
+  'color-converter',
 ];
 
 // Keep tools in launch order; append new entries so they appear first in listings.

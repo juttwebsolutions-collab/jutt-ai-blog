@@ -1,0 +1,304 @@
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+
+const pageUrl = 'https://juttaiblog.online/tools/color-converter';
+const faqs = [
+  {
+    question: 'Which color formats does this converter support?',
+    answer: 'It converts six- or three-digit HEX values, integer RGB values, and comma-separated HSL values with percentage saturation and lightness.',
+  },
+  {
+    question: 'Can I enter a color without the hash sign?',
+    answer: 'Yes. Both #3b82f6 and 3b82f6 are accepted as HEX input. Short three-digit HEX values are expanded before conversion.',
+  },
+  {
+    question: 'Are the displayed RGB and HSL values exact?',
+    answer: 'RGB channels are whole numbers from 0 to 255. HSL values are rounded for readability, so converting a rounded result back can differ by a small amount.',
+  },
+  {
+    question: 'Does the converter upload or save my color input?',
+    answer: 'No. Parsing and conversion happen in your browser. The tool makes no external API calls and does not save your input.',
+  },
+];
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'HEX, RGB & HSL Color Converter',
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'Requires JavaScript',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<Layout
+  title="HEX, RGB & HSL Color Converter | Jutt AI Tools"
+  description="Convert colors between HEX, RGB, and HSL formats with a live preview. Free, browser-based color converter with no uploads or API calls."
+  url="/tools/color-converter"
+  analytics={false}
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1000px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">HEX, RGB &amp; HSL Color Converter</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Convert common web color formats and preview the result instantly. All calculations run locally in your browser.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="Color format converter">
+      <form id="color-form" class="space-y-5">
+        <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+          <label for="color-input" class="block text-sm font-bold text-slate-900">
+            Enter a HEX, RGB, or HSL color
+            <input id="color-input" type="text" maxlength="64" autocomplete="off" spellcheck="false" value="#2dd4bf" placeholder="#2dd4bf or rgb(45, 212, 191)" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-mono text-slate-900 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100" />
+          </label>
+          <button type="submit" class="rounded-full bg-slate-950 px-6 py-3 text-sm font-bold text-white transition hover:bg-teal-800">Convert color</button>
+        </div>
+        <label for="color-picker" class="flex w-fit cursor-pointer items-center gap-3 text-sm font-bold text-slate-900">
+          <input id="color-picker" type="color" value="#2dd4bf" aria-label="Choose a color with the native color picker" class="h-12 w-16 cursor-pointer rounded-lg border border-slate-300 bg-white p-1" />
+          Or choose a color
+        </label>
+      </form>
+      <div id="color-status" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status" aria-live="polite">Enter a supported color value to convert.</div>
+      <div id="color-preview" class="min-h-24 rounded-2xl border border-slate-200 bg-[#2dd4bf] p-5" role="img" aria-label="Color preview for the current converted value">
+        <span class="inline-block rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-slate-900">Color preview</span>
+      </div>
+      <div class="grid gap-3 sm:grid-cols-3">
+        {[
+          { label: 'HEX', id: 'color-hex' },
+          { label: 'RGB', id: 'color-rgb' },
+          { label: 'HSL', id: 'color-hsl' },
+        ].map(({ label, id }) => (
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div class="mb-2 flex items-center justify-between gap-2">
+              <h2 class="m-0 text-sm font-bold text-slate-900">{label}</h2>
+              <button type="button" data-copy-color={id} disabled class="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800 disabled:cursor-not-allowed disabled:opacity-50">Copy</button>
+            </div>
+            <output id={id} class="block min-h-7 break-all font-mono text-sm text-slate-800" aria-live="polite">—</output>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <article class="mt-10 space-y-5 leading-7 text-slate-700">
+      <section>
+        <h2 class="text-2xl font-extrabold text-slate-950">Understand HEX, RGB, and HSL color values</h2>
+        <p>Web colors are often written in several interchangeable formats. HEX expresses red, green, and blue channels as hexadecimal pairs, as in <code>#2dd4bf</code>. Each pair ranges from <code>00</code> to <code>ff</code>, or zero to 255 in decimal. The shortened three-digit form, such as <code>#3af</code>, is a shorthand for repeating each digit and is expanded to <code>#33aaff</code>. HEX is compact and common in stylesheets, design systems, and asset specifications.</p>
+        <p>RGB describes the same additive red, green, and blue channels using decimal numbers. For example, <code>rgb(45, 212, 191)</code> represents the same turquoise as <code>#2dd4bf</code>. HSL describes a color by its hue, saturation, and lightness: hue is an angle around a color wheel, while saturation and lightness are percentages. HSL can be easier to reason about when creating hover shades, muted tones, or consistent palettes because hue is separated from vividness and brightness.</p>
+      </section>
+      <section>
+        <h2 class="text-xl font-extrabold text-slate-950">How to convert a color</h2>
+        <p>Type a three- or six-digit HEX value, an RGB value such as <code>rgb(45, 212, 191)</code>, or a comma-separated HSL value such as <code>hsl(174, 65%, 50%)</code>. The leading hash on HEX is optional. Choose Convert color or press Enter to display all three representations and a preview. You can also use the native color picker, which updates the text field and converted values immediately. Each output has its own Copy button, which places just that format on the clipboard.</p>
+        <p>The converter checks that RGB channels are whole numbers from 0 through 255 and that HSL percentages are between 0 and 100. Hue values range from 0 through 360 degrees. Empty, malformed, unsupported, or overly long input receives an explanatory message; it is not guessed or silently corrected. HSL values are rounded for readable display, so repeatedly converting rounded outputs can create a small difference in the last channel.</p>
+      </section>
+      <section>
+        <h2 class="text-xl font-extrabold text-slate-950">Common uses and accessible color decisions</h2>
+        <p>Developers use color conversion when translating a design file into CSS, comparing existing theme tokens, tuning a palette, or communicating a color to a teammate who uses another format. Designers can use HSL to make small lightness adjustments while keeping the approximate hue. RGB and HEX values are convenient when pasting colors into a stylesheet, a graphics program, or a component configuration. The preview is a quick visual check, but it does not replace testing the actual interface in context.</p>
+        <p>Color alone should not be the only way important information is conveyed. Check text contrast against its real background, include labels or icons where needed, and test interactive states. This page performs conversion only; it does not estimate accessibility contrast or manage alpha transparency. All parsing, calculation, and preview updates happen locally, with no external API calls or upload. Continue your workflow with the <a class="font-bold underline" href="/tools/css-box-shadow-generator">CSS Box Shadow Generator</a>, <a class="font-bold underline" href="/tools/css-minifier">CSS Minifier</a>, or <a class="font-bold underline" href="/tools/svg-formatter">SVG Formatter</a>.</p>
+      </section>
+      <section aria-labelledby="color-faq-heading">
+        <h2 id="color-faq-heading" class="text-2xl font-extrabold text-slate-950">Frequently asked questions</h2>
+        <div class="space-y-4">
+          {faqs.map(({ question, answer }) => (
+            <div>
+              <h3 class="mb-1 text-lg font-bold text-slate-900">{question}</h3>
+              <p class="mb-0">{answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </article>
+    <section class="mt-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-7" aria-labelledby="color-related-heading">
+      <h2 id="color-related-heading" class="text-xl font-extrabold text-slate-950">Related developer tools</h2>
+      <div class="grid gap-3 sm:grid-cols-3">
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/css-box-shadow-generator">CSS Box Shadow Generator</a>
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/css-minifier">CSS Minifier</a>
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/svg-formatter">SVG Formatter</a>
+      </div>
+    </section>
+    <script type="application/ld+json" set:html={JSON.stringify(webApplicationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  interface RgbColor {
+    red: number;
+    green: number;
+    blue: number;
+  }
+
+  const colorForm = document.querySelector<HTMLFormElement>('#color-form');
+  const colorInput = document.querySelector<HTMLInputElement>('#color-input');
+  const colorPicker = document.querySelector<HTMLInputElement>('#color-picker');
+  const colorStatus = document.querySelector<HTMLDivElement>('#color-status');
+  const colorPreview = document.querySelector<HTMLDivElement>('#color-preview');
+  const hexOutput = document.querySelector<HTMLOutputElement>('#color-hex');
+  const rgbOutput = document.querySelector<HTMLOutputElement>('#color-rgb');
+  const hslOutput = document.querySelector<HTMLOutputElement>('#color-hsl');
+  const colorCopyButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-copy-color]'));
+
+  function showColorStatus(message: string, isError = false): void {
+    if (!colorStatus) return;
+    colorStatus.textContent = message;
+    colorStatus.className = isError
+      ? 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+      : 'rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900';
+  }
+
+  function parseColor(value: string): RgbColor | null {
+    const input = value.trim();
+    const hex = input.startsWith('#') ? input.slice(1) : input;
+    if (/^[\da-f]{3}$/i.test(hex) || /^[\da-f]{6}$/i.test(hex)) {
+      const expanded = hex.length === 3 ? [...hex].map((digit) => `${digit}${digit}`).join('') : hex;
+      return {
+        red: Number.parseInt(expanded.slice(0, 2), 16),
+        green: Number.parseInt(expanded.slice(2, 4), 16),
+        blue: Number.parseInt(expanded.slice(4, 6), 16),
+      };
+    }
+
+    const rgb = input.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);
+    if (rgb) {
+      const red = Number(rgb[1]);
+      const green = Number(rgb[2]);
+      const blue = Number(rgb[3]);
+      if ([red, green, blue].every((channel) => Number.isInteger(channel) && channel >= 0 && channel <= 255)) {
+        return { red, green, blue };
+      }
+      return null;
+    }
+
+    const hsl = input.match(/^hsl\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*\)$/i);
+    if (!hsl) return null;
+    const hueDegrees = Number(hsl[1]);
+    const saturationPercent = Number(hsl[2]);
+    const lightnessPercent = Number(hsl[3]);
+    if (hueDegrees > 360 || saturationPercent > 100 || lightnessPercent > 100) return null;
+
+    const saturation = saturationPercent / 100;
+    const lightness = lightnessPercent / 100;
+    const hue = hueDegrees === 360 ? 0 : hueDegrees;
+    const adjustment = saturation * Math.min(lightness, 1 - lightness);
+    const channel = (offset: number) => {
+      const sector = (offset + hue / 30) % 12;
+      return lightness - adjustment * Math.max(-1, Math.min(sector - 3, 9 - sector, 1));
+    };
+    return {
+      red: Math.round(channel(0) * 255),
+      green: Math.round(channel(8) * 255),
+      blue: Math.round(channel(4) * 255),
+    };
+  }
+
+  function formatColor(rgb: RgbColor): { hex: string; rgb: string; hsl: string } {
+    const hex = `#${[rgb.red, rgb.green, rgb.blue].map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+    const red = rgb.red / 255;
+    const green = rgb.green / 255;
+    const blue = rgb.blue / 255;
+    const maximum = Math.max(red, green, blue);
+    const minimum = Math.min(red, green, blue);
+    const difference = maximum - minimum;
+    const lightness = (maximum + minimum) / 2;
+    let hue = 0;
+    let saturation = 0;
+
+    if (difference !== 0) {
+      saturation = difference / (1 - Math.abs(2 * lightness - 1));
+      if (maximum === red) hue = ((green - blue) / difference) % 6;
+      else if (maximum === green) hue = (blue - red) / difference + 2;
+      else hue = (red - green) / difference + 4;
+      hue = (hue * 60 + 360) % 360;
+    }
+
+    return {
+      hex,
+      rgb: `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`,
+      hsl: `hsl(${Math.round(hue)}, ${Math.round(saturation * 100)}%, ${Math.round(lightness * 100)}%)`,
+    };
+  }
+
+  function clearColorResults(): void {
+    if (hexOutput) hexOutput.textContent = '—';
+    if (rgbOutput) rgbOutput.textContent = '—';
+    if (hslOutput) hslOutput.textContent = '—';
+    colorCopyButtons.forEach((button) => { button.disabled = true; });
+  }
+
+  function convertColor(): void {
+    if (!colorInput) return;
+    if (!colorInput.value.trim()) {
+      clearColorResults();
+      showColorStatus('Enter a color value to convert.', true);
+      return;
+    }
+    if (colorInput.value.length > 64) {
+      clearColorResults();
+      showColorStatus('Color input is too long. Use 64 characters or fewer.', true);
+      return;
+    }
+
+    const rgb = parseColor(colorInput.value);
+    if (!rgb) {
+      clearColorResults();
+      showColorStatus('Enter a valid 3- or 6-digit HEX, RGB, or HSL color.', true);
+      return;
+    }
+
+    const formats = formatColor(rgb);
+    if (hexOutput) hexOutput.textContent = formats.hex;
+    if (rgbOutput) rgbOutput.textContent = formats.rgb;
+    if (hslOutput) hslOutput.textContent = formats.hsl;
+    if (colorPreview) {
+      colorPreview.style.backgroundColor = formats.hex;
+      colorPreview.setAttribute('aria-label', `Color preview: ${formats.hex}`);
+    }
+    if (colorPicker) colorPicker.value = formats.hex;
+    colorCopyButtons.forEach((button) => { button.disabled = false; });
+    showColorStatus('Color converted locally in your browser.');
+  }
+
+  colorForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    convertColor();
+  });
+  colorPicker?.addEventListener('input', () => {
+    if (colorInput && colorPicker) colorInput.value = colorPicker.value;
+    convertColor();
+  });
+  colorCopyButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const targetId = button.dataset.copyColor;
+      const output = targetId ? document.getElementById(targetId) : null;
+      const value = output?.textContent?.trim();
+      if (!value || value === '—') {
+        showColorStatus('Convert a color before copying a result.', true);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(value);
+        showColorStatus(`${targetId?.replace('color-', '').toUpperCase()} value copied.`);
+      } catch {
+        showColorStatus('Could not access the clipboard. Select and copy the value manually.', true);
+      }
+    });
+  });
+
+  convertColor();
+</script>

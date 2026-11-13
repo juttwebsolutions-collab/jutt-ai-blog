@@ -21,6 +21,9 @@ export function getStaticPaths() {
     'css-box-shadow-generator',
     'json-to-ts',
     'url-encoder-decoder',
+    'html-encoder-decoder',
+    'uuid-generator',
+    'color-converter',
   ]);
   return tools.filter((tool) => !dedicatedToolPages.has(tool.id)).map((tool) => ({
     params: { slug: tool.id },

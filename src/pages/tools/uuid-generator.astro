@@ -1,0 +1,176 @@
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+
+const pageUrl = 'https://juttaiblog.online/tools/uuid-generator';
+const faqs = [
+  {
+    question: 'What is a UUID v4?',
+    answer: 'A UUID v4 is a 128-bit identifier whose defining version and variant bits are set according to the UUID standard; the remaining bits are generated randomly.',
+  },
+  {
+    question: 'Are the generated UUIDs unique?',
+    answer: 'UUID v4 values are designed to make accidental collisions extraordinarily unlikely, but no random identifier generator can promise mathematical uniqueness across every system.',
+  },
+  {
+    question: 'Are UUIDs generated securely?',
+    answer: 'This tool uses the browser’s cryptographic random number generator. If that API is unavailable, generation fails visibly rather than falling back to predictable randomness.',
+  },
+  {
+    question: 'Does the generator send UUIDs to a server?',
+    answer: 'No. UUID generation takes place in your browser and the generated values are not uploaded or saved by this tool.',
+  },
+];
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'UUID v4 Generator',
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'Requires JavaScript and Web Crypto',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<Layout
+  title="UUID v4 Generator | Secure Random UUIDs | Jutt AI Tools"
+  description="Generate one or many random UUID version 4 identifiers in your browser with the Web Crypto API. Free, private, and ready to copy."
+  url="/tools/uuid-generator"
+  analytics={false}
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1000px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">UUID v4 Generator</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Create random version 4 UUID identifiers locally with your browser’s cryptographic random number generator.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="UUID version 4 generator">
+      <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+        <label for="uuid-count" class="block text-sm font-bold text-slate-900">
+          Number of UUIDs
+          <input id="uuid-count" type="number" min="1" max="100" step="1" value="1" inputmode="numeric" class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-4 focus:ring-teal-100 sm:max-w-xs" />
+          <span class="mt-1 block text-xs font-normal text-slate-500">Generate between 1 and 100 identifiers at once.</span>
+        </label>
+        <button id="generate-uuids" type="button" class="rounded-full bg-slate-950 px-6 py-3 text-sm font-bold text-white transition hover:bg-teal-800">Generate UUIDs</button>
+      </div>
+      <div id="uuid-status" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status" aria-live="polite">Ready to generate UUIDs on this device.</div>
+      <div>
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <label for="uuid-output" class="text-sm font-bold text-slate-900">Generated UUIDs</label>
+          <button id="copy-uuids" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Copy all</button>
+        </div>
+        <textarea id="uuid-output" rows="7" readonly spellcheck="false" aria-label="Generated UUID values" placeholder="Generated values will appear here..." class="block w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-mono text-sm leading-7 text-slate-900 outline-none"></textarea>
+      </div>
+    </section>
+
+    <article class="mt-10 space-y-5 leading-7 text-slate-700">
+      <section>
+        <h2 class="text-2xl font-extrabold text-slate-950">What a UUID is and why developers use one</h2>
+        <p>A universally unique identifier (UUID) is a 128-bit value formatted as five groups of hexadecimal characters, for example <code>xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx</code>. The familiar hyphenated representation is standardized so different applications can create and exchange identifiers without coordinating a central numbering service. UUIDs are useful for database records, distributed jobs, temporary object names, test fixtures, and references that need to be generated before a record reaches its final storage system.</p>
+        <p>This page creates UUID version 4 values. Version 4 identifiers are based on random bits, with a small number of bits reserved to mark the version and variant. The tool uses the Web Crypto API provided by the browser rather than a timestamp, a counter, or a general-purpose pseudo-random function. That distinction matters when many clients may independently create IDs. The UUID format is still an identifier, not a password or secret token; do not treat it as an authorization credential.</p>
+      </section>
+      <section>
+        <h2 class="text-xl font-extrabold text-slate-950">How to generate and copy UUIDs</h2>
+        <p>Choose how many identifiers you need, from one to one hundred, and activate Generate UUIDs. The generator validates the count and displays each result on its own line. Use Copy all to place the complete list on the clipboard, then paste it into a development environment, seed file, spreadsheet, or test. The result remains available in the page until you close it or generate a new batch. Nothing is posted to an API, and the tool does not store a history.</p>
+        <p>The generator accepts only whole-number batch counts. Empty, fractional, zero, negative, or out-of-range values are rejected with a clear message rather than silently changed. Keeping the batch size capped prevents an accidental request from creating an unbounded page update. If browser cryptographic randomness is unavailable, the page reports the problem instead of generating lower-quality identifiers as a fallback.</p>
+      </section>
+      <section>
+        <h2 class="text-xl font-extrabold text-slate-950">Practical UUID guidance and limitations</h2>
+        <p>UUID v4 is a convenient choice when independent systems need to create IDs without a shared sequence. Its random construction makes collisions extremely unlikely at ordinary application scales, but the word “unique” is not a guarantee of zero collisions. Systems with strict uniqueness requirements should still enforce a uniqueness constraint in their data store and handle a conflict safely. If identifiers must be sortable by creation time, another UUID version or a database-native identifier may be a better fit.</p>
+        <p>Generated values are plain text and can be copied into common programming languages. Check the target system’s expected format before using them in migrations or production data. UUIDs can make references harder to guess, but they do not replace access checks, authentication, or secret management. For nearby tasks, try the <a class="font-bold underline" href="/tools/hash-generator">Text Hash Generator</a>, <a class="font-bold underline" href="/tools/password-generator">Password Generator</a>, or <a class="font-bold underline" href="/tools/json-to-ts">JSON to TypeScript Generator</a>. This utility runs without external API calls, so values stay in your browser.</p>
+      </section>
+      <section aria-labelledby="uuid-faq-heading">
+        <h2 id="uuid-faq-heading" class="text-2xl font-extrabold text-slate-950">Frequently asked questions</h2>
+        <div class="space-y-4">
+          {faqs.map(({ question, answer }) => (
+            <div>
+              <h3 class="mb-1 text-lg font-bold text-slate-900">{question}</h3>
+              <p class="mb-0">{answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </article>
+    <section class="mt-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-7" aria-labelledby="uuid-related-heading">
+      <h2 id="uuid-related-heading" class="text-xl font-extrabold text-slate-950">Related developer tools</h2>
+      <div class="grid gap-3 sm:grid-cols-3">
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/hash-generator">Text Hash Generator</a>
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/password-generator">Password Generator</a>
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/json-to-ts">JSON to TypeScript</a>
+      </div>
+    </section>
+    <script type="application/ld+json" set:html={JSON.stringify(webApplicationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const uuidCount = document.querySelector<HTMLInputElement>('#uuid-count');
+  const uuidOutput = document.querySelector<HTMLTextAreaElement>('#uuid-output');
+  const uuidStatus = document.querySelector<HTMLDivElement>('#uuid-status');
+
+  function showUuidStatus(message: string, isError = false): void {
+    if (!uuidStatus) return;
+    uuidStatus.textContent = message;
+    uuidStatus.className = isError
+      ? 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+      : 'rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900';
+  }
+
+  function createUuidV4(): string {
+    if (!window.crypto?.getRandomValues) throw new Error('Web Crypto is unavailable.');
+    const bytes = window.crypto.getRandomValues(new Uint8Array(16));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+
+  document.querySelector<HTMLButtonElement>('#generate-uuids')?.addEventListener('click', () => {
+    if (!uuidCount || !uuidOutput) return;
+    const count = Number(uuidCount.value);
+    if (!Number.isInteger(count) || count < 1 || count > 100) {
+      uuidOutput.value = '';
+      showUuidStatus('Enter a whole number from 1 to 100.', true);
+      uuidCount.focus();
+      return;
+    }
+    try {
+      uuidOutput.value = Array.from({ length: count }, createUuidV4).join('\n');
+      showUuidStatus(`${count} UUID v4 ${count === 1 ? 'identifier generated' : 'identifiers generated'} locally.`);
+    } catch {
+      uuidOutput.value = '';
+      showUuidStatus('This browser does not provide cryptographic randomness. Try a current browser over HTTPS.', true);
+    }
+  });
+
+  document.querySelector<HTMLButtonElement>('#copy-uuids')?.addEventListener('click', async () => {
+    if (!uuidOutput?.value) {
+      showUuidStatus('Generate at least one UUID before copying.', true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(uuidOutput.value);
+      showUuidStatus('UUID values copied to the clipboard.');
+    } catch {
+      showUuidStatus('Could not access the clipboard. Select and copy the UUIDs manually.', true);
+    }
+  });
+</script>

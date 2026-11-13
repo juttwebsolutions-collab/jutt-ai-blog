@@ -1,0 +1,189 @@
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/global.css';
+
+const pageUrl = 'https://juttaiblog.online/tools/html-encoder-decoder';
+const faqs = [
+  {
+    question: 'What does an HTML entity encoder do?',
+    answer: 'It replaces HTML-sensitive characters such as ampersands and angle brackets with character references so they display as text in an HTML text context.',
+  },
+  {
+    question: 'Can I decode named and numeric HTML entities?',
+    answer: 'Yes. The decoder uses your browser’s built-in HTML parser to decode named entities such as &amp; and numeric references such as &#169;.',
+  },
+  {
+    question: 'Does this tool send or save my text?',
+    answer: 'No. Encoding and decoding happen locally in your browser. The tool does not send the input to an API or store it.',
+  },
+  {
+    question: 'Does HTML encoding sanitize unsafe input?',
+    answer: 'No. Character encoding is not a complete security sanitizer. Use a context-aware escaping library and a reviewed sanitization policy when handling untrusted content in an application.',
+  },
+];
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'HTML Entity Encoder & Decoder',
+  url: pageUrl,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'Requires JavaScript',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+};
+---
+
+<Layout
+  title="HTML Entity Encoder & Decoder | Jutt AI Tools"
+  description="Encode HTML-sensitive characters or decode named and numeric entities locally in your browser. No uploads or external API calls."
+  url="/tools/html-encoder-decoder"
+  analytics={false}
+>
+  <Navbar />
+  <main class="mx-auto w-[min(1000px,calc(100%-2rem))] pb-12">
+    <header class="py-12 sm:py-16">
+      <a href="/tools" class="text-sm font-bold text-teal-800 hover:text-teal-950">← All tools</a>
+      <p class="mb-2 mt-7 text-xs font-extrabold uppercase tracking-[0.16em] text-teal-800">Design &amp; developer tools · Runs in your browser</p>
+      <h1 class="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">HTML Entity Encoder &amp; Decoder</h1>
+      <p class="mt-3 max-w-2xl leading-7 text-slate-600">Convert special characters to HTML entities or decode entities back to readable text. Your content stays on this device.</p>
+    </header>
+
+    <section class="space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur-md sm:p-8" aria-label="HTML entity encoder and decoder">
+      <div>
+        <label for="html-input" class="mb-2 block text-sm font-bold text-slate-900">Text or HTML entities</label>
+        <textarea id="html-input" rows="7" maxlength="100000" spellcheck="false" placeholder="Enter text such as &lt;h1&gt;Tom &amp; Ada&lt;/h1&gt;..." class="block w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"></textarea>
+        <p class="mt-2 text-xs text-slate-500">Maximum 100,000 characters. Encoding is for HTML text content, not a substitute for application-specific sanitization.</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button id="encode-html" type="button" class="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-teal-800">Encode entities</button>
+        <button id="decode-html" type="button" class="rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Decode entities</button>
+        <button id="clear-html" type="button" class="rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Clear</button>
+      </div>
+      <div id="html-status" class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" role="status" aria-live="polite">Enter text and choose an action.</div>
+      <div>
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <label for="html-output" class="text-sm font-bold text-slate-900">Result</label>
+          <button id="copy-html" type="button" class="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-teal-700 hover:text-teal-800">Copy result</button>
+        </div>
+        <textarea id="html-output" rows="7" maxlength="100000" spellcheck="false" readonly placeholder="The result will appear here..." class="block w-full resize-y rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-mono text-sm leading-6 text-slate-900 outline-none"></textarea>
+      </div>
+    </section>
+
+    <article class="mt-10 space-y-5 leading-7 text-slate-700">
+      <section>
+        <h2 class="text-2xl font-extrabold text-slate-950">What HTML entities are and when to use them</h2>
+        <p>HTML entities, also called character references, are a way to represent characters in markup. A reference begins with an ampersand and ends with a semicolon. For example, <code>&amp;amp;</code> represents an ampersand, while <code>&amp;lt;</code> and <code>&amp;gt;</code> represent the angle brackets used to form HTML tags. Numeric references can represent characters by code point, such as <code>&amp;#169;</code> for the copyright symbol. Browsers interpret these references when rendering a document, so text that looks like markup can be displayed as text instead.</p>
+        <p>This browser-based HTML entity encoder and decoder gives you a quick way to inspect or transform small snippets without uploading them. The encoder converts ampersands, angle brackets, quotation marks, and apostrophes into references. It handles ampersands first so the references it creates are not encoded again. The decoder relies on the browser’s built-in HTML parsing behavior, which understands common named and numeric references. The result is shown as plain text in an output field; it is never inserted as active page markup.</p>
+      </section>
+      <section>
+        <h2 class="text-xl font-extrabold text-slate-950">How to use the encoder and decoder</h2>
+        <p>Paste or type a value into the input box, then choose <strong>Encode entities</strong> to make reserved characters visible as references. Choose <strong>Decode entities</strong> when the input already contains references and you need to inspect the characters they represent. Copy the result when it looks right, or use Clear to start over. Empty input is reported rather than silently treated as a successful conversion. Inputs are limited to 100,000 characters to keep browser processing responsive; unusually large documents should be handled with a local editor or project-specific build tool.</p>
+        <p>Use this utility for debugging HTML snippets, preparing plain text examples for documentation, checking how an entity will display, or comparing encoded and decoded content. It can also help when content has been copied from a CMS and contains visible references. Since the result is ordinary text, you can review it before pasting it into a template or code sample.</p>
+      </section>
+      <section>
+        <h2 class="text-xl font-extrabold text-slate-950">Important safety and compatibility notes</h2>
+        <p>Encoding is context-sensitive. HTML text nodes, quoted attributes, JavaScript strings, CSS values, and URLs have different parsing rules. This tool’s encoder is intended for simple HTML text content; it is not a universal escaping function, sanitizer, or security boundary. Do not rely on manual entity conversion alone to make untrusted markup safe. Applications should use their framework’s escaping features and a maintained sanitizer when HTML must be accepted. Avoid placing decoded text directly into an unsafe HTML sink.</p>
+        <p>Entity names are defined by HTML, and some names are case-sensitive or require a semicolon. Browser parsing handles many edge cases, but a decoder is not a validator for an entire HTML document. This tool works locally in your browser, makes no external API calls, and does not send the entered text to a server. For other common developer tasks, use the <a class="font-bold underline" href="/tools/url-encoder-decoder">URL Encoder / Decoder</a>, <a class="font-bold underline" href="/tools/json-to-ts">JSON to TypeScript Generator</a>, or <a class="font-bold underline" href="/tools/css-box-shadow-generator">CSS Box Shadow Generator</a>.</p>
+      </section>
+      <section aria-labelledby="html-faq-heading">
+        <h2 id="html-faq-heading" class="text-2xl font-extrabold text-slate-950">Frequently asked questions</h2>
+        <div class="space-y-4">
+          {faqs.map(({ question, answer }) => (
+            <div>
+              <h3 class="mb-1 text-lg font-bold text-slate-900">{question}</h3>
+              <p class="mb-0">{answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </article>
+    <section class="mt-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-7" aria-labelledby="html-related-heading">
+      <h2 id="html-related-heading" class="text-xl font-extrabold text-slate-950">Related developer tools</h2>
+      <div class="grid gap-3 sm:grid-cols-3">
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/url-encoder-decoder">URL Encoder / Decoder</a>
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/json-to-ts">JSON to TypeScript</a>
+        <a class="rounded-2xl border border-slate-200 p-4 font-bold text-teal-800 hover:border-teal-400" href="/tools/css-box-shadow-generator">CSS Box Shadow Generator</a>
+      </div>
+    </section>
+    <script type="application/ld+json" set:html={JSON.stringify(webApplicationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  const htmlInput = document.querySelector<HTMLTextAreaElement>('#html-input');
+  const htmlOutput = document.querySelector<HTMLTextAreaElement>('#html-output');
+  const htmlStatus = document.querySelector<HTMLDivElement>('#html-status');
+
+  function showHtmlStatus(message: string, isError = false): void {
+    if (!htmlStatus) return;
+    htmlStatus.textContent = message;
+    htmlStatus.className = isError
+      ? 'rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800'
+      : 'rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-900';
+  }
+
+  function transformHtml(mode: 'encode' | 'decode'): void {
+    if (!htmlInput || !htmlOutput) return;
+    if (!htmlInput.value) {
+      htmlOutput.value = '';
+      showHtmlStatus('Enter text before converting.', true);
+      return;
+    }
+    if (htmlInput.value.length > 100000) {
+      htmlOutput.value = '';
+      showHtmlStatus('Input is too large. Use 100,000 characters or fewer.', true);
+      return;
+    }
+
+    if (mode === 'encode') {
+      const entities: Record<string, string> = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      };
+      htmlOutput.value = htmlInput.value.replace(/[&<>"']/g, (character) => entities[character] ?? character);
+    } else {
+      const decoder = document.createElement('textarea');
+      decoder.innerHTML = htmlInput.value;
+      htmlOutput.value = decoder.value;
+    }
+    showHtmlStatus(mode === 'encode' ? 'HTML-sensitive characters encoded locally.' : 'HTML entities decoded locally.');
+  }
+
+  document.querySelector<HTMLButtonElement>('#encode-html')?.addEventListener('click', () => transformHtml('encode'));
+  document.querySelector<HTMLButtonElement>('#decode-html')?.addEventListener('click', () => transformHtml('decode'));
+  document.querySelector<HTMLButtonElement>('#clear-html')?.addEventListener('click', () => {
+    if (htmlInput) htmlInput.value = '';
+    if (htmlOutput) htmlOutput.value = '';
+    showHtmlStatus('Cleared. Enter text and choose an action.');
+    htmlInput?.focus();
+  });
+  document.querySelector<HTMLButtonElement>('#copy-html')?.addEventListener('click', async () => {
+    if (!htmlOutput?.value) {
+      showHtmlStatus('There is no result to copy yet.', true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(htmlOutput.value);
+      showHtmlStatus('Result copied to the clipboard.');
+    } catch {
+      showHtmlStatus('Could not access the clipboard. Select and copy the result manually.', true);
+    }
+  });
+</script>
